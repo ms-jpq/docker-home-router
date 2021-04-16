@@ -38,3 +38,8 @@ RUN useradd --user-group --shell=/usr/sbin/nologin router && \
 # 4500  UDP     -> L2TP
 # 51820 UDP     -> WIREGUARD
 EXPOSE 53/tcp 53/udp 67/udp 80/tcp 123/udp 500/udp 1080/tcp 4500/udp 51820/udp
+
+
+ENV WAN_IF= \
+    LAN_IF= \
+    GUEST_IF=
