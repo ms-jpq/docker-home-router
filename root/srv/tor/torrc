@@ -1,0 +1,4 @@
+DNSPort                127.0.0.1:9060
+TransPort              0.0.0.0:9040
+AutomapHostsOnResolve  1
+VirtualAddrNetworkIPv4 {{ TOR_SUBNET }}
