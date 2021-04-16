@@ -1,1 +1,1 @@
-./root/code/requirements.txt
+./docker/code/requirements.txt

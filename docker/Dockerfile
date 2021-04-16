@@ -1,3 +1,4 @@
+ARG S6="https://github.com/just-containers/s6-overlay/releases/download/v2.2.0.1/s6-overlay-amd64-installer"
 FROM ubuntu:focal
 
 
@@ -20,8 +21,8 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 
-ADD --chmod=+x https://github.com/just-containers/s6-overlay/releases/download/v2.2.0.1/s6-overlay-amd64-installer /tmp/
-RUN /tmp/s6-overlay-amd64-installer /
+ADD --chmod=+x  "$S6" /tmp/s6
+RUN /tmp/s6 /
 ENTRYPOINT ["/init"]
 
 
@@ -36,8 +37,17 @@ RUN useradd --user-group --shell=/usr/sbin/nologin router && \
 # 500   UDP     -> L2TP
 # 1080  TCP     -> TOR PROXY
 # 4500  UDP     -> L2TP
+# 5335  TCP/UDP -> DNS2
 # 51820 UDP     -> WIREGUARD
-EXPOSE 53/tcp 53/udp 67/udp 80/tcp 123/udp 500/udp 1080/tcp 4500/udp 51820/udp
+EXPOSE 53/tcp 53/udp \
+       67/udp \
+       80/tcp \
+       123/udp \
+       500/udp \
+       1080/tcp \
+       4500/udp \
+       5335/tcp 5335/udp \
+       51820/udp
 
 
 ENV WAN_IF= \
