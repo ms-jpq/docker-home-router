@@ -33,7 +33,8 @@ RUN useradd --user-group --shell=/usr/sbin/nologin router && \
 # 67    UDP     -> DHCP
 # 80    TCP     -> HTTP
 # 123   UDP     -> NTP
+# 500   UDP     -> L2TP
 # 1080  TCP     -> TOR PROXY
 # 4500  UDP     -> L2TP
 # 51820 UDP     -> WIREGUARD
-EXPOSE 53/tcp 53/udp 67/udp 80/tcp 123/udp 1080/tcp 4500/udp 51820/udp
+EXPOSE 53/tcp 53/udp 67/udp 80/tcp 123/udp 500/udp 1080/tcp 4500/udp 51820/udp
