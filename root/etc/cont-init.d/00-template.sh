@@ -4,3 +4,4 @@ set -eu
 set -o pipefail
 
 
+python3 -m router template

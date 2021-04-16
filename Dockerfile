@@ -29,4 +29,11 @@ RUN useradd --user-group --shell=/usr/sbin/nologin router && \
     pip3 install --upgrade /code
 
 
-EXPOSE 8080
+# 53    TCP/UDP -> DNS
+# 67    UDP     -> DHCP
+# 80    TCP     -> HTTP
+# 123   UDP     -> NTP
+# 1080  TCP     -> TOR PROXY
+# 4500  UDP     -> L2TP
+# 51820 UDP     -> WIREGUARD
+EXPOSE 53/tcp 53/udp 67/udp 80/tcp 123/udp 1080/tcp 4500/udp 51820/udp
