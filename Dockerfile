@@ -25,4 +25,8 @@ RUN /tmp/s6-overlay-amd64-installer /
 ENTRYPOINT ["/init"]
 
 
+RUN useradd --user-group --shell=/usr/sbin/nologin router && \
+    pip3 install --upgrade /code
+
+
 EXPOSE 8080
