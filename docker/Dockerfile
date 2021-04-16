@@ -53,7 +53,7 @@ EXPOSE 53/tcp 53/udp \
 # WAN_IF, LAN_IF -> Interface names: assigned different IP address space
 # GUEST_IF       -> Optional: see above
 # IP6_ULA_PREFIX -> Globally unique 40 bit prefix (in HEX)
-# IP4_EXCLUSION  -> Networks to exclude from pool calculations
+# IP4_EXCLUSION  -> ',' delimited : Networks to exclude from assignment in 'x.x.x.x/mask' form
 ENV WAN_IF= \
     LAN_IF= \
     GUEST_IF= \
