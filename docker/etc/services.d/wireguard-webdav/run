@@ -4,4 +4,13 @@ set -eu
 set -o pipefail
 
 
-exec s6-setuidgid router rclone serve webdav --addr=localhost:51820 --read-only /srv/wireguard/qr
+ARGS=(
+  serve
+  webdav
+  --addr=localhost:51820
+  --read-only
+  /data/wireguard/pub
+  )
+
+
+exec s6-setuidgid router rclone "${ARGS[@]}"
