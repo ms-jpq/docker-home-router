@@ -4,4 +4,8 @@ set -eu
 set -o pipefail
 
 
-exec s6-setuidgid router chronyd
+ARGS=(
+  )
+
+
+exec s6-setuidgid router chronyd "${ARGS[@]}"

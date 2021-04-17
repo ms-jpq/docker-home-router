@@ -4,5 +4,9 @@ set -eu
 set -o pipefail
 
 
-exec nginx
+ARGS=(
+  )
+
+
+exec nginx "${ARGS[@]}"
 

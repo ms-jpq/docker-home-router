@@ -4,5 +4,9 @@ set -eu
 set -o pipefail
 
 
-exec s6-setuidgid router tor
+ARGS=(
+  )
+
+
+exec s6-setuidgid router tor "${ARGS[@]}"
 

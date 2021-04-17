@@ -4,4 +4,8 @@ set -eu
 set -o pipefail
 
 
+ARGS=(
+  )
+
+
 sleep infinity
