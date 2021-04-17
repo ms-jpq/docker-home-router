@@ -1,7 +1,6 @@
+from argparse import ArgumentParser, Namespace
 from json import loads
 from subprocess import check_call, check_output
-
-
 
 _EGRESS_OPTS = (
     "egress",
@@ -69,11 +68,17 @@ def _ingress(wan_if: str) -> None:
     )
 
 
+def _parse_args() -> Namespace:
+    parser = ArgumentParser()
+    parser.add_argument("--wan-if", required=True)
+    return parser.parse_args()
+
+
 def main() -> None:
-    wan_if = _WAN_IF.read_text().rstrip()
+    args = _parse_args()
+    wan_if = str(args.wan_if)
     _egress(wan_if)
     _ingress(wan_if)
 
 
 main()
-
