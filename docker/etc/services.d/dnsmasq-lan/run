@@ -3,3 +3,5 @@
 set -eu
 set -o pipefail
 
+
+exec s6-setuidgid router dnsmasq --pid-file=/var/run/dns-lan.pid --conf-file=/srv/dnsmasq/0-main.conf
