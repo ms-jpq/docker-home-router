@@ -55,10 +55,11 @@ EXPOSE 53/tcp 53/udp \
 # IP6_ULA_RAND   -> Globally unique 40 bit prefix (in HEX)
 # IP6_ULA_SUBNET -> Organizationally unique 16 bit prefix (in HEX)
 # IP4_EXCLUSION  -> ',' delimited : Networks to exclude from assignment in 'x.x.x.x/mask' form
+# DNS            -> Upstream DNS servers: default is unbound recursive resolver
 ENV WAN_IF= \
     LAN_IF= \
     GUEST_IF= \
     IP6_ULA_RAND= \
     IP6_ULA_SUBNET= \
     IP4_EXCLUSION=10.0.0.0/24,192.168.0.0/24,172.16.0.0/24 \
-    DNS=127.0.0.1:53,
+    DNS=127.0.0.1:5335,[0:0:0:0:0:0:0:1]:5335
