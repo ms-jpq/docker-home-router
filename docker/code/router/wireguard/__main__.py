@@ -27,7 +27,7 @@ _KEYS_DIR = _TOP_LV / "keys"
 _QR_DIR = _TOP_LV / "qr"
 _LINK_NAME = "wg0"
 
-_IF = _SRV / "lan_if"
+
 _TOR_NET = _SRV / "tor_net"
 _SERVER_ADDR = _CONF / "srv_addr"
 _SUBNET = _CONF / "wg_net"
@@ -36,24 +36,6 @@ _DEVICES = _CONF / "devices.json"
 
 _ADDR = Union[IPv4Address, IPv6Address]
 _NETWORK = Union[IPv4Network, IPv6Network]
-
-
-def _ip_networks(lan_if: str) -> Iterator[_NETWORK]:
-    raw = check_output(("ip", "--json", "addr", "show", lan_if), text=True)
-    json = loads(raw)
-    for spec in json:
-        for info in spec["addr_info"]:
-            ip, prefix = info["local"], info["prefixlen"]
-            yield ip_network(f"{ip}/{prefix}", strict=False)
-
-
-def _lan_network() -> _NETWORK:
-    lan_if = _IF.read_text().rstrip()
-    while True:
-        try:
-            return next(_ip_networks(lan_if))
-        except StopIteration:
-            pass
 
 
 def _additional_networks() -> Iterator[_NETWORK]:
@@ -186,7 +168,6 @@ def main() -> None:
     server_addr = _SERVER_ADDR.read_text().rstrip()
     raw_subnet = _SUBNET.read_text().rstrip()
     network = ip_network(raw_subnet)
-    lan_network = _lan_network()
     additional_networks = tuple(_additional_networks())
     _gen_client_keys()
     _gen_qr(
@@ -202,4 +183,3 @@ def main() -> None:
 
 
 main()
-

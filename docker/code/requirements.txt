@@ -1,2 +1,2 @@
-std2@https://github.com/ms-jpq/std2/archive/2dff212f90dbc979d829eff5abf41bd674bf33b7.tar.gz
+std2@https://github.com/ms-jpq/std2/archive/c4dbc68c3492f1f504f731ad7afbbe3ac629dfa7.tar.gz
 Jinja2
