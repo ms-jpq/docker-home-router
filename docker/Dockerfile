@@ -1,9 +1,12 @@
-ARG S6="https://github.com/just-containers/s6-overlay/releases/download/v2.2.0.1/s6-overlay-amd64-installer"
 FROM ubuntu:focal
+
+
+ARG S6="https://github.com/just-containers/s6-overlay/releases/download/v2.2.0.1/s6-overlay-amd64-installer"
 
 
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    wget \
     python3-pip \
     nginx \
     dnsmasq \
@@ -21,11 +24,14 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 
-ADD --chmod=+x  "$S6" /tmp/s6
-RUN /tmp/s6 /
+RUN wget "${S6}" --output-document /tmp/s6 && \
+    chmod +x /tmp/s6 && \
+    /tmp/s6 / && \
+    rm -rf /tmp/*
 ENTRYPOINT ["/init"]
 
 
+COPY . /
 RUN useradd --user-group --shell=/usr/sbin/nologin router && \
     pip3 install --upgrade /code
 

@@ -14,8 +14,6 @@ setup(
     install_requires=install_requires,
     version="0.0.1",
     description="Router",
-    long_description=Path("README.md").read_text(),
-    long_description_content_type="text/markdown",
     author="ms-jpq",
     author_email="github@bigly.dog",
     url="https://github.com/ms-jpq/router",
