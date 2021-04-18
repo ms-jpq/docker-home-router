@@ -180,6 +180,3 @@ def main() -> None:
     _add_subnet(network)
     _wg_up(network)
     _set_up()
-
-
-main()

@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from ipaddress import IPv4Network, IPv6Network
+from itertools import islice
 from json import dumps, loads
 from pathlib import Path
 from random import randint
@@ -81,7 +82,7 @@ def _pick_private(
 
 def _v4(exclusions: str) -> _V4Stack:
     nono = map(IPv4Network, exclusions.split(LFS))
-    lan, wg, tor, guest = _pick_private(nono, prefix=24)
+    lan, wg, tor, guest = islice(_pick_private(nono, prefix=24), 4)
     stack = _V4Stack(lan=lan, wg=wg, tor=tor, guest=guest)
     return stack
 
@@ -89,16 +90,16 @@ def _v4(exclusions: str) -> _V4Stack:
 def _v6(prefix: Optional[str], subnets: Optional[str]) -> _V6Stack:
     if not prefix:
         bits = format(randint(0, 2 ** 40 - 1), "08x")
-        prefix = f"{bits[:4]}:{bits[4:]}"
+        prefix = f"{bits[:2]}:{bits[2:6]}:{bits[6:]}"
 
-    org_prefix = f"fd00:{prefix}"
+    org_prefix = f"fd{prefix}"
     org = IPv6Network(f"{org_prefix}::/48")
     seen = {
         IPv6Network(f"{org_prefix}:{subnet}::/64")
         for subnet in (subnets or "").split("IFS")
     }
-    lan, wg, tor, guest = (
-        subnet for subnet in org.subnets(new_prefix=64) if subnet not in seen
+    lan, wg, tor, guest = islice(
+        (subnet for subnet in org.subnets(new_prefix=64) if subnet not in seen), 4
     )
 
     stack = _V6Stack(lan=lan, wg=wg, tor=tor, guest=guest)

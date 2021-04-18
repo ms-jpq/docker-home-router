@@ -29,7 +29,7 @@ RUN wget "${S6}" --output-document /tmp/s6 && \
     /tmp/s6 / && \
     rm -rf /tmp/*
 ENV S6_KEEP_ENV=1 \
-    S6_BEHAVIOUR_IF_STAGE2_FAILS=1
+    S6_BEHAVIOUR_IF_STAGE2_FAILS=2
 ENTRYPOINT ["/init"]
 
 

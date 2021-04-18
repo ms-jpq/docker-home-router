@@ -3,6 +3,7 @@ from typing import Any, Mapping
 
 from std2.pathlib import walk
 
+from .cake.main import main as cake_main
 from .consts import (
     DNS_SERVERS,
     GUEST_IF,
@@ -15,9 +16,12 @@ from .consts import (
     WAN_IF,
     WG_IF,
 )
+from .dnsmasq.main import main as dnsmasq_main
 from .subnets import calculate_networks, dump_networks, load_networks
 from .template import j2_build, j2_render
 from .types import Networks
+from .unbound.main import main as unbound_main
+from .wireguard.main import main as wg_main
 
 
 def _env(networks: Networks) -> Mapping[str, Any]:
@@ -61,7 +65,7 @@ def _template() -> None:
 
 def _parse_args() -> Namespace:
     parser = ArgumentParser()
-    parser.add_argument("op", choices=("template",))
+    parser.add_argument("op", choices=("template", "cake", "wg", "dnsmasq", "unbound"))
     return parser.parse_args()
 
 
@@ -70,6 +74,16 @@ def main() -> None:
 
     if args.op == "template":
         _template()
+    elif args.op == "cake":
+        cake_main()
+    elif args.op == "wg":
+        wg_main()
+    elif args.op == "dnsmasq":
+        dnsmasq_main()
+    elif args.op == "unbound":
+        unbound_main()
+    else:
+        assert False
 
 
 main()
