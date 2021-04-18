@@ -18,11 +18,8 @@ _CLIENT_TPL = Path("wg", "client.conf")
 
 
 _WG_DATA = DATA / "wireguard"
-_KEYS_DIR = _WG_DATA / "keys"
-_SRV_KEY = _KEYS_DIR / "server" / "private.key"
-_CLIENT_KEYS = _KEYS_DIR / "clients"
-
-
+_SRV_KEY = _WG_DATA / "keys" / "server" / "private.key"
+_CLIENT_KEYS = _WG_DATA / "keys" / "clients"
 _QR_DIR = _WG_DATA / "pub"
 
 
@@ -62,8 +59,8 @@ def _srv_keys() -> Tuple[str, str]:
 def _client_keys() -> Iterator[Tuple[Path, str, str]]:
     _CLIENT_KEYS.mkdir(parents=True, exist_ok=True)
 
-    for client in sorted(_KEYS_DIR.iterdir()):
-        path = client.relative_to(_KEYS_DIR)
+    for client in sorted(_CLIENT_KEYS.iterdir()):
+        path = client.relative_to(_CLIENT_KEYS)
 
         private_key = client.read_text().rstrip()
         public_key = check_output(
@@ -73,7 +70,7 @@ def _client_keys() -> Iterator[Tuple[Path, str, str]]:
 
 
 def _gen_client_keys() -> None:
-    _CLIENT_KEYS.parent.mkdir(parents=True, exist_ok=True)
+    _CLIENT_KEYS.mkdir(parents=True, exist_ok=True)
 
     for peer in split(WG_PEERS):
         path = _CLIENT_KEYS / f"{peer}.key"

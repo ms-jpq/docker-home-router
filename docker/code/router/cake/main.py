@@ -1,6 +1,7 @@
-from argparse import ArgumentParser, Namespace
 from json import loads
 from subprocess import check_call, check_output
+
+from ..consts import WAN_IF
 
 _EGRESS_OPTS = (
     "egress",
@@ -88,14 +89,6 @@ def _ingress(wan_if: str, rtt: str) -> None:
     )
 
 
-def _parse_args() -> Namespace:
-    parser = ArgumentParser()
-    parser.add_argument("--wan-rtt", default="100ms")
-    parser.add_argument("--lan-rtt", default="10ms")
-    return parser.parse_args()
-
-
 def main() -> None:
-    args = _parse_args()
-    _egress(args.wan_if, rtt=args.wan_rtt)
-    _ingress(args.wan_if, rtt=args.lan_rtt)
+    _egress(WAN_IF, rtt="100ms")
+    _ingress(WAN_IF, rtt="10ms")

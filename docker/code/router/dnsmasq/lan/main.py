@@ -10,7 +10,7 @@ from ...consts import J2
 from ...render import j2_build, j2_render
 from ..consts import DYN, LEASES
 
-_TPL = Path("dnsmasq", "5-dyn.conf")
+_TPL = Path("dns", "5-dyn.conf")
 _PID_FILE = Path("/", "var", "run", "dnsmsaq-lan.pid")
 
 

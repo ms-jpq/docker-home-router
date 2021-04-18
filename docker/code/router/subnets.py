@@ -85,8 +85,7 @@ def _v6(prefix: Optional[str], subnets: Optional[str]) -> _V6Stack:
     org_prefix = f"fd{prefix}"
     org = IPv6Network(f"{org_prefix}::/48")
     seen = {
-        IPv6Network(f"{org_prefix}:{subnet}::/64")
-        for subnet in (subnets or "").split("IFS")
+        IPv6Network(f"{org_prefix}:{subnet}::/64") for subnet in split(subnets or "")
     }
     lan, wg, tor, guest = islice(
         (subnet for subnet in org.subnets(new_prefix=64) if subnet not in seen), 4

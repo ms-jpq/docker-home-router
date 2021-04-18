@@ -4,4 +4,4 @@ set -eu
 set -o pipefail
 
 
-exec chown -R "$USER:$USER" /code /srv
+exec chown -R "$USER:$USER" /srv /data
