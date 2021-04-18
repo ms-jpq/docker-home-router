@@ -1,13 +1,13 @@
 from dataclasses import dataclass
 from ipaddress import IPv4Network, IPv6Network
-from itertools import chain
 from json import loads
-from typing import Iterator, Optional, Sequence
+from typing import Optional
 
 from std2.pickle import decode
 from std2.pickle.coders import ipv4_network_decoder, ipv6_network_decoder
 
 from .consts import LFS, NETWORKS
+from .ip.v4 import pick_private
 from .types import DualStack, Networks
 
 
@@ -35,12 +35,14 @@ def load_networks() -> Networks:
     return networks
 
 
+def _v4(exclusions: str) -> _V4Stack:
+    nono = map(IPv4Network, exclusions.split(LFS))
+    lan, wg, tor, guest = pick_private(nono, prefix=24)
+    stack = _V4Stack(lan=lan, wg=wg, tor=tor, guest=guest)
+    return stack
 
-def _calc_lan_v4(exclusions: str) -> _V4Stack:
-    nono = tuple(map(IPv4Network, exclusions.split(LFS)))
 
-
-def _calc_lan_v6(ula_prefix: Optional[str], ula_subnet: Optional[str]) -> _V6Stack:
+def _v6(ula_prefix: Optional[str], ula_subnet: Optional[str]) -> _V6Stack:
     v6_prefix = int(ula_prefix.replace(":", ""), 16)
     v6_subnet = int(ula_subnet.replace(":", ""), 16)
     if not v6_prefix < 2 ** 40:
@@ -52,14 +54,11 @@ def _calc_lan_v6(ula_prefix: Optional[str], ula_subnet: Optional[str]) -> _V6Sta
 
 
 def calculate_networks() -> Networks:
-    lan = DualStack(v4=IPv4Network(""), v6=IPv6Network(""))
-    wireguard = DualStack(v4=IPv4Network(""), v6=IPv6Network(""))
-    tor = DualStack(v4=IPv4Network(""), v6=IPv6Network(""))
-    guest = DualStack(v4=IPv4Network(""), v6=IPv6Network(""))
+    v4, v6 = _v4(""), _v6("", "")
     networks = Networks(
-        lan=lan,
-        wireguard=wireguard,
-        tor=tor,
-        guest=guest,
+        lan=DualStack(v4=v4.lan, v6=v6.lan),
+        wireguard=DualStack(v4=v4.wg, v6=v6.wg),
+        tor=DualStack(v4=v4.tor, v6=v6.tor),
+        guest=DualStack(v4=v4.guest, v6=v6.guest),
     )
     return networks
