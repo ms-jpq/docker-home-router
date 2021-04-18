@@ -3,6 +3,7 @@ from os import linesep
 from ...show import show
 from ..consts import DYN, LEASES
 
+_PORT = 60693
 _TITLE = "LEASES"
 
 
@@ -12,5 +13,5 @@ def _feed() -> str:
 
 
 def main() -> None:
-    srv = show(_TITLE, port=60693, feed=_feed)
+    srv = show(_TITLE, port=_PORT, feed=_feed)
     srv.serve_forever()

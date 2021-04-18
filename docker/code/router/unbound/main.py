@@ -7,6 +7,7 @@ from std2.configparser import hydrate
 from ..consts import TIMEOUT
 from ..show import show
 
+_PORT = 60692
 _TITLE = "UNBOUND"
 
 
@@ -40,5 +41,5 @@ def _feed() -> str:
 
 
 def main() -> None:
-    srv = show(_TITLE, port=60692, feed=_feed)
+    srv = show(_TITLE, port=_PORT, feed=_feed)
     srv.serve_forever()

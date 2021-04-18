@@ -7,7 +7,7 @@ set -o pipefail
 ARGS=(
   serve
   webdav
-  --addr=localhost:51820
+  --addr=localhost:60694
   --read-only
   /data/wireguard/pub
   )
