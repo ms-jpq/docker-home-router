@@ -99,10 +99,7 @@ def _wg_conf(j2: Environment, stack: DualStack) -> str:
     return text
 
 
-def _gen_qr(
-    j2: Environment,
-    networks: Networks,
-) -> None:
+def _gen_qr(j2: Environment, networks: Networks) -> None:
     _, server_public = _srv_keys()
 
     _QR_DIR.mkdir(parents=True, exist_ok=True)
