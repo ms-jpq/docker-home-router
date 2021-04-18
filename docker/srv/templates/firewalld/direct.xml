@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<direct>
+
+  <!--
+    Hijack outbound DNS
+  -->
+
+  <rule ipv="ipv4" table="nat" chain="PREROUTING" priority="0">--protocol tcp --destination-port 53 --jump REDIRECT</rule>
+  <rule ipv="ipv4" table="nat" chain="PREROUTING" priority="0">--protocol udp --destination-port 53 --jump REDIRECT</rule>
+
+  <rule ipv="ipv6" table="nat" chain="PREROUTING" priority="0">--protocol tcp --destination-port 53 --jump REDIRECT</rule>
+  <rule ipv="ipv6" table="nat" chain="PREROUTING" priority="0">--protocol udp --destination-port 53 --jump REDIRECT</rule>
+
+
+  <!--
+    Hijack outbound NTP
+  -->
+
+  <rule ipv="ipv4" table="nat" chain="PREROUTING" priority="0">--protocol udp --destination-port 123 --jump REDIRECT</rule>
+  <rule ipv="ipv6" table="nat" chain="PREROUTING" priority="0">--protocol udp --destination-port 123 --jump REDIRECT</rule>
+
+
+  <!--
+    Block DNS over TLS
+  -->
+
+  <rule ipv="ipv4" table="filter" chain="FORWARD" priority="0">--protocol tcp --destination-port 853 '!' --source 127.0.0.1       --jump DROP</rule>
+  <rule ipv="ipv6" table="filter" chain="FORWARD" priority="0">--protocol tcp --destination-port 853 '!' --source 0:0:0:0:0:0:0:1 --jump DROP</rule>
+
+
+  <!--
+    Transparent Tor Proxy
+  -->
+
+  <rule ipv="ipv4" table="filter" chain="OUTPUT" priority="0">--protocol tcp --destination {{ TOR_NETWORK_V4 }} --jump REJECT</rule>
+  <rule ipv="ipv4" table="filter" chain="OUTPUT" priority="0">--protocol udp --destination {{ TOR_NETWORK_V4 }} --jump REJECT</rule>
+
+  <rule ipv="ipv6" table="filter" chain="OUTPUT" priority="0">--protocol tcp --destination {{ TOR_NETWORK_V6 }} --jump REJECT</rule>
+  <rule ipv="ipv6" table="filter" chain="OUTPUT" priority="0">--protocol udp --destination {{ TOR_NETWORK_V6 }} --jump REJECT</rule>
+
+
+  <rule ipv="ipv4" table="filter" chain="FORWARD" priority="0">--protocol udp --destination {{ TOR_NETWORK_V4 }} --jump DROP</rule>
+  <rule ipv="ipv4" table="nat" chain="PREROUTING" priority="0">--protocol tcp --destination {{ TOR_NETWORK_V4 }} --jump REDIRECT --to-port 1080</rule>
+
+
+  <rule ipv="ipv6" table="filter" chain="FORWARD" priority="0">--protocol udp --destination {{ TOR_NETWORK_V6 }} --jump DROP</rule>
+  <rule ipv="ipv6" table="nat" chain="PREROUTING" priority="0">--protocol tcp --destination {{ TOR_NETWORK_V6 }} --jump REDIRECT --to-port 1080</rule>
+
+</direct>
+
