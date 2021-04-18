@@ -9,8 +9,6 @@ _EGRESS_OPTS = (
     "besteffort",
     "wash",
     "ethernet",
-    "rtt",
-    "100ms",
 )
 
 _INGRESS_OPTS = (
@@ -19,18 +17,29 @@ _INGRESS_OPTS = (
     "besteffort",
     "wash",
     "ethernet",
-    "rtt",
-    "10ms",
 )
 
 _QDISC_ID = "ffff:"
 
 
-def _egress(wan_if: str) -> None:
-    check_call(("tc", "qdisc", "replace", "dev", wan_if, "root", "cake", *_EGRESS_OPTS))
+def _egress(wan_if: str, rtt: str) -> None:
+    check_call(
+        (
+            "tc",
+            "qdisc",
+            "replace",
+            "dev",
+            wan_if,
+            "root",
+            "cake",
+            *_EGRESS_OPTS,
+            "rtt",
+            rtt,
+        )
+    )
 
 
-def _ingress(wan_if: str) -> None:
+def _ingress(wan_if: str, rtt: str) -> None:
     link_name = f"ifb4{wan_if}"
 
     raw_links = check_output(("ip", "--json", "link", "show"), text=True)
@@ -45,7 +54,18 @@ def _ingress(wan_if: str) -> None:
         ("tc", "qdisc", "replace", "dev", wan_if, "handle", _QDISC_ID, "ingress")
     )
     check_call(
-        ("tc", "qdisc", "replace", "dev", link_name, "root", "cake", *_INGRESS_OPTS)
+        (
+            "tc",
+            "qdisc",
+            "replace",
+            "dev",
+            link_name,
+            "root",
+            "cake",
+            *_INGRESS_OPTS,
+            "rtt",
+            rtt,
+        )
     )
     check_call(("ip", "link", "set", link_name, "up"))
     check_call(
@@ -71,14 +91,15 @@ def _ingress(wan_if: str) -> None:
 def _parse_args() -> Namespace:
     parser = ArgumentParser()
     parser.add_argument("--wan-if", required=True)
+    parser.add_argument("--wan-rtt", default="100ms")
+    parser.add_argument("--lan-rtt", default="10ms")
     return parser.parse_args()
 
 
 def main() -> None:
     args = _parse_args()
-    wan_if = str(args.wan_if)
-    _egress(wan_if)
-    _ingress(wan_if)
+    _egress(args.wan_if, rtt=args.wan_rtt)
+    _ingress(args.wan_if, rtt=args.lan_rtt)
 
 
 main()

@@ -4,11 +4,12 @@ from pathlib import Path
 LFS = ","
 
 _SRV = Path("/", "srv")
+_DATA = Path("/", "data")
 
 TEMPLATES = _SRV / Path("templates")
 RUN = _SRV / Path("run")
 
-NETWORKS = RUN / "networks.json"
+NETWORKS = _DATA / "networks.json"
 
 
 IP6_ULA_GLOBAL = environ["IP6_ULA_GLOBAL"]
