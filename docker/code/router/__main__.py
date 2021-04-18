@@ -23,7 +23,7 @@ from .dnsmasq.lan.main import main as dns_lan_main
 from .dnsmasq.leases.main import main as dns_leases_main
 from .ip import ipv6_enabled
 from .render import j2_build, j2_render
-from .subnets import calculate_networks, dump_networks, load_networks
+from .subnets import calculate_networks, load_networks
 from .tc.main import main as tc_main
 from .types import Networks
 from .unbound.main import main as unbound_main
@@ -78,13 +78,11 @@ def _template() -> None:
     except Exception:
         networks = calculate_networks()
 
-    dump_networks(networks)
-
     env = _env(networks)
     j2 = j2_build(TEMPLATES)
     for path in walk(TEMPLATES):
         tpl = path.relative_to(TEMPLATES)
-        dest = RUN / tpl
+        dest = (RUN / tpl).resolve()
         text = j2_render(j2, path=tpl, env=env)
         dest.parent.mkdir(parents=True, exist_ok=True)
         dest.write_text(text)

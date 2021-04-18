@@ -1,19 +1,14 @@
 from dataclasses import dataclass
 from ipaddress import IPv4Network, IPv6Network
 from itertools import islice
-from json import dumps, loads
+from json import loads
 from random import randint
 from typing import Iterable, Iterator, Optional
 
 from std2.ipaddress import RFC_1918
 from std2.lex import split
-from std2.pickle import decode, encode
-from std2.pickle.coders import (
-    ipv4_network_decoder,
-    ipv4_network_encoder,
-    ipv6_network_decoder,
-    ipv6_network_encoder,
-)
+from std2.pickle import decode
+from std2.pickle.coders import ipv4_network_decoder, ipv6_network_decoder
 
 from .consts import IP4_EXCLUSION, IP6_ULA_GLOBAL, IP6_ULA_SUBNET_EXCLUSION, NETWORKS
 from .types import DualStack, Networks
@@ -41,12 +36,6 @@ def load_networks() -> Networks:
         Networks, json, decoders=(ipv4_network_decoder, ipv6_network_decoder)
     )
     return networks
-
-
-def dump_networks(networks: Networks) -> None:
-    data = encode(networks, encoders=(ipv4_network_encoder, ipv6_network_encoder))
-    json = dumps(data, check_circular=False, ensure_ascii=False, indent=2)
-    NETWORKS.write_text(json)
 
 
 def _private_subnets(prefixes: Iterable[int]) -> Iterator[IPv4Network]:
