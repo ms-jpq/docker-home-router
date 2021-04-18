@@ -7,6 +7,7 @@ ARG S6="https://github.com/just-containers/s6-overlay/releases/download/v2.2.0.1
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
     wget \
+    iproute2 \
     python3-pip \
     nginx \
     dnsmasq \
@@ -67,6 +68,7 @@ EXPOSE 53/tcp 53/udp \
 # IP4_EXCLUSION            -> ',' delimited : Networks to exclude from assignment in 'x.x.x.x/mask' form
 # DNS_SERVERS              -> Upstream DNS servers: default is unbound recursive resolver
 # NTP_SERVERS              -> Upstream NTP servers
+# WG_PEERS                 -> ',' delimited : List of peers to create for wireguard
 ENV WAN_IF= \
     LAN_IF= \
     WG_IF=wg0 \
@@ -75,4 +77,5 @@ ENV WAN_IF= \
     IP6_ULA_SUBNET_EXCLUSION= \
     IP4_EXCLUSION=10.0.0.0/24,192.168.0.0/24,172.16.0.0/24 \
     DNS_SERVERS=127.0.0.1#5335,[::1]#5335 \
-    NTP_SERVERS=
+    NTP_SERVERS= \
+    WG_PEERS=wife,wife's boyfriend

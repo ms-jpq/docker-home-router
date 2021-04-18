@@ -15,12 +15,12 @@ from std2.pickle.coders import (
     ipv6_network_decoder,
     ipv6_network_encoder,
 )
+from std2.lex import split
 
 from .consts import (
     IP4_EXCLUSION,
     IP6_ULA_GLOBAL,
     IP6_ULA_SUBNET_EXCLUSION,
-    LFS,
     NETWORKS,
 )
 from .types import DualStack, Networks
@@ -81,7 +81,7 @@ def _pick_private(
 
 
 def _v4(exclusions: str) -> _V4Stack:
-    nono = map(IPv4Network, exclusions.split(LFS))
+    nono = map(IPv4Network, split(exclusions))
     lan, wg, tor, guest = islice(_pick_private(nono, prefix=24), 4)
     stack = _V4Stack(lan=lan, wg=wg, tor=tor, guest=guest)
     return stack

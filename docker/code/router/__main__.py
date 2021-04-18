@@ -8,7 +8,6 @@ from .consts import (
     DNS_SERVERS,
     GUEST_IF,
     LAN_IF,
-    LFS,
     NTP_SERVERS,
     RUN,
     TEMPLATES,
@@ -18,10 +17,11 @@ from .consts import (
 )
 from .dnsmasq.main import main as dnsmasq_main
 from .subnets import calculate_networks, dump_networks, load_networks
-from .template import j2_build, j2_render
+from .render import j2_build, j2_render
 from .types import Networks
 from .unbound.main import main as unbound_main
 from .wireguard.main import main as wg_main
+from std2.lex import split
 
 
 def _env(networks: Networks) -> Mapping[str, Any]:
@@ -39,8 +39,8 @@ def _env(networks: Networks) -> Mapping[str, Any]:
         "TOR_NETWORK_V6": networks.tor.v6,
         "WG_NETWORK_V4": networks.wireguard.v4,
         "WG_NETWORK_V6": networks.wireguard.v6,
-        "DNS_SERVERS": DNS_SERVERS.split(LFS),
-        "NTP_SERVERS": NTP_SERVERS.split(LFS),
+        "DNS_SERVERS": split(DNS_SERVERS),
+        "NTP_SERVERS": split(NTP_SERVERS),
     }
     return env
 

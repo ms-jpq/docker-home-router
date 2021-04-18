@@ -1,15 +1,17 @@
 from os import environ
 from pathlib import Path
 
-LFS = ","
+_TOP_LV = Path(__file__).resolve().parent
 
 _SRV = Path("/", "srv")
-_DATA = Path("/", "data")
+DATA = Path("/", "data")
+
+J2 = _TOP_LV / "j2"
 
 TEMPLATES = _SRV / Path("templates")
 RUN = _SRV / Path("run")
 
-NETWORKS = _DATA / "networks.json"
+NETWORKS = DATA / "networks.json"
 
 USER = environ["USER"]
 
@@ -24,3 +26,5 @@ IP4_EXCLUSION = environ["IP4_EXCLUSION"]
 
 DNS_SERVERS = environ["DNS_SERVERS"]
 NTP_SERVERS = environ["NTP_SERVERS"]
+
+WG_PEERS = environ["WG_PEERS"]

@@ -1,92 +1,71 @@
-from ipaddress import (
-    IPv4Address,
-    IPv4Network,
-    IPv6Address,
-    IPv6Network,
-    ip_address,
-    ip_network,
-)
+from ipaddress import ip_address, ip_interface, ip_network
 from json import loads
 from os import linesep
 from pathlib import Path
 from shutil import rmtree
-from string import Template
 from subprocess import check_call, check_output, run
-from typing import Iterable, Iterator, Tuple, Union
+from typing import Iterable, Iterator, Tuple
 
-_TOP_LV = Path(__file__).resolve().parent
-_SRV = _TOP_LV.parent
-_CONF = _TOP_LV / "conf"
-_TEMPLATES = _TOP_LV / "templates"
+from std2.types import IPAddress, IPNetwork
+from std2.parse import parse
 
-_SRV_CONF = _TEMPLATES / "server.conf"
-_PEER_CONF = _TEMPLATES / "peer.conf"
-_CLIENT_CONF = _TEMPLATES / "client.conf"
+from ..consts import DATA, J2, WG_IF, WG_PEERS
+from ..ip import addr_show, link_show
+from ..subnets import load_networks
+from .render import j2_build, j2_render
 
-_KEYS_DIR = _TOP_LV / "keys"
-_QR_DIR = _TOP_LV / "qr"
-_LINK_NAME = "wg0"
+_SRV_TPL = Path("wg", "server.conf")
+_CLIENT_TPL = Path("wg", "client.conf")
 
 
-_TOR_NET = _SRV / "tor_net"
-_SERVER_ADDR = _CONF / "srv_addr"
-_SUBNET = _CONF / "wg_net"
-_DEVICES = _CONF / "devices.json"
+_WG_DATA = DATA / "wireguard"
+_KEYS_DIR = _WG_DATA / "keys"
+_SRV_KEY = _KEYS_DIR / "server" / "private.key"
+_CLIENT_KEYS = _KEYS_DIR / "clients"
 
 
-_ADDR = Union[IPv4Address, IPv6Address]
-_NETWORK = Union[IPv4Network, IPv6Network]
-
-
-def _additional_networks() -> Iterator[_NETWORK]:
-    if _TOR_NET.exists():
-        raw = _TOR_NET.read_text().rstrip()
-        yield ip_network(raw)
+_QR_DIR = _WG_DATA / "pub"
 
 
 def _add_link() -> None:
-    raw_links = check_output(("ip", "--json", "link", "show"), text=True)
-    links = loads(raw_links)
-    for link in links:
-        if link["ifname"] == _LINK_NAME:
+    for link in link_show():
+        if link.ifname == WG_IF:
             break
     else:
-        check_call(("ip", "link", "add", _LINK_NAME, "type", "wireguard"))
+        check_call(("ip", "link", "add", WG_IF, "type", "wireguard"))
 
 
-def _add_subnet(network: _NETWORK) -> None:
-    raw = check_output(("ip", "--json", "address", "show", _LINK_NAME))
-    addrs = loads(raw)
-    for addr in addrs:
-        for info in addr["addr_info"]:
-            local: _ADDR = ip_address(info["local"])
-            if local in network and network.prefixlen == info["prefixlen"]:
+def _add_subnet(network: IPNetwork) -> None:
+    for addr in addr_show():
+        for info in addr.addr_info:
+            if info.local in network and network.prefixlen == info.prefixlen:
                 break
         else:
             addr = f"{next(network.hosts())}/{network.prefixlen}"
-            check_call(("ip", "address", "add", "dev", _LINK_NAME, addr))
+            check_call(("ip", "address", "add", "dev", WG_IF, addr))
 
 
 def _set_up() -> None:
-    check_call(("ip", "link", "set", "up", "dev", _LINK_NAME))
+    check_call(("ip", "link", "set", "up", "dev", WG_IF))
 
 
 def _srv_keys() -> Tuple[str, str]:
-    _KEYS_DIR.mkdir(parents=True, exist_ok=True)
-    srv = _KEYS_DIR / "server-private.key"
-    if not srv.exists():
+    _SRV_KEY.parent.mkdir(parents=True, exist_ok=True)
+    if not _SRV_KEY.exists():
         pk = check_output(("wg", "genkey"), text=True)
-        srv.write_text(pk)
+        _SRV_KEY.write_text(pk)
 
-    private_key = srv.read_text().rstrip()
+    private_key = _SRV_KEY.read_text().rstrip()
     public_key = check_output(("wg", "pubkey"), input=private_key, text=True).rstrip()
     return private_key, public_key
 
 
 def _client_keys() -> Iterator[Tuple[Path, str, str]]:
-    _KEYS_DIR.mkdir(parents=True, exist_ok=True)
-    for client in sorted(_KEYS_DIR.glob("client-private-*.key")):
+    _CLIENT_KEYS.mkdir(parents=True, exist_ok=True)
+
+    for client in sorted(_KEYS_DIR.iterdir()):
         path = client.relative_to(_KEYS_DIR)
+
         private_key = client.read_text().rstrip()
         public_key = check_output(
             ("wg", "pubkey"), input=private_key, text=True
@@ -102,9 +81,8 @@ def _gen_client_keys() -> None:
             path.write_text(pk)
 
 
-def _wg_conf(network: _NETWORK) -> Iterator[str]:
-    server_tpl = Template(_SRV_CONF.read_text())
-    peer_tpl = Template(_PEER_CONF.read_text())
+def _wg_conf(network: IPNetwork) -> Iterator[str]:
+    j2 = j2_build(J2)
 
     server_private, _ = _srv_keys()
     srv = server_tpl.substitute(SERVER_PRIVATE_KEY=server_private)
@@ -120,9 +98,9 @@ def _wg_conf(network: _NETWORK) -> Iterator[str]:
 
 def _gen_qr(
     server_addr: str,
-    network: _NETWORK,
-    lan_network: _NETWORK,
-    additional_networks: Iterable[_NETWORK],
+    network: IPNetwork,
+    lan_network: IPNetwork,
+    additional_networks: Iterable[IPNetwork],
 ) -> None:
     client_tpl = Template(_CLIENT_CONF.read_text())
     _, server_public = _srv_keys()
@@ -160,15 +138,12 @@ def _gen_qr(
 def _wg_up(network: _NETWORK) -> None:
     conf = linesep.join(_wg_conf(network))
     run(
-        ("wg", "setconf", _LINK_NAME, "/dev/stdin"), input=conf, text=True
+        ("wg", "setconf", WG_IF, "/dev/stdin"), input=conf, text=True
     ).check_returncode()
 
 
 def main() -> None:
-    server_addr = _SERVER_ADDR.read_text().rstrip()
-    raw_subnet = _SUBNET.read_text().rstrip()
-    network = ip_network(raw_subnet)
-    additional_networks = tuple(_additional_networks())
+    networks = load_networks()
     _gen_client_keys()
     _gen_qr(
         server_addr,
