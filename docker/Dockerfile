@@ -35,6 +35,7 @@ ENV S6_KEEP_ENV=1 \
 ENTRYPOINT ["/init"]
 
 
+WORKDIR /srv/run
 COPY . /
 ENV USER=router
 RUN useradd --user-group --shell=/usr/sbin/nologin "$USER" && \

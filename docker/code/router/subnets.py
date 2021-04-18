@@ -53,7 +53,11 @@ def _private_subnets(prefixes: Iterable[int]) -> Iterator[IPv4Network]:
     for prefix in prefixes:
         for network in RFC_1918:
             try:
-                yield from network.subnets(new_prefix=prefix)
+                for subnet in network.subnets(new_prefix=prefix):
+                    yield subnet
+                    break
+                else:
+                    raise ValueError()
             except ValueError:
                 pass
             else:
