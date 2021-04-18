@@ -8,6 +8,12 @@ from std2.pickle.coders import ipv4_addr_decoder, ipv6_addr_decoder
 from std2.types import IPAddress
 
 
+def ipv6_enabled() -> bool:
+    raw = check_output(("sysctl", "net.ipv6.conf.all.disable_ipv6"), text=True).rstrip()
+    _, _, val = raw.partition(" = ")
+    return not int(val)
+
+
 @dataclass(frozen=True)
 class _AddrInfo:
     local: IPAddress

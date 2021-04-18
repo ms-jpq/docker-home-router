@@ -4,6 +4,7 @@ set -eu
 set -o pipefail
 
 
-python3 -m router cake
+#TODO -- Enable this
+#python3 -m router cake
 sleep infinity
 

@@ -18,6 +18,7 @@ from .consts import (
 )
 from .dnsmasq.lan.main import main as dns_lan_main
 from .dnsmasq.leases.main import main as dns_leases_main
+from .ip import ipv6_enabled
 from .render import j2_build, j2_render
 from .subnets import calculate_networks, dump_networks, load_networks
 from .types import Networks
@@ -26,24 +27,36 @@ from .wireguard.main import main as wg_main
 
 
 def _env(networks: Networks) -> Mapping[str, Any]:
-    env = {
-        "USER": USER,
-        "WAN_IF": WAN_IF,
-        "LAN_IF": LAN_IF,
-        "GUEST_IF": GUEST_IF,
-        "WG_IF": WG_IF,
-        "GUEST_NETWORK_V4": networks.guest.v4,
-        "GUEST_NETWORK_V6": networks.guest.v6,
-        "LAN_NETWORK_V4": networks.lan.v4,
-        "LAN_NETWORK_V6": networks.lan.v6,
-        "TOR_NETWORK_V4": networks.tor.v4,
-        "TOR_NETWORK_V6": networks.tor.v6,
-        "WG_NETWORK_V4": networks.wireguard.v4,
-        "WG_NETWORK_V6": networks.wireguard.v6,
-        "DNS_SERVERS": split(DNS_SERVERS),
-        "NTP_SERVERS": split(NTP_SERVERS),
-    }
-    return env
+    if not WAN_IF:
+        raise ValueError("WAN_IF - required")
+    elif not LAN_IF:
+        raise ValueError("LAN_IF - required")
+    elif not WG_IF:
+        raise ValueError("WG_IF - required")
+    elif not DNS_SERVERS:
+        raise ValueError("DNS_SERVERS - required")
+    elif not NTP_SERVERS:
+        raise ValueError("NTP_SERVERS - required")
+    else:
+        env = {
+            "USER": USER,
+            "WAN_IF": WAN_IF,
+            "LAN_IF": LAN_IF,
+            "GUEST_IF": GUEST_IF,
+            "WG_IF": WG_IF,
+            "IPV6_ENABLED": ipv6_enabled(),
+            "GUEST_NETWORK_V4": networks.guest.v4,
+            "GUEST_NETWORK_V6": networks.guest.v6,
+            "LAN_NETWORK_V4": networks.lan.v4,
+            "LAN_NETWORK_V6": networks.lan.v6,
+            "TOR_NETWORK_V4": networks.tor.v4,
+            "TOR_NETWORK_V6": networks.tor.v6,
+            "WG_NETWORK_V4": networks.wireguard.v4,
+            "WG_NETWORK_V6": networks.wireguard.v6,
+            "DNS_SERVERS": split(DNS_SERVERS),
+            "NTP_SERVERS": split(NTP_SERVERS),
+        }
+        return env
 
 
 def _template() -> None:

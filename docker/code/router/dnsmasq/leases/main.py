@@ -8,6 +8,11 @@ _TITLE = "LEASES"
 
 
 def _feed() -> str:
+    DYN.parent.mkdir(parents=True, exist_ok=True)
+    LEASES.parent.mkdir(parents=True, exist_ok=True)
+    DYN.touch()
+    LEASES.touch()
+
     dyn, leases = DYN.read_text(), LEASES.read_text()
     return dyn + linesep * 3 + leases
 
