@@ -19,7 +19,7 @@ RUN apt-get update && \
     tor \
     wireguard \
     qrencode \
-    rclone \
+    rclone && \
     rm -rf /var/lib/apt/lists/*
 
 
