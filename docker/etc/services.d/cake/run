@@ -4,6 +4,6 @@ set -eu
 set -o pipefail
 
 
-s6-setuidgid "$USER" python3 -m router cake
+s6-setuidgid "$USER" python3 -m router cake || true
 sleep infinity
 
