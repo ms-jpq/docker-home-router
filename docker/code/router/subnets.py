@@ -49,20 +49,23 @@ def dump_networks(networks: Networks) -> None:
     NETWORKS.write_text(json)
 
 
-def _private_subnets(prefix: int) -> Iterator[IPv4Network]:
-    for network in RFC_1918:
-        try:
-            yield from network.subnets(new_prefix=prefix)
-        except ValueError:
-            pass
+def _private_subnets(prefixes: Iterable[int]) -> Iterator[IPv4Network]:
+    for prefix in prefixes:
+        for network in RFC_1918:
+            try:
+                yield from network.subnets(new_prefix=prefix)
+            except ValueError:
+                pass
+            else:
+                break
 
 
 def _pick_private(
-    existing: Iterable[IPv4Network], prefix: int
+    existing: Iterable[IPv4Network], prefixes: Iterable[int]
 ) -> Iterator[IPv4Network]:
     seen = {*existing}
 
-    for candidate in _private_subnets(prefix):
+    for candidate in _private_subnets(prefixes):
         for network in seen:
             if not candidate.overlaps(network) and not network.overlaps(candidate):
                 seen.add(candidate)
@@ -72,7 +75,7 @@ def _pick_private(
 
 def _v4(exclusions: str) -> _V4Stack:
     nono = map(IPv4Network, split(exclusions))
-    lan, wg, tor, guest = islice(_pick_private(nono, prefix=24), 4)
+    lan, wg, tor, guest = _pick_private(nono, prefixes=(24, 24, 16, 24))
     stack = _V4Stack(lan=lan, wg=wg, tor=tor, guest=guest)
     return stack
 

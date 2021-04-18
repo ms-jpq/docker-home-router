@@ -9,5 +9,6 @@ ARGS=(
   )
 
 
-exec s6-setuidgid "$USER" tor "${ARGS[@]}"
+#exec s6-setuidgid "$USER" tor "${ARGS[@]}"
+sleep infinity
 
