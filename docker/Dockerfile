@@ -58,13 +58,13 @@ EXPOSE 53/tcp 53/udp \
        51820/udp
 
 
-# WAN_IF, LAN_IF -> Interface names: assigned different IP address space
-# GUEST_IF       -> Optional: see above
-# IP6_ULA_RAND   -> Globally unique 40 bit prefix (in HEX)
-# IP6_ULA_SUBNET -> Organizationally unique 16 bit prefix (in HEX)
-# IP4_EXCLUSION  -> ',' delimited : Networks to exclude from assignment in 'x.x.x.x/mask' form
-# DNS_SERVERS    -> Upstream DNS servers: default is unbound recursive resolver
-# NTP_SERVERS    -> Upstream NTP servers
+# WAN_IF, LAN_IF           -> Interface names: assigned different IP address space
+# GUEST_IF                 -> Optional: see above
+# IP6_ULA_RAND             -> Globally unique 40 bit prefix (in HEX)
+# IP6_ULA_SUBNET_EXCLUSION -> Organizationally unique 16 bit prefix (in HEX)
+# IP4_EXCLUSION            -> ',' delimited : Networks to exclude from assignment in 'x.x.x.x/mask' form
+# DNS_SERVERS              -> Upstream DNS servers: default is unbound recursive resolver
+# NTP_SERVERS              -> Upstream NTP servers
 ENV WAN_IF= \
     LAN_IF= \
     GUEST_IF= \
