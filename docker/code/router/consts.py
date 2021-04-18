@@ -1,5 +1,6 @@
 from os import environ
 from pathlib import Path
+from socket import getfqdn
 
 _TOP_LV = Path(__file__).resolve().parent
 
@@ -28,3 +29,4 @@ DNS_SERVERS = environ["DNS_SERVERS"]
 NTP_SERVERS = environ["NTP_SERVERS"]
 
 WG_PEERS = environ["WG_PEERS"]
+SERVER_NAME = environ["SERVER_NAME"] or getfqdn()

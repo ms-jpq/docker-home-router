@@ -7,7 +7,7 @@ from jinja2 import Environment
 from std2.lex import split
 from std2.types import IPNetwork
 
-from ..consts import DATA, J2, WG_IF, WG_PEERS
+from ..consts import DATA, J2, SERVER_NAME, WG_IF, WG_PEERS
 from ..ip import addr_show, link_show
 from ..render import j2_build, j2_render
 from ..subnets import load_networks
@@ -109,6 +109,21 @@ def _gen_qr(j2: Environment, networks: Networks) -> None:
     hosts = zip(stack.v4.hosts(), stack.v6.hosts())
     dns_v4, dns_v6 = next(hosts)
 
+    _env = {
+        "SERVER_PUBLIC_KEY": server_public,
+        "DNS_ADDR_V4": dns_v4,
+        "DNS_ADDR_V6": dns_v6,
+        "WG_NETWORK_V4": stack.v4,
+        "WG_NETWORK_V6": stack.v6,
+        "TOR_NETWORK_V4": networks.tor.v4,
+        "TOR_NETWORK_V6": networks.tor.v6,
+        "LAN_NETWORK_V4": networks.lan.v4,
+        "LAN_NETWORK_V6": networks.lan.v6,
+        "GUEST_NETWORK_V4": networks.guest.v4,
+        "GUEST_NETWORK_V6": networks.guest.v6,
+        "SERVER_NAME": SERVER_NAME,
+    }
+
     for (path, client_private, _), (v4, v6) in zip(_client_keys(), hosts):
         v4_addr = f"{v4}/{stack.v4.max_prefixlen}"
         v6_addr = f"{v6}/{stack.v6.max_prefixlen}"
@@ -117,20 +132,12 @@ def _gen_qr(j2: Environment, networks: Networks) -> None:
         qr_path = (_QR_DIR / path).with_suffix(".png")
 
         env = {
-            "SERVER_PUBLIC_KEY": server_public,
-            "CLIENT_PRIVATE_KEY": client_private,
-            "DNS_ADDR_V4": dns_v4,
-            "DNS_ADDR_V6": dns_v6,
-            "CLIENT_ADDR_V4": v4_addr,
-            "CLIENT_ADDR_V6": v6_addr,
-            "WG_NETWORK_V4": stack.v4,
-            "WG_NETWORK_V6": stack.v6,
-            "TOR_NETWORK_V4": networks.tor.v4,
-            "TOR_NETWORK_V6": networks.tor.v6,
-            "LAN_NETWORK_V4": networks.lan.v4,
-            "LAN_NETWORK_V6": networks.lan.v6,
-            "GUEST_NETWORK_V4": networks.guest.v4,
-            "GUEST_NETWORK_V6": networks.guest.v6,
+            **{
+                "CLIENT_PRIVATE_KEY": client_private,
+                "CLIENT_ADDR_V4": v4_addr,
+                "CLIENT_ADDR_V6": v6_addr,
+            },
+            **_env,
         }
         text = j2_render(j2, path=_CLIENT_TPL, env=env)
         conf_path.write_text(text)
