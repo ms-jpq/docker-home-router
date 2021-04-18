@@ -60,6 +60,7 @@ EXPOSE 53/tcp 53/udp \
 
 # WAN_IF, LAN_IF           -> Interface names: assigned different IP address space
 # GUEST_IF                 -> Optional: see above
+# WG_IF                    -> Name for wireguard interface
 # IP6_ULA_GLOBAL           -> Globally unique 40 bit prefix (in HEX)
 # IP6_ULA_SUBNET_EXCLUSION -> ',' delimited : Organizationally unique 16 bit prefix (in HEX)
 # IP4_EXCLUSION            -> ',' delimited : Networks to exclude from assignment in 'x.x.x.x/mask' form
@@ -67,6 +68,7 @@ EXPOSE 53/tcp 53/udp \
 # NTP_SERVERS              -> Upstream NTP servers
 ENV WAN_IF= \
     LAN_IF= \
+    WG_IF=wg0 \
     GUEST_IF= \
     IP6_ULA_GLOBAL= \
     IP6_ULA_SUBNET_EXCLUSION= \

@@ -3,7 +3,7 @@ from typing import Any, Mapping
 
 from std2.pathlib import walk
 
-from .consts import GUEST_IF, LAN_IF, NTP_SERVERS, RUN, TEMPLATES, WAN_IF
+from .consts import GUEST_IF, LAN_IF, NTP_SERVERS, RUN, TEMPLATES, WAN_IF, WG_IF
 from .subnets import calculate_networks, dump_networks, load_networks
 from .template import j2_build, j2_render
 from .types import Networks
@@ -14,6 +14,7 @@ def _env(networks: Networks) -> Mapping[str, Any]:
         "WAN_IF": WAN_IF,
         "LAN_IF": LAN_IF,
         "GUEST_IF": GUEST_IF,
+        "WG_IF": WG_IF,
         "GUEST_NETWORK_V4": networks.guest.v4,
         "GUEST_NETWORK_V6": networks.guest.v6,
         "LAN_NETWORK_V4": networks.lan.v4,
@@ -35,7 +36,7 @@ def _template() -> None:
 
     dump_networks(networks)
 
-    env = _env()
+    env = _env(networks)
     j2 = j2_build(TEMPLATES)
     for path in walk(TEMPLATES):
         tpl = path.relative_to(TEMPLATES)
