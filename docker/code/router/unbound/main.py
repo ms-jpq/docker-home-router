@@ -40,4 +40,5 @@ def _feed() -> str:
 
 
 def main() -> None:
-    show(_TITLE, port=60692, feed=_feed)
+    srv = show(_TITLE, port=60692, feed=_feed)
+    srv.serve_forever()

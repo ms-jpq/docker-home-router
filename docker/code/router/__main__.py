@@ -1,6 +1,7 @@
 from argparse import ArgumentParser, Namespace
 from typing import Any, Mapping
 
+from std2.lex import split
 from std2.pathlib import walk
 
 from .cake.main import main as cake_main
@@ -15,13 +16,13 @@ from .consts import (
     WAN_IF,
     WG_IF,
 )
-from .dnsmasq.main import main as dnsmasq_main
-from .subnets import calculate_networks, dump_networks, load_networks
+from .dnsmasq.lan.main import main as dns_lan_main
+from .dnsmasq.leases.main import main as dns_leases_main
 from .render import j2_build, j2_render
+from .subnets import calculate_networks, dump_networks, load_networks
 from .types import Networks
 from .unbound.main import main as unbound_main
 from .wireguard.main import main as wg_main
-from std2.lex import split
 
 
 def _env(networks: Networks) -> Mapping[str, Any]:
@@ -65,7 +66,9 @@ def _template() -> None:
 
 def _parse_args() -> Namespace:
     parser = ArgumentParser()
-    parser.add_argument("op", choices=("template", "cake", "wg", "dnsmasq", "unbound"))
+    parser.add_argument(
+        "op", choices=("template", "cake", "wg", "dns-lan", "dns-leases", "unbound")
+    )
     return parser.parse_args()
 
 
@@ -78,8 +81,10 @@ def main() -> None:
         cake_main()
     elif args.op == "wg":
         wg_main()
-    elif args.op == "dnsmasq":
-        dnsmasq_main()
+    elif args.op == "dns-lan":
+        dns_lan_main()
+    elif args.op == "dns-leases":
+        dns_leases_main()
     elif args.op == "unbound":
         unbound_main()
     else:

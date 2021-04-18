@@ -1,2 +1,3 @@
 def main() -> None:
     pass
+
