@@ -3,7 +3,7 @@ from os import linesep
 from pathlib import Path
 from subprocess import check_call
 from time import sleep
-from typing import Iterator, Tuple
+from typing import Iterator, Optional, Tuple
 
 from jinja2 import Environment
 from std2.types import IPAddress
@@ -16,8 +16,20 @@ _TPL = Path("dns", "5-dyn.conf")
 _PID_FILE = Path("/", "var", "run", "dnsmsaq-lan.pid")
 
 
+def _pid() -> Optional[int]:
+    try:
+        pid = _PID_FILE.read_text().rstrip()
+    except Exception:
+        return None
+    else:
+        return int(pid)
+
+
 def _p_leases() -> Iterator[Tuple[str, IPAddress]]:
+    LEASES.parent.mkdir(parents=True, exist_ok=True)
+    LEASES.touch()
     lines = LEASES.read_text().rstrip().split(linesep)
+
     for line in lines:
         if line:
             try:
@@ -31,22 +43,19 @@ def _p_leases() -> Iterator[Tuple[str, IPAddress]]:
 
 def _forever(j2: Environment) -> None:
     dyn = DYN.read_text()
+    pid = _pid()
 
     mappings = _p_leases()
     env = {"MAPPINGS": mappings}
     text = j2_render(j2, path=_TPL, env=env)
 
-    if dyn != text:
+    if pid and dyn != text:
         DYN.write_text(text)
-
-        pid = _PID_FILE.read_text().rstrip()
-        check_call(("kill", pid))
+        check_call(("kill", str(pid)))
 
 
 def main() -> None:
     j2 = j2_build(J2)
     while True:
-        LEASES.parent.mkdir(parents=True, exist_ok=True)
-        LEASES.touch()
         _forever(j2)
         sleep(2)
