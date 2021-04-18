@@ -1,3 +1,4 @@
+from ipaddress import IPv4Address
 from os import linesep
 from pathlib import Path
 from subprocess import check_call
@@ -5,6 +6,7 @@ from time import sleep
 from typing import Iterator, Tuple
 
 from jinja2 import Environment
+from std2.types import IPAddress
 
 from ...consts import J2
 from ...render import j2_build, j2_render
@@ -14,11 +16,13 @@ _TPL = Path("dns", "5-dyn.conf")
 _PID_FILE = Path("/", "var", "run", "dnsmsaq-lan.pid")
 
 
-def _p_leases() -> Iterator[Tuple[str, str]]:
+def _p_leases() -> Iterator[Tuple[str, IPAddress]]:
     lines = LEASES.read_text().rstrip().split(linesep)
     for line in lines:
-        break
-        yield line, line
+        if line:
+            _, _, ipv4, rhs = line.split(" ", maxsplit=4)
+            name, _, _ = rhs.rpartition(" ")
+            yield name, IPv4Address(ipv4)
 
 
 def _forever(j2: Environment) -> None:
