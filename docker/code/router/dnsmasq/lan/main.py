@@ -47,7 +47,9 @@ def _p_leases() -> Iterator[Tuple[str, IPAddress]]:
 
 
 def _p_peers() -> Iterator[Tuple[str, IPAddress]]:
-    json = loads(WG_PEERS_JSON.read_text())
+    WG_PEERS_JSON.parent.mkdir(parents=True, exist_ok=True)
+    WG_PEERS_JSON.touch()
+    json = loads(WG_PEERS_JSON.read_text() or "{}")
     peers: WGPeers = decode(
         WGPeers, json, decoders=(ipv4_network_decoder, ipv6_network_decoder)
     )
