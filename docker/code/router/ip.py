@@ -8,6 +8,7 @@ from std2.pickle.coders import ipv4_addr_decoder, ipv6_addr_decoder
 from std2.types import IPAddress
 
 
+@dataclass(frozen=True)
 class _AddrInfo:
     local: IPAddress
     prefixlen: int
