@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from ipaddress import IPv4Network, IPv6Network
 from json import loads
+from random import randint
 from typing import Iterable, Iterator, Optional
 
 from std2.ipaddress import RFC_1918
@@ -63,11 +64,23 @@ def _v4(exclusions: str) -> _V4Stack:
     return stack
 
 
-def _v6(ula_prefix: Optional[str], ula_subnet: Optional[str]) -> _V6Stack:
-    prefix = ula_prefix or ""
-    subnet = ula_subnet or ""
+def _v6(prefix: Optional[str], subnets: Optional[str]) -> _V6Stack:
+    if not prefix:
+        bits = format(randint(0, 2 ** 40 - 1), "08x")
+        prefix = f"{bits[:4]}:{bits[4:]}"
 
-    org = f"fd00:{prefix}::/80"
+    org_prefix = f"fd00:{prefix}"
+    org = IPv6Network(f"{org_prefix}::/48")
+    seen = {
+        IPv6Network(f"{org_prefix}:{subnet}::/64")
+        for subnet in (subnets or "").split("IFS")
+    }
+    lan, wg, tor, guest = (
+        subnet for subnet in org.subnets(new_prefix=64) if subnet not in seen
+    )
+
+    stack = _V6Stack(lan=lan, wg=wg, tor=tor, guest=guest)
+    return stack
 
 
 def calculate_networks() -> Networks:
