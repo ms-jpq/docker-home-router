@@ -23,6 +23,6 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: ${{ secrets.DOCKER_USERNAME }}/router
           tags: latest
-          path: ./docker/Dockerfile
-          Dockerfile: Dockerfile
+          path: ./docker
+          Dockerfile: ./docker/Dockerfile
 
