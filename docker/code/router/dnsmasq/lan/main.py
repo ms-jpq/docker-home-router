@@ -17,6 +17,7 @@ _PID_FILE = Path("/", "var", "run", "dnsmsaq-lan.pid")
 def _p_leases() -> Iterator[Tuple[str, str]]:
     lines = LEASES.read_text().rstrip().split(linesep)
     for line in lines:
+        break
         yield line, line
 
 

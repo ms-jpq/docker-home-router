@@ -8,6 +8,8 @@ services:
       - NET_ADMIN
     environment:
       - TZ
+      - WAN_IF=eth0
+      - LAN_IF=eth0
     volumes:
       - ./tmp:/data
 
