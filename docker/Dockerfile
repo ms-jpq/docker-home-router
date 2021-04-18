@@ -20,11 +20,6 @@ RUN apt-get update && \
     wireguard \
     qrencode \
     rclone \
-    strongswan \
-    strongswan-pki \
-    libcharon-extra-plugins \
-    libcharon-extauth-plugins \
-    libstrongswan-extra-plugins && \
     rm -rf /var/lib/apt/lists/*
 
 

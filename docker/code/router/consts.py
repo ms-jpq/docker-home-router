@@ -13,7 +13,7 @@ TEMPLATES = _SRV / Path("templates")
 SERVICES = _SRV / "services.json"
 RUN = _SRV / Path("run")
 
-NETWORKS = DATA / "networks.json"
+NETWORKS = DATA / "networks" / "networks.json"
 
 USER = environ["USER"]
 
