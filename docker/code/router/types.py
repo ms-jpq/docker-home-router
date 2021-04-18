@@ -1,5 +1,6 @@
 from dataclasses import dataclass
-from ipaddress import IPv4Network, IPv6Network
+from ipaddress import IPv4Address, IPv4Network, IPv6Address, IPv6Network
+from typing import Mapping
 
 
 @dataclass(frozen=True)
@@ -14,3 +15,12 @@ class Networks:
     lan: DualStack
     tor: DualStack
     wireguard: DualStack
+
+
+@dataclass(frozen=True)
+class WGPeer:
+    v4: IPv4Address
+    v6: IPv6Address
+
+
+WGPeers = Mapping[str, WGPeer]

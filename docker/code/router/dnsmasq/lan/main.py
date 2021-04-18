@@ -1,4 +1,6 @@
 from ipaddress import IPv4Address
+from itertools import chain
+from json import loads
 from os import linesep
 from pathlib import Path
 from subprocess import check_call
@@ -6,10 +8,13 @@ from time import sleep
 from typing import Iterator, Optional, Tuple
 
 from jinja2 import Environment
+from std2.pickle import decode
+from std2.pickle.coders import ipv4_network_decoder, ipv6_network_decoder
 from std2.types import IPAddress
 
-from ...consts import J2
+from ...consts import J2, WG_PEERS_JSON
 from ...render import j2_build, j2_render
+from ...types import WGPeers
 from ..consts import DYN, LEASES
 
 _TPL = Path("dns", "5-dyn.conf")
@@ -41,11 +46,21 @@ def _p_leases() -> Iterator[Tuple[str, IPAddress]]:
                 yield name, IPv4Address(ipv4)
 
 
+def _p_peers() -> Iterator[Tuple[str, IPAddress]]:
+    json = loads(WG_PEERS_JSON.read_text())
+    peers: WGPeers = decode(
+        WGPeers, json, decoders=(ipv4_network_decoder, ipv6_network_decoder)
+    )
+    for name, addrs in peers.items():
+        yield name, addrs.v4
+        yield name, addrs.v6
+
+
 def _forever(j2: Environment) -> None:
     dyn = DYN.read_text()
     pid = _pid()
 
-    mappings = _p_leases()
+    mappings = chain(_p_leases(), _p_peers())
     env = {"MAPPINGS": mappings}
     text = j2_render(j2, path=_TPL, env=env)
 

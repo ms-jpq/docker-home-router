@@ -1,3 +1,4 @@
+from json import dumps
 from pathlib import Path
 from shutil import rmtree
 from subprocess import check_call, check_output, run
@@ -5,13 +6,15 @@ from typing import Any, Iterator, Mapping, Tuple
 
 from jinja2 import Environment
 from std2.lex import split
+from std2.pickle import encode
+from std2.pickle.coders import ipv4_addr_encoder, ipv6_addr_encoder
 from std2.types import IPNetwork
 
-from ..consts import DATA, J2, SERVER_NAME, WG_IF, WG_PEERS
+from ..consts import DATA, J2, SERVER_NAME, WG_IF, WG_PEERS_JSON, WG_PEERS
 from ..ip import addr_show, link_show
 from ..render import j2_build, j2_render
 from ..subnets import load_networks
-from ..types import DualStack, Networks
+from ..types import DualStack, Networks, WGPeer
 
 _SRV_TPL = Path("wg", "server.conf")
 _CLIENT_TPL = Path("wg", "client.conf")
@@ -102,6 +105,7 @@ def _gen_qr(j2: Environment, networks: Networks) -> None:
     except FileNotFoundError:
         pass
     _QR_DIR.mkdir(parents=True, exist_ok=True)
+    WG_PEERS_JSON.parent.mkdir(parents=True, exist_ok=True)
 
     _, server_public = _srv_keys()
     stack = networks.wireguard
@@ -122,8 +126,13 @@ def _gen_qr(j2: Environment, networks: Networks) -> None:
         "GUEST_NETWORK_V6": networks.guest.v6,
         "SERVER_NAME": SERVER_NAME,
     }
+    gen = tuple(zip(_client_keys(), hosts))
+    data = {path.stem: WGPeer(v4=v4, v6=v6) for (path, _, _), (v4, v6) in gen}
+    encoded = encode(data, encoders=(ipv4_addr_encoder, ipv6_addr_encoder))
+    json = dumps(encoded)
+    WG_PEERS_JSON.write_text(json)
 
-    for (path, client_private, _), (v4, v6) in zip(_client_keys(), hosts):
+    for (path, client_private, _), (v4, v6) in gen:
         v4_addr = f"{v4}/{stack.v4.max_prefixlen}"
         v6_addr = f"{v6}/{stack.v6.max_prefixlen}"
 

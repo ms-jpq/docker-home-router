@@ -13,7 +13,8 @@ TEMPLATES = _SRV / Path("templates")
 SERVICES = _SRV / "services.json"
 RUN = _SRV / Path("run")
 
-NETWORKS = DATA / "networks" / "networks.json"
+NETWORKS_JSON = _SRV / "networks" / "networks.json"
+WG_PEERS_JSON = RUN / "wireguard" / "wg-peers.json"
 
 USER = environ["USER"]
 
