@@ -8,7 +8,13 @@ from std2.ipaddress import RFC_1918
 from std2.pickle import decode
 from std2.pickle.coders import ipv4_network_decoder, ipv6_network_decoder
 
-from .consts import LFS, NETWORKS
+from .consts import (
+    IP4_EXCLUSION,
+    IP6_ULA_GLOBAL,
+    IP6_ULA_SUBNET_EXCLUSION,
+    LFS,
+    NETWORKS,
+)
 from .types import DualStack, Networks
 
 
@@ -84,7 +90,7 @@ def _v6(prefix: Optional[str], subnets: Optional[str]) -> _V6Stack:
 
 
 def calculate_networks() -> Networks:
-    v4, v6 = _v4(""), _v6("", "")
+    v4, v6 = _v4(IP4_EXCLUSION), _v6(IP6_ULA_GLOBAL, IP6_ULA_SUBNET_EXCLUSION)
     networks = Networks(
         lan=DualStack(v4=v4.lan, v6=v6.lan),
         wireguard=DualStack(v4=v4.wg, v6=v6.wg),
