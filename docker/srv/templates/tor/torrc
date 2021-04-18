@@ -1,5 +1,5 @@
-DNSPort                127.0.0.1:9060
-TransPort              0.0.0.0:9040
+DNSPort                127.0.0.1:60691
+TransPort              0.0.0.0:1080
 AutomapHostsOnResolve  1
-VirtualAddrNetworkIPv4 {{ TOR_SUBNET }}
-VirtualAddrNetworkIPv6 {{ TOR_SUBNET }}
+VirtualAddrNetworkIPv4 {{ TOR_NETWORK_V4 }}
+VirtualAddrNetworkIPv6 {{ TOR_NETWORK_V6 }}
