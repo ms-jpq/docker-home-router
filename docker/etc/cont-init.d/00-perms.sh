@@ -7,7 +7,6 @@ set -o pipefail
 ARGS=(
   /srv
   /data
-  /root/.tor
   /root/.rclone.conf
   /var/log/chrony
   )

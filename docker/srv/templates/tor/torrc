@@ -3,3 +3,6 @@ TransPort              0.0.0.0:1080
 AutomapHostsOnResolve  1
 VirtualAddrNetworkIPv4 {{ TOR_NETWORK_V4 }}
 VirtualAddrNetworkIPv6 {{ TOR_NETWORK_V6 }}
+
+
+DataDirectory /data/tor
