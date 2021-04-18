@@ -5,6 +5,7 @@ set -o pipefail
 
 
 ARGS=(
+  -c /srv/run/nginx/nginx.conf
   )
 
 

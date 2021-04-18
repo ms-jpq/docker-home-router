@@ -5,6 +5,7 @@ set -o pipefail
 
 
 ARGS=(
+  -f /srv/run/tor/torrc
   )
 
 

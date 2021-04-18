@@ -5,6 +5,8 @@ set -o pipefail
 
 
 ARGS=(
+  -d
+  -f /srv/run/chrony/chrony.conf
   )
 
 

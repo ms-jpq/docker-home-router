@@ -5,6 +5,8 @@ set -o pipefail
 
 
 ARGS=(
+  -c /srv/run/unbound/0-main.conf
+  -c /srv/run/unbound/1-perf.conf
   )
 
 
