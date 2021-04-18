@@ -8,4 +8,6 @@ services:
       - NET_ADMIN
     environment:
       - TZ
+    volumes:
+      - ./tmp:/data
 

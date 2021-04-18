@@ -23,7 +23,7 @@ Addrs = Sequence[Addr]
 def addr_show() -> Addrs:
     raw = check_output(("ip", "--json", "address", "show"), text=True)
     json = loads(raw)
-    addrs: Addrs = decode(Addrs, json)
+    addrs: Addrs = decode(Addrs, json, strict=False)
     return addrs
 
 
@@ -38,5 +38,5 @@ Links = Sequence[Link]
 def link_show() -> Links:
     raw = check_output(("ip", "--json", "link", "show"), text=True)
     json = loads(raw)
-    links: Links = decode(Links, json)
+    links: Links = decode(Links, json, strict=False)
     return links

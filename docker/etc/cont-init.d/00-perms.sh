@@ -4,4 +4,11 @@ set -eu
 set -o pipefail
 
 
-exec chown -R "$USER:$USER" /srv /data
+ARGS=(
+  /srv
+  /data
+  /root/.rclone.conf
+  )
+
+
+exec chown -R "$USER:$USER" "${ARGS[@]}"

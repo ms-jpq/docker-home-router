@@ -97,11 +97,13 @@ def _wg_conf(j2: Environment, stack: DualStack) -> str:
 
 
 def _gen_qr(j2: Environment, networks: Networks) -> None:
-    _, server_public = _srv_keys()
-
-    rmtree(_QR_DIR)
+    try:
+        rmtree(_QR_DIR)
+    except FileNotFoundError:
+        pass
     _QR_DIR.mkdir(parents=True, exist_ok=True)
 
+    _, server_public = _srv_keys()
     stack = networks.wireguard
     hosts = zip(stack.v4.hosts(), stack.v6.hosts())
     dns_v4, dns_v6 = next(hosts)
