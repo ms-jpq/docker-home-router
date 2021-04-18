@@ -2,12 +2,11 @@ from dataclasses import dataclass
 from ipaddress import IPv4Network, IPv6Network
 from itertools import islice
 from json import dumps, loads
-from pathlib import Path
 from random import randint
-from tempfile import TemporaryDirectory
 from typing import Iterable, Iterator, Optional
 
 from std2.ipaddress import RFC_1918
+from std2.lex import split
 from std2.pickle import decode, encode
 from std2.pickle.coders import (
     ipv4_network_decoder,
@@ -15,14 +14,8 @@ from std2.pickle.coders import (
     ipv6_network_decoder,
     ipv6_network_encoder,
 )
-from std2.lex import split
 
-from .consts import (
-    IP4_EXCLUSION,
-    IP6_ULA_GLOBAL,
-    IP6_ULA_SUBNET_EXCLUSION,
-    NETWORKS,
-)
+from .consts import IP4_EXCLUSION, IP6_ULA_GLOBAL, IP6_ULA_SUBNET_EXCLUSION, NETWORKS
 from .types import DualStack, Networks
 
 
@@ -53,10 +46,7 @@ def load_networks() -> Networks:
 def dump_networks(networks: Networks) -> None:
     data = encode(networks, encoders=(ipv4_network_encoder, ipv6_network_encoder))
     json = dumps(data, check_circular=False, ensure_ascii=False, indent=2)
-    with TemporaryDirectory() as tmp:
-        path = Path(tmp) / "tmp.json"
-        path.write_text(json)
-        path.replace(NETWORKS)
+    NETWORKS.write_text(json)
 
 
 def _private_subnets(prefix: int) -> Iterator[IPv4Network]:

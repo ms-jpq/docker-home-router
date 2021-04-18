@@ -1,18 +1,17 @@
-from ipaddress import ip_address, ip_interface, ip_network
-from json import loads
-from os import linesep
 from pathlib import Path
 from shutil import rmtree
 from subprocess import check_call, check_output, run
-from typing import Iterable, Iterator, Tuple
+from typing import Iterator, Tuple
 
-from std2.types import IPAddress, IPNetwork
-from std2.parse import parse
+from jinja2 import Environment
+from std2.lex import split
+from std2.types import IPNetwork
 
 from ..consts import DATA, J2, WG_IF, WG_PEERS
 from ..ip import addr_show, link_show
+from ..render import j2_build, j2_render
 from ..subnets import load_networks
-from .render import j2_build, j2_render
+from ..types import DualStack, Networks
 
 _SRV_TPL = Path("wg", "server.conf")
 _CLIENT_TPL = Path("wg", "client.conf")
@@ -74,35 +73,36 @@ def _client_keys() -> Iterator[Tuple[Path, str, str]]:
 
 
 def _gen_client_keys() -> None:
-    for name in loads(_DEVICES.read_text()):
-        path = _KEYS_DIR / f"client-private-{name}.key"
+    _CLIENT_KEYS.parent.mkdir(parents=True, exist_ok=True)
+
+    for peer in split(WG_PEERS):
+        path = _CLIENT_KEYS / f"{peer}.key"
         if not path.exists():
             pk = check_output(("wg", "genkey"), text=True)
             path.write_text(pk)
 
 
-def _wg_conf(network: IPNetwork) -> Iterator[str]:
-    j2 = j2_build(J2)
-
+def _wg_conf(j2: Environment, stack: DualStack) -> str:
     server_private, _ = _srv_keys()
-    srv = server_tpl.substitute(SERVER_PRIVATE_KEY=server_private)
-    yield srv
-
-    hosts = network.hosts()
-    next(hosts)
-    for (_, _, peer_public), host in zip(_client_keys(), hosts):
-        addr = f"{host}/{network.max_prefixlen}"
-        peer = peer_tpl.substitute(PEER_PUBLIC_KEY=peer_public, PEER_ADDR=str(addr))
-        yield peer
+    v4_hosts, v6_hosts = stack.v4.hosts(), stack.v6.hosts()
+    next(v4_hosts)
+    peers = (
+        {
+            "PUBLIC_KEY": peer_public,
+            "V4_ADDR": f"{v4}/{stack.v4.max_prefixlen}",
+            "V6_ADDR": f"{v6}/{stack.v6.max_prefixlen}",
+        }
+        for (_, _, peer_public), v4, v6 in zip(_client_keys(), v4_hosts, v6_hosts)
+    )
+    env = {"SERVER_PRIVATE_KEY": server_private, "PEERS": peers}
+    text = j2_render(j2, path=_SRV_TPL, env=env)
+    return text
 
 
 def _gen_qr(
-    server_addr: str,
-    network: IPNetwork,
-    lan_network: IPNetwork,
-    additional_networks: Iterable[IPNetwork],
+    j2: Environment,
+    networks: Networks,
 ) -> None:
-    client_tpl = Template(_CLIENT_CONF.read_text())
     _, server_public = _srv_keys()
 
     _QR_DIR.mkdir(parents=True, exist_ok=True)
@@ -135,23 +135,22 @@ def _gen_qr(
         ).check_returncode()
 
 
-def _wg_up(network: _NETWORK) -> None:
-    conf = linesep.join(_wg_conf(network))
+def _wg_up(j2: Environment, stack: DualStack) -> None:
+    conf = _wg_conf(j2, stack=stack)
     run(
         ("wg", "setconf", WG_IF, "/dev/stdin"), input=conf, text=True
     ).check_returncode()
 
 
 def main() -> None:
+    j2 = j2_build(J2)
     networks = load_networks()
     _gen_client_keys()
-    _gen_qr(
-        server_addr,
-        network=network,
-        lan_network=lan_network,
-        additional_networks=additional_networks,
-    )
+    _gen_qr(j2, networks=networks)
     _add_link()
-    _add_subnet(network)
-    _wg_up(network)
+
+    _add_subnet(networks.wireguard.v4)
+    _add_subnet(networks.wireguard.v6)
+
+    _wg_up(j2, stack=networks.wireguard)
     _set_up()
