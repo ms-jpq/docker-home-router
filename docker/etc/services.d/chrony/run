@@ -8,4 +8,4 @@ ARGS=(
   )
 
 
-exec s6-setuidgid router chronyd "${ARGS[@]}"
+exec s6-setuidgid "$USER" chronyd "${ARGS[@]}"

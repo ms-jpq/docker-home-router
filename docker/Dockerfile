@@ -34,7 +34,8 @@ ENTRYPOINT ["/init"]
 
 
 COPY . /
-RUN useradd --user-group --shell=/usr/sbin/nologin router && \
+ENV USER=router
+RUN useradd --user-group --shell=/usr/sbin/nologin "$USER" && \
     pip3 install --upgrade /code
 
 

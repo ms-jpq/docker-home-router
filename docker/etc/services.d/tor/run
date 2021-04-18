@@ -8,5 +8,5 @@ ARGS=(
   )
 
 
-exec s6-setuidgid router tor "${ARGS[@]}"
+exec s6-setuidgid "$USER" tor "${ARGS[@]}"
 

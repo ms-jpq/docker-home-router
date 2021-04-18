@@ -4,4 +4,4 @@ set -eu
 set -o pipefail
 
 
-exec chown -R router:router /code /srv
+exec chown -R "$USER:$USER" /code /srv

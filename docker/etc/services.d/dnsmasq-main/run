@@ -5,8 +5,8 @@ set -o pipefail
 
 
 ARGS=(
-  --conf-file=/srv/run/dnsmasq/main/0-main.conf
+  --conf-dir=/srv/run/dnsmasq/main
   )
 
 
-exec s6-setuidgid router dnsmasq "${ARGS[@]}"
+exec s6-setuidgid "$USER" dnsmasq "${ARGS[@]}"

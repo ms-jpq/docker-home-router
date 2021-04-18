@@ -8,5 +8,5 @@ ARGS=(
   )
 
 
-exec s6-setuidgid router unbound "${ARGS[@]}"
+exec s6-setuidgid "$USER" unbound "${ARGS[@]}"
 
