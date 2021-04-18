@@ -1,7 +1,7 @@
 from pathlib import Path
 from shutil import rmtree
 from subprocess import check_call, check_output, run
-from typing import Iterator, Tuple
+from typing import Any, Iterator, Mapping, Tuple
 
 from jinja2 import Environment
 from std2.lex import split
@@ -40,8 +40,8 @@ def _add_subnet(network: IPNetwork) -> None:
             if info.local in network and network.prefixlen == info.prefixlen:
                 break
         else:
-            addr = f"{next(network.hosts())}/{network.prefixlen}"
-            check_call(("ip", "address", "add", "dev", WG_IF, addr))
+            address = f"{next(network.hosts())}/{network.prefixlen}"
+            check_call(("ip", "address", "add", "dev", WG_IF, address))
 
 
 def _set_up() -> None:
@@ -109,7 +109,7 @@ def _gen_qr(j2: Environment, networks: Networks) -> None:
     hosts = zip(stack.v4.hosts(), stack.v6.hosts())
     dns_v4, dns_v6 = next(hosts)
 
-    _env = {
+    g_env = {
         "SERVER_PUBLIC_KEY": server_public,
         "DNS_ADDR_V4": dns_v4,
         "DNS_ADDR_V6": dns_v6,
@@ -131,14 +131,12 @@ def _gen_qr(j2: Environment, networks: Networks) -> None:
         conf_path = (_QR_DIR / path).with_suffix(".conf")
         qr_path = (_QR_DIR / path).with_suffix(".png")
 
-        env = {
-            **{
-                "CLIENT_PRIVATE_KEY": client_private,
-                "CLIENT_ADDR_V4": v4_addr,
-                "CLIENT_ADDR_V6": v6_addr,
-            },
-            **_env,
+        l_env: Mapping[str, Any] = {
+            "CLIENT_PRIVATE_KEY": client_private,
+            "CLIENT_ADDR_V4": v4_addr,
+            "CLIENT_ADDR_V6": v6_addr,
         }
+        env = {**l_env, **g_env}
         text = j2_render(j2, path=_CLIENT_TPL, env=env)
         conf_path.write_text(text)
 
