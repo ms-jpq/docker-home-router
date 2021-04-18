@@ -11,6 +11,7 @@ from .consts import (
     NTP_SERVERS,
     RUN,
     TEMPLATES,
+    USER,
     WAN_IF,
     WG_IF,
 )
@@ -21,6 +22,7 @@ from .types import Networks
 
 def _env(networks: Networks) -> Mapping[str, Any]:
     env = {
+        "USER": USER,
         "WAN_IF": WAN_IF,
         "LAN_IF": LAN_IF,
         "GUEST_IF": GUEST_IF,

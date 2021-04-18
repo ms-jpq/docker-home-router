@@ -11,6 +11,7 @@ RUN = _SRV / Path("run")
 
 NETWORKS = _DATA / "networks.json"
 
+USER = environ["USER"]
 
 WAN_IF = environ["WAN_IF"]
 LAN_IF = environ["LAN_IF"]
