@@ -1,4 +1,10 @@
+SocksPort              0
 DNSPort                127.0.0.1:60691
+
+{% if IPV6_ENABLED %}
+DNSPort                [::1]:60691
+{% endif %}
+
 TransPort              0.0.0.0:1080
 AutomapHostsOnResolve  1
 VirtualAddrNetworkIPv4 {{ TOR_NETWORK_V4 }}
