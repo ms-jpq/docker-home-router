@@ -1,5 +1,6 @@
 from os import linesep
 from pathlib import Path
+from subprocess import check_call
 from time import sleep
 from typing import Iterator, Tuple
 
@@ -11,6 +12,7 @@ from ..consts import LEASES
 
 _DYN = RUN / "dnsmasq" / "lan" / "5-dyn.conf"
 _TPL = Path("dnsmasq", "5-dyn.conf")
+_PID_FILE = Path("/", "var", "run", "dnsmsaq-lan.pid")
 
 
 def _p_leases() -> Iterator[Tuple[str, str]]:
@@ -28,6 +30,9 @@ def _forever(j2: Environment) -> None:
 
     if dyn != text:
         _DYN.write_text(text)
+
+        pid = _PID_FILE.read_text().rstrip()
+        check_call(("kill", pid))
 
 
 def main() -> None:
