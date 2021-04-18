@@ -20,9 +20,13 @@ def _p_leases() -> Iterator[Tuple[str, IPAddress]]:
     lines = LEASES.read_text().rstrip().split(linesep)
     for line in lines:
         if line:
-            _, _, ipv4, rhs = line.split(" ", maxsplit=4)
-            name, _, _ = rhs.rpartition(" ")
-            yield name, IPv4Address(ipv4)
+            try:
+                _, _, ipv4, rhs = line.split(" ", maxsplit=4)
+            except ValueError:
+                pass
+            else:
+                name, _, _ = rhs.rpartition(" ")
+                yield name, IPv4Address(ipv4)
 
 
 def _forever(j2: Environment) -> None:
