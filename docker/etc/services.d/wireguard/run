@@ -4,6 +4,7 @@ set -eu
 set -o pipefail
 
 
-s6-setuidgid "$USER" python3 -m router wg
+python3 -m router wg
+/etc/cont-init.d/00-perms.sh
 sleep infinity
 
