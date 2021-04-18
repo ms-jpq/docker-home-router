@@ -11,6 +11,7 @@ services:
       - TZ
       - WAN_IF=eth0
       - LAN_IF=eth0
+    network_mode: host
     volumes:
       - ./tmp:/data
 
