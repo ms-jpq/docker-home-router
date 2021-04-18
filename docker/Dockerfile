@@ -6,6 +6,7 @@ ARG S6="https://github.com/just-containers/s6-overlay/releases/download/v2.2.0.1
 
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    nftables \
     curl \
     wget \
     net-tools \
