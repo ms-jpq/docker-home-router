@@ -4,6 +4,7 @@ from subprocess import check_output
 from typing import Sequence
 
 from std2.pickle import decode
+from std2.pickle.coders import ipv4_addr_decoder, ipv6_addr_decoder
 from std2.types import IPAddress
 
 
@@ -23,7 +24,9 @@ Addrs = Sequence[Addr]
 def addr_show() -> Addrs:
     raw = check_output(("ip", "--json", "address", "show"), text=True)
     json = loads(raw)
-    addrs: Addrs = decode(Addrs, json, strict=False)
+    addrs: Addrs = decode(
+        Addrs, json, strict=False, decoders=(ipv4_addr_decoder, ipv6_addr_decoder)
+    )
     return addrs
 
 

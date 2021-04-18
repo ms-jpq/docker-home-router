@@ -6,8 +6,8 @@ set -o pipefail
 
 ARGS=(
   -d
-  -f /srv/run/chrony/chrony.conf
+  -f /srv/run/chrony/0-main.conf
   )
 
 
-exec s6-setuidgid "$USER" chronyd "${ARGS[@]}"
+chronyd "${ARGS[@]}"
