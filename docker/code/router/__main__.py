@@ -1,5 +1,6 @@
 from argparse import ArgumentParser, Namespace
 from json import loads
+from subprocess import CalledProcessError, check_call
 from typing import Any, Mapping
 
 from std2.lex import split
@@ -27,6 +28,14 @@ from .tc.main import main as tc_main
 from .types import Networks
 from .unbound.main import main as unbound_main
 from .wireguard.main import main as wg_main
+
+
+def _sysctl() -> None:
+    try:
+        check_call(("sysctl", "net.ipv4.ip_forward=1"))
+        check_call(("sysctl", "net.ipv6.conf.all.forwarding=1"))
+    except CalledProcessError:
+        pass
 
 
 def _env(networks: Networks) -> Mapping[str, Any]:
@@ -110,6 +119,7 @@ def main() -> None:
     elif args.op == "tc":
         tc_main()
     elif args.op == "template":
+        _sysctl()
         _template()
     elif args.op == "unbound":
         unbound_main()
