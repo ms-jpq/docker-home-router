@@ -1,4 +1,5 @@
 from argparse import ArgumentParser, Namespace
+from json import loads
 from typing import Any, Mapping
 
 from std2.lex import split
@@ -11,6 +12,7 @@ from .consts import (
     LAN_IF,
     NTP_SERVERS,
     RUN,
+    SERVICES,
     TEMPLATES,
     USER,
     WAN_IF,
@@ -21,6 +23,7 @@ from .dnsmasq.leases.main import main as dns_leases_main
 from .ip import ipv6_enabled
 from .render import j2_build, j2_render
 from .subnets import calculate_networks, dump_networks, load_networks
+from .tc.main import main as tc_main
 from .types import Networks
 from .unbound.main import main as unbound_main
 from .wireguard.main import main as wg_main
@@ -40,6 +43,7 @@ def _env(networks: Networks) -> Mapping[str, Any]:
     else:
         env = {
             "USER": USER,
+            "SERVICES": loads(SERVICES.read_text()),
             "WAN_IF": WAN_IF,
             "LAN_IF": LAN_IF,
             "GUEST_IF": GUEST_IF,
@@ -80,7 +84,16 @@ def _template() -> None:
 def _parse_args() -> Namespace:
     parser = ArgumentParser()
     parser.add_argument(
-        "op", choices=("template", "cake", "wg", "dns-lan", "dns-leases", "unbound")
+        "op",
+        choices=(
+            "cake",
+            "dns-lan",
+            "dns-leases",
+            "tc",
+            "template",
+            "unbound",
+            "wg",
+        ),
     )
     return parser.parse_args()
 
@@ -88,18 +101,20 @@ def _parse_args() -> Namespace:
 def main() -> None:
     args = _parse_args()
 
-    if args.op == "template":
-        _template()
-    elif args.op == "cake":
+    if args.op == "cake":
         cake_main()
-    elif args.op == "wg":
-        wg_main()
     elif args.op == "dns-lan":
         dns_lan_main()
     elif args.op == "dns-leases":
         dns_leases_main()
+    elif args.op == "tc":
+        tc_main()
+    elif args.op == "template":
+        _template()
     elif args.op == "unbound":
         unbound_main()
+    elif args.op == "wg":
+        wg_main()
     else:
         assert False
 

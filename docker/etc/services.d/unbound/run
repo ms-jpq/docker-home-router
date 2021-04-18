@@ -10,7 +10,6 @@ ARGS=(
   )
 
 
-#exec s6-setuidgid "$USER"
-unbound "${ARGS[@]}"
+s6-setuidgid "$USER" unbound "${ARGS[@]}"
 sleep infinity
 
