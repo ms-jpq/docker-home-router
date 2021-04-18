@@ -78,4 +78,6 @@ ENV WAN_IF= \
     IP4_EXCLUSION=10.0.0.0/24,192.168.0.0/24,172.16.0.0/24 \
     DNS_SERVERS=127.0.0.1#5335,[::1]#5335 \
     NTP_SERVERS= \
-    WG_PEERS=wife,wife's boyfriend
+    WG_PEERS=wife,wife's boyfriend \
+    SERVER_NAME=
+

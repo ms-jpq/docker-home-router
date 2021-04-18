@@ -84,15 +84,15 @@ def _gen_client_keys() -> None:
 
 def _wg_conf(j2: Environment, stack: DualStack) -> str:
     server_private, _ = _srv_keys()
-    v4_hosts, v6_hosts = stack.v4.hosts(), stack.v6.hosts()
-    next(v4_hosts)
+    hosts = zip(stack.v4.hosts(), stack.v6.hosts())
+    next(hosts)
     peers = (
         {
             "PUBLIC_KEY": peer_public,
             "V4_ADDR": f"{v4}/{stack.v4.max_prefixlen}",
             "V6_ADDR": f"{v6}/{stack.v6.max_prefixlen}",
         }
-        for (_, _, peer_public), v4, v6 in zip(_client_keys(), v4_hosts, v6_hosts)
+        for (_, _, peer_public), (v4, v6) in zip(_client_keys(), hosts)
     )
     env = {"SERVER_PRIVATE_KEY": server_private, "PEERS": peers}
     text = j2_render(j2, path=_SRV_TPL, env=env)
@@ -102,33 +102,41 @@ def _wg_conf(j2: Environment, stack: DualStack) -> str:
 def _gen_qr(j2: Environment, networks: Networks) -> None:
     _, server_public = _srv_keys()
 
+    rmtree(_QR_DIR)
     _QR_DIR.mkdir(parents=True, exist_ok=True)
-    for path in _QR_DIR.iterdir():
-        if path.is_symlink() or not path.is_dir():
-            path.unlink()
-        else:
-            rmtree(path)
 
-    hosts = network.hosts()
-    dns_addr = str(next(hosts))
-    for (path, client_private, _), host in zip(_client_keys(), hosts):
-        addr = f"{host}/{network.max_prefixlen}"
+    stack = networks.wireguard
+    hosts = zip(stack.v4.hosts(), stack.v6.hosts())
+    dns_v4, dns_v6 = next(hosts)
+
+    for (path, client_private, _), (v4, v6) in zip(_client_keys(), hosts):
+        v4_addr = f"{v4}/{stack.v4.max_prefixlen}"
+        v6_addr = f"{v6}/{stack.v6.max_prefixlen}"
+
         conf_path = (_QR_DIR / path).with_suffix(".conf")
         qr_path = (_QR_DIR / path).with_suffix(".png")
 
-        client = client_tpl.substitute(
-            SERVER_PUBLIC_KEY=server_public,
-            CLIENT_PRIVATE_KEY=client_private,
-            CLIENT_ADDR=addr,
-            DNS_ADDR=dns_addr,
-            WG_NETWORK=str(network),
-            LAN_NETWORK=str(lan_network),
-            MORE_NETWORKS=", ".join(map(str, additional_networks)),
-            SERVER_ADDR=server_addr,
-        )
-        conf_path.write_text(client)
+        env = {
+            "SERVER_PUBLIC_KEY": server_public,
+            "CLIENT_PRIVATE_KEY": client_private,
+            "DNS_ADDR_V4": dns_v4,
+            "DNS_ADDR_V6": dns_v6,
+            "CLIENT_ADDR_V4": v4_addr,
+            "CLIENT_ADDR_V6": v6_addr,
+            "WG_NETWORK_V4": stack.v4,
+            "WG_NETWORK_V6": stack.v6,
+            "TOR_NETWORK_V4": networks.tor.v4,
+            "TOR_NETWORK_V6": networks.tor.v6,
+            "LAN_NETWORK_V4": networks.lan.v4,
+            "LAN_NETWORK_V6": networks.lan.v6,
+            "GUEST_NETWORK_V4": networks.guest.v4,
+            "GUEST_NETWORK_V6": networks.guest.v6,
+        }
+        text = j2_render(j2, path=_CLIENT_TPL, env=env)
+        conf_path.write_text(text)
+
         run(
-            ("qrencode", "--output", str(qr_path)), input=client.encode()
+            ("qrencode", "--output", str(qr_path)), input=text.encode()
         ).check_returncode()
 
 
