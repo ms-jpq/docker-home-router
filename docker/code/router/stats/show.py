@@ -5,8 +5,8 @@ from typing import Callable
 
 from jinja2 import Environment
 
-from .consts import J2
-from .render import j2_build, j2_render
+from ..consts import J2
+from ..render import j2_build, j2_render
 
 Feed = Callable[[], str]
 

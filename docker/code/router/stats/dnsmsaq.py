@@ -1,6 +1,6 @@
 from os import linesep
 
-from ...show import show
+from .show import show
 from ..consts import DYN, LEASES
 
 _PORT = 60693
