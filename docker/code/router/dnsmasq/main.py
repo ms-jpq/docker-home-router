@@ -12,10 +12,9 @@ from std2.pickle import decode
 from std2.pickle.coders import ipv4_network_decoder, ipv6_network_decoder
 from std2.types import IPAddress
 
-from ...consts import J2, WG_PEERS_JSON
-from ...render import j2_build, j2_render
-from ...types import WGPeers
-from ..consts import DYN, LEASES
+from ..consts import DYN, J2, LEASES, WG_PEERS_JSON
+from ..render import j2_build, j2_render
+from ..types import WGPeers
 
 _TPL = Path("dns", "5-dyn.conf")
 _PID_FILE = Path("/", "var", "run", "dnsmsaq-lan.pid")

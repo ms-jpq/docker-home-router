@@ -19,14 +19,12 @@ from .consts import (
     WAN_IF,
     WG_IF,
 )
-from .dnsmasq.lan.main import main as dns_lan_main
-from .dnsmasq.leases.main import main as dns_leases_main
+from .dnsmasq.main import main as dnsmsq_main
+from .stats.main import main as stats_main
 from .ip import ipv6_enabled
 from .render import j2_build, j2_render
 from .subnets import calculate_networks, load_networks
-from .tc.main import main as tc_main
 from .types import Networks
-from .unbound.main import main as unbound_main
 from .wireguard.main import main as wg_main
 
 
@@ -94,11 +92,9 @@ def _parse_args() -> Namespace:
         "op",
         choices=(
             "cake",
-            "dns-lan",
-            "dns-leases",
-            "tc",
+            "dnsmasq",
+            "stats",
             "template",
-            "unbound",
             "wg",
         ),
     )
@@ -110,17 +106,13 @@ def main() -> None:
 
     if args.op == "cake":
         cake_main()
-    elif args.op == "dns-lan":
-        dns_lan_main()
-    elif args.op == "dns-leases":
-        dns_leases_main()
-    elif args.op == "tc":
-        tc_main()
+    elif args.op == "dnsmasq":
+        dnsmsq_main()
+    elif args.op == "stats":
+        stats_main()
     elif args.op == "template":
         _sysctl()
         _template()
-    elif args.op == "unbound":
-        unbound_main()
     elif args.op == "wg":
         wg_main()
     else:

@@ -13,6 +13,9 @@ TEMPLATES = _SRV / Path("templates")
 SERVICES = _SRV / "services.json"
 RUN = _SRV / Path("run")
 
+LEASES = DATA / "dnsmasq" / "leases"
+DYN = RUN / "dnsmasq" / "lan" / "5-dyn.conf"
+
 NETWORKS_JSON = _SRV / "networks" / "networks.json"
 WG_PEERS_JSON = RUN / "wireguard" / "wg-peers.json"
 
