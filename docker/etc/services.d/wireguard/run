@@ -4,8 +4,7 @@ set -eu
 set -o pipefail
 
 
-#TODO -- Enable this
-#python3 -m router wg
+python3 -m router wg
 /etc/cont-init.d/00-perms.sh
 sleep infinity
 

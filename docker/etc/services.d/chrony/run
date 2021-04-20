@@ -10,4 +10,4 @@ ARGS=(
   )
 
 
-chronyd "${ARGS[@]}"
+exec chronyd "${ARGS[@]}"

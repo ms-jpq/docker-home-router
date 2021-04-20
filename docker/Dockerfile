@@ -12,14 +12,12 @@ RUN apt-get update && \
     net-tools \
     iproute2 \
     python3-pip \
-    nginx \
     dnsmasq \
     unbound \
     chrony \
     tor \
     wireguard \
     qrencode \
-    rclone && \
     rm -rf /var/lib/apt/lists/*
 
 
