@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>/</title>
+    <title>{{ TITLE }}</title>
     <style>
       :root {
         white-space: pre-wrap;
@@ -12,13 +12,7 @@
     </style>
   </head>
   <body>
-    {% for NAME, PATH, _ in SERVICES %}
-    <ul>
-      <li>
-        <a target="_blank" rel="noreferrer" href="/{{ PATH | e }}/">{{ NAME | e }}</a>
-      </li>
-    <ul/>
-    {% endfor %}
+{{ BODY }}
   </body>
 </html>
 
