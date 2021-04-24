@@ -12,7 +12,7 @@
     </style>
   </head>
   <body>
-    {% for NAME, PATH, _ in SERVICES %}
+    {% for NAME, PATH in SERVICES %}
     <ul>
       <li>
         <a rel="noreferrer" href="/{{ PATH | urlencode }}/">{{ NAME | e }}</a>
