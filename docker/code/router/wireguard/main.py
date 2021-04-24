@@ -10,7 +10,7 @@ from std2.pickle import encode
 from std2.pickle.coders import ipv4_addr_encoder, ipv6_addr_encoder
 from std2.types import IPNetwork
 
-from ..consts import DATA, J2, SERVER_NAME, WG_IF, WG_PEERS_JSON, WG_PEERS
+from ..consts import DATA, J2, SERVER_NAME, USER, WG_IF, WG_PEERS, WG_PEERS_JSON
 from ..ip import addr_show, link_show
 from ..render import j2_build, j2_render
 from ..subnets import load_networks
@@ -172,3 +172,4 @@ def main() -> None:
 
     _wg_up(j2, stack=networks.wireguard)
     _set_up()
+    check_call(("chown", "-R", f"{USER}:{USER}", "--", str(_WG_DATA)))

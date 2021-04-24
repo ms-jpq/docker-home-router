@@ -20,9 +20,10 @@ from .consts import (
     WG_IF,
 )
 from .dnsmasq.main import main as dnsmsq_main
-from .stats.main import main as stats_main
+from .ifup.main import main as ifup_main
 from .ip import ipv6_enabled
 from .render import j2_build, j2_render
+from .stats.main import main as stats_main
 from .subnets import calculate_networks, load_networks
 from .types import Networks
 from .wireguard.main import main as wg_main
@@ -91,6 +92,7 @@ def _parse_args() -> Namespace:
     parser.add_argument(
         "op",
         choices=(
+            "ifup",
             "cake",
             "dnsmasq",
             "stats",
@@ -104,7 +106,9 @@ def _parse_args() -> Namespace:
 def main() -> None:
     args = _parse_args()
 
-    if args.op == "cake":
+    if args.op == "ifup":
+        ifup_main()
+    elif args.op == "cake":
         cake_main()
     elif args.op == "dnsmasq":
         dnsmsq_main()
