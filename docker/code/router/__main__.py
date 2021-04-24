@@ -13,7 +13,6 @@ from .consts import (
     LAN_IF,
     NTP_SERVERS,
     RUN,
-    SERVICES,
     TEMPLATES,
     USER,
     WAN_IF,
@@ -51,7 +50,6 @@ def _env(networks: Networks) -> Mapping[str, Any]:
     else:
         env = {
             "USER": USER,
-            "SERVICES": loads(SERVICES.read_text()),
             "WAN_IF": WAN_IF,
             "LAN_IF": LAN_IF,
             "GUEST_IF": GUEST_IF,

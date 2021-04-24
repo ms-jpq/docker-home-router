@@ -12,7 +12,6 @@ DATA = Path("/", "data")
 J2 = _TOP_LV / "j2"
 
 TEMPLATES = _SRV / Path("templates")
-SERVICES = _SRV / "services.json"
 RUN = _SRV / Path("run")
 
 LEASES = DATA / "dnsmasq" / "leases"
