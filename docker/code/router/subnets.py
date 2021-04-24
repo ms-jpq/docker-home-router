@@ -41,19 +41,10 @@ def load_networks() -> Networks:
     return networks
 
 
-def _private_subnets(prefixes: Iterable[int]) -> Iterator[IPv4Network]:
-    for prefix in prefixes:
-        for network in RFC_1918:
-            try:
-                for subnet in network.subnets(new_prefix=prefix):
-                    yield subnet
-                    break
-                else:
-                    raise ValueError()
-            except ValueError:
-                pass
-            else:
-                break
+def _private_subnets(prefix: int) -> Iterator[IPv4Network]:
+    for network in RFC_1918:
+        for subnet in network.subnets(new_prefix=prefix):
+            yield subnet
 
 
 def _pick_private(
@@ -61,9 +52,12 @@ def _pick_private(
 ) -> Iterator[IPv4Network]:
     seen = {*existing}
 
-    for candidate in _private_subnets(prefixes):
-        for network in seen:
-            if not candidate.overlaps(network) and not network.overlaps(candidate):
+    for prefix in prefixes:
+        for candidate in _private_subnets(prefix):
+            if all(
+                not candidate.overlaps(network) and not network.overlaps(candidate)
+                for network in seen
+            ):
                 seen.add(candidate)
                 yield candidate
                 break
