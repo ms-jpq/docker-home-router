@@ -2,6 +2,8 @@ from os import environ
 from pathlib import Path
 from socket import getfqdn
 
+PORT = 8080
+
 _TOP_LV = Path(__file__).resolve().parent
 
 _SRV = Path("/", "srv")

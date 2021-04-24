@@ -2,8 +2,6 @@ from os import linesep
 
 from ..consts import DYN, LEASES
 
-TITLE = "LEASES"
-
 
 def feed() -> str:
     DYN.parent.mkdir(parents=True, exist_ok=True)

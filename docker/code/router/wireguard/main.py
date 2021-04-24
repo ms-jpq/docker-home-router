@@ -23,7 +23,7 @@ _CLIENT_TPL = Path("wg", "client.conf")
 _WG_DATA = DATA / "wireguard"
 _SRV_KEY = _WG_DATA / "keys" / "server" / "private.key"
 _CLIENT_KEYS = _WG_DATA / "keys" / "clients"
-_QR_DIR = _WG_DATA / "pub"
+QR_DIR = _WG_DATA / "pub"
 
 
 def _add_link() -> None:
@@ -101,10 +101,10 @@ def _wg_conf(j2: Environment, stack: DualStack) -> str:
 
 def _gen_qr(j2: Environment, networks: Networks) -> None:
     try:
-        rmtree(_QR_DIR)
+        rmtree(QR_DIR)
     except FileNotFoundError:
         pass
-    _QR_DIR.mkdir(parents=True, exist_ok=True)
+    QR_DIR.mkdir(parents=True, exist_ok=True)
     WG_PEERS_JSON.parent.mkdir(parents=True, exist_ok=True)
 
     _, server_public = _srv_keys()
@@ -136,8 +136,8 @@ def _gen_qr(j2: Environment, networks: Networks) -> None:
         v4_addr = f"{v4}/{stack.v4.max_prefixlen}"
         v6_addr = f"{v6}/{stack.v6.max_prefixlen}"
 
-        conf_path = (_QR_DIR / path).with_suffix(".conf")
-        qr_path = (_QR_DIR / path).with_suffix(".png")
+        conf_path = (QR_DIR / path).with_suffix(".conf")
+        qr_path = (QR_DIR / path).with_suffix(".png")
 
         l_env: Mapping[str, Any] = {
             "CLIENT_PRIVATE_KEY": client_private,

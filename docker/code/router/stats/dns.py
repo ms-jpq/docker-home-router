@@ -6,8 +6,6 @@ from std2.configparser import hydrate
 
 from ..consts import TIMEOUT
 
-TITLE = "UNBOUND"
-
 
 def _parse_stat(line: str) -> Tuple[str, Union[int, float]]:
     key, _, val = line.partition("=")
