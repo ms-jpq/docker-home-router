@@ -17,6 +17,8 @@ RUN = _SRV / Path("run")
 LEASES = DATA / "dnsmasq" / "leases"
 DYN = RUN / "dnsmasq" / "lan" / "5-dyn.conf"
 
+UNBOUND_CONF = RUN / "unbound" / "0-main.conf"
+
 NETWORKS_JSON = _SRV / "run" / "networks" / "networks.json"
 WG_PEERS_JSON = RUN / "wireguard" / "wg-peers.json"
 
