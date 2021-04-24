@@ -69,12 +69,15 @@ def main() -> None:
             elif path is _Path.dhcp:
                 env = {"TITLE": path.name, "BODY": dhcp_feed()}
                 page = j2_render(j2, path=_SHOW_TPL, env=env).encode()
+                _get(self, page=page)
             elif path is _Path.dns:
                 env = {"TITLE": path.name, "BODY": dns_feed()}
                 page = j2_render(j2, path=_SHOW_TPL, env=env).encode()
+                _get(self, page=page)
             elif path is _Path.tc:
                 env = {"TITLE": path.name, "BODY": tc_feed()}
                 page = j2_render(j2, path=_SHOW_TPL, env=env).encode()
+                _get(self, page=page)
             elif path is _Path.wg:
                 get(static_j2, handler=self, base=_Path.wg.value, root=QR_DIR)
             else:
