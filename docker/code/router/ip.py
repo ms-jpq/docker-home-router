@@ -22,6 +22,7 @@ class _AddrInfo:
 
 @dataclass(frozen=True)
 class Addr:
+    ifname: str
     addr_info: Sequence[_AddrInfo]
 
 

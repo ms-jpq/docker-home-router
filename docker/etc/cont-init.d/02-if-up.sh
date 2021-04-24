@@ -4,4 +4,4 @@ set -eu
 set -o pipefail
 
 
-exec s6-setuidgid "$USER" python3 -m router template
+python3 -m router ifup
