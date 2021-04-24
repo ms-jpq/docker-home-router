@@ -7,7 +7,6 @@ services:
     cap_add:
       - NET_ADMIN
       - SYS_TIME
-      - SYS_ADMIN
     environment:
       - TZ
       - WAN_IF=eth0
