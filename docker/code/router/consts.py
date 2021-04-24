@@ -17,7 +17,7 @@ RUN = _SRV / Path("run")
 LEASES = DATA / "dnsmasq" / "leases"
 DYN = RUN / "dnsmasq" / "lan" / "5-dyn.conf"
 
-NETWORKS_JSON = _SRV / "networks" / "networks.json"
+NETWORKS_JSON = _SRV / "run" / "networks" / "networks.json"
 WG_PEERS_JSON = RUN / "wireguard" / "wg-peers.json"
 
 USER = environ["USER"]
