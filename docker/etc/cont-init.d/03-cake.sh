@@ -4,4 +4,4 @@ set -eu
 set -o pipefail
 
 
-python3 -m router cake
+exec python3 -m router cake

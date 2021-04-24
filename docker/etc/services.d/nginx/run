@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+set -eu
+set -o pipefail
+
+
+ARGS=(
+  -c /srv/run/nginx/nginx.conf
+  )
+
+
+exec nginx "${ARGS[@]}"

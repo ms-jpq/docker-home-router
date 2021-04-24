@@ -4,4 +4,4 @@ set -eu
 set -o pipefail
 
 
-python3 -m router wg
+exec python3 -m router wg

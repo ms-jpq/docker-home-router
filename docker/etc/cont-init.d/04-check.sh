@@ -4,4 +4,4 @@ set -eu
 set -o pipefail
 
 
-nft --file /data/nftables/0-main.conf --check
+exec nft --file /data/nftables/0-main.conf --check
