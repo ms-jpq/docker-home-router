@@ -1,4 +1,4 @@
-std2@https://github.com/ms-jpq/std2/archive/701df5abb574536dac441b0257359d4e044b8a89.tar.gz
-py-dev@https://github.com/ms-jpq/py-dev/archive/6c737f09917c56aa0334215aec73c518a28d20e3.tar.gz
+std2@https://github.com/ms-jpq/std2/archive/0860392e7fc7de107b44333897eb3d1df72c1c19.tar.gz
+py-dev@https://github.com/ms-jpq/py-dev/archive/396a00a86a6ec5cf430c3c7ca7a822aa5cd3e571.tar.gz
 sortd
 Jinja2
