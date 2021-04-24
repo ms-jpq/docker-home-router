@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+set -eu
+set -o pipefail
+
+
+while true
+do
+  /etc/cont-init.d/05-unbound.sh
+  sleep 86400
+done
