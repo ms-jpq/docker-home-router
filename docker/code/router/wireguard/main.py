@@ -36,13 +36,15 @@ def _add_link() -> None:
 
 def _add_subnet(network: IPNetwork) -> None:
     for addr in addr_show():
-        for info in addr.addr_info:
-            print(network, info, addr.addr_info, flush=True)
-            if info.local in network and network.prefixlen == info.prefixlen:
-                break
-        else:
-            address = f"{next(network.hosts())}/{network.prefixlen}"
-            check_call(("ip", "address", "add", address, "dev", WG_IF))
+        if addr.ifname == WG_IF:
+            for info in addr.addr_info:
+                if info.local in network and network.prefixlen == info.prefixlen:
+                    return
+            else:
+                address = f"{next(network.hosts())}/{network.prefixlen}"
+                check_call(("ip", "address", "add", address, "dev", WG_IF))
+    else:
+        assert False
 
 
 def _set_up() -> None:
