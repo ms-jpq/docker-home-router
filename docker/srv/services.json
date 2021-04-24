@@ -1,6 +1,0 @@
-[
-  ["DNS leases", "leases", 60693],
-  ["UNbound", "unbound", 60692],
-  ["WireGuard", "wg", 60694],
-  ["TC Queue", "tc", 60695]
-]

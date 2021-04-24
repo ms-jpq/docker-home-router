@@ -5,10 +5,8 @@ from typing import Any, Tuple, Union
 from std2.configparser import hydrate
 
 from ..consts import TIMEOUT
-from ..show import show
 
-_PORT = 60692
-_TITLE = "UNBOUND"
+TITLE = "UNBOUND"
 
 
 def _parse_stat(line: str) -> Tuple[str, Union[int, float]]:
@@ -28,7 +26,7 @@ def _parse_stats(raw: str) -> Any:
     return stat
 
 
-def _feed() -> str:
+def feed() -> str:
     raw = check_output(("unbound-control", "stats_noreset"), text=True, timeout=TIMEOUT)
     data = _parse_stats(raw)
     json = dumps(
@@ -38,8 +36,3 @@ def _feed() -> str:
     )
     yaml = check_output(("sortd", "yaml"), text=True, input=json)
     return yaml
-
-
-def main() -> None:
-    srv = show(_TITLE, port=_PORT, feed=_feed)
-    srv.serve_forever()

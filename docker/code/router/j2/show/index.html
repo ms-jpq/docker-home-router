@@ -15,7 +15,7 @@
     {% for NAME, PATH, _ in SERVICES %}
     <ul>
       <li>
-        <a target="_blank" rel="noreferrer" href="/{{ PATH | e }}/">{{ NAME | e }}</a>
+        <a rel="noreferrer" href="/{{ PATH | urlencode }}/">{{ NAME | e }}</a>
       </li>
     <ul/>
     {% endfor %}
