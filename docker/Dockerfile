@@ -17,7 +17,8 @@ RUN apt-get update && \
     chrony \
     tor \
     wireguard \
-    qrencode && \
+    qrencode \
+    nginx && \
     rm -rf /var/lib/apt/lists/*
 
 
