@@ -37,6 +37,7 @@ def _add_link() -> None:
 def _add_subnet(network: IPNetwork) -> None:
     for addr in addr_show():
         for info in addr.addr_info:
+            print(info, addr.addr_info, flush=True)
             if info.local in network and network.prefixlen == info.prefixlen:
                 break
         else:
