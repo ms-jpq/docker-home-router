@@ -5,7 +5,6 @@ set -o pipefail
 
 
 ARGS=(
-  -d
   -c /srv/run/unbound/0-include.conf
   )
 
