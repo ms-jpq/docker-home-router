@@ -9,7 +9,7 @@ from typing import Iterator, Optional, Tuple
 
 from jinja2 import Environment
 from std2.pickle import decode
-from std2.pickle.coders import ipv4_network_decoder, ipv6_network_decoder
+from std2.pickle.coders import BUILTIN_DECODERS
 from std2.types import IPAddress
 
 from ..consts import DYN, J2, LEASES, WG_PEERS_JSON
@@ -49,9 +49,7 @@ def _p_peers() -> Iterator[Tuple[str, IPAddress]]:
     WG_PEERS_JSON.parent.mkdir(parents=True, exist_ok=True)
     WG_PEERS_JSON.touch()
     json = loads(WG_PEERS_JSON.read_text() or "{}")
-    peers: WGPeers = decode(
-        WGPeers, json, decoders=(ipv4_network_decoder, ipv6_network_decoder)
-    )
+    peers: WGPeers = decode(WGPeers, json, decoders=BUILTIN_DECODERS)
     for name, addrs in peers.items():
         yield name, addrs.v4
         yield name, addrs.v6

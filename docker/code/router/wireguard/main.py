@@ -7,7 +7,7 @@ from typing import Any, Iterator, Mapping, Tuple
 from jinja2 import Environment
 from std2.lex import split
 from std2.pickle import encode
-from std2.pickle.coders import ipv4_addr_encoder, ipv6_addr_encoder
+from std2.pickle.coders import BUILTIN_ENCODERS
 from std2.types import IPNetwork
 
 from ..consts import DATA, J2, SERVER_NAME, USER, WG_IF, WG_PEERS, WG_PEERS_JSON
@@ -128,7 +128,7 @@ def _gen_qr(j2: Environment, networks: Networks) -> None:
     }
     gen = tuple(zip(_client_keys(), hosts))
     data = {path.stem: WGPeer(v4=v4, v6=v6) for (path, _, _), (v4, v6) in gen}
-    encoded = encode(data, encoders=(ipv4_addr_encoder, ipv6_addr_encoder))
+    encoded = encode(data, encoders=BUILTIN_ENCODERS)
     json = dumps(encoded)
     WG_PEERS_JSON.write_text(json)
 

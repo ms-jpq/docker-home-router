@@ -8,9 +8,14 @@ from typing import Iterable, Iterator, Optional
 from std2.ipaddress import RFC_1918
 from std2.lex import split
 from std2.pickle import decode
-from std2.pickle.coders import ipv4_network_decoder, ipv6_network_decoder
+from std2.pickle.coders import BUILTIN_DECODERS
 
-from .consts import IP4_EXCLUSION, IP6_ULA_GLOBAL, IP6_ULA_SUBNET_EXCLUSION, NETWORKS_JSON
+from .consts import (
+    IP4_EXCLUSION,
+    IP6_ULA_GLOBAL,
+    IP6_ULA_SUBNET_EXCLUSION,
+    NETWORKS_JSON,
+)
 from .types import DualStack, Networks
 
 
@@ -32,9 +37,7 @@ class _V6Stack:
 
 def load_networks() -> Networks:
     json = loads(NETWORKS_JSON.read_text())
-    networks: Networks = decode(
-        Networks, json, decoders=(ipv4_network_decoder, ipv6_network_decoder)
-    )
+    networks: Networks = decode(Networks, json, decoders=BUILTIN_DECODERS)
     return networks
 
 
