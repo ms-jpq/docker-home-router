@@ -41,7 +41,7 @@ def _add_subnet(network: IPNetwork) -> None:
                 break
         else:
             address = f"{next(network.hosts())}/{network.prefixlen}"
-            check_call(("ip", "address", "add", "dev", WG_IF, address))
+            check_call(("ip", "address", "add", address, "dev", WG_IF))
 
 
 def _set_up() -> None:
