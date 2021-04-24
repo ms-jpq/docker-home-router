@@ -5,7 +5,7 @@ set -o pipefail
 
 
 ARGS=(
-  --conf-dir=/srv/run/dnsmasq/lan
+  --conf-dir /srv/run/dnsmasq/lan
   )
 
 
