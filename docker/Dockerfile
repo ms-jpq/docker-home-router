@@ -18,7 +18,6 @@ RUN apt-get update && \
     tor \
     wireguard \
     qrencode \
-    nginx && \
     rm -rf /var/lib/apt/lists/*
 
 
