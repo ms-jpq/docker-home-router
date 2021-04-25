@@ -4,4 +4,8 @@ set -eu
 set -o pipefail
 
 
-exec nft --file /data/nftables/0-main.conf --check
+cd /data/nftables || exit 1
+
+
+CHECK='include "./*.conf"'
+exec nft --file /dev/stdin --check <<< "$CHECK"
