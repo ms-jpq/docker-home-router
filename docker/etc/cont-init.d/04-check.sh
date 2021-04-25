@@ -8,4 +8,4 @@ cd /data/nftables || exit 1
 
 
 CHECK='include "./*.conf"'
-exec nft --file /dev/stdin --check <<< "$CHECK"
+exec nft --file - --check <<< "$CHECK"
