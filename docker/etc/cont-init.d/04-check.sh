@@ -4,5 +4,5 @@ set -eu
 set -o pipefail
 
 
-CHECK='include "/data/nftables/*.conf"'
+CHECK='include "/data/nftables/*.conf";'
 exec nft --file - --check <<< "$CHECK"
