@@ -82,9 +82,13 @@ def _template() -> None:
     for path in walk(TEMPLATES):
         tpl = path.relative_to(TEMPLATES)
         dest = (RUN / tpl).resolve()
-        text = j2_render(j2, path=tpl, env=env)
         dest.parent.mkdir(parents=True, exist_ok=True)
-        dest.write_text(text)
+        if path.is_symlink():
+            dest.unlink(missing_ok=True)
+            dest.symlink_to(path.readlink())
+        else:
+            text = j2_render(j2, path=tpl, env=env)
+            dest.write_text(text)
 
 
 def _parse_args() -> Namespace:
