@@ -12,8 +12,9 @@ from std2.pickle import decode
 from std2.pickle.coders import BUILTIN_DECODERS
 from std2.types import IPAddress
 
-from ..consts import DYN, J2, LEASES, WG_PEERS_JSON
+from ..consts import DYN, J2, LEASES, SERVER_NAME, WG_PEERS_JSON
 from ..render import j2_build, j2_render
+from ..subnets import load_networks
 from ..types import WGPeers
 
 _TPL = Path("dns", "5-dyn.conf")
@@ -33,6 +34,12 @@ def _p_leases() -> Iterator[Tuple[str, IPAddress]]:
     LEASES.parent.mkdir(parents=True, exist_ok=True)
     LEASES.touch()
     lines = LEASES.read_text().rstrip().split(linesep)
+
+    networks = load_networks()
+    yield SERVER_NAME, next(networks.lan.v4.hosts())
+    yield SERVER_NAME, next(networks.lan.v6.hosts())
+    yield SERVER_NAME, next(networks.wireguard.v4.hosts())
+    yield SERVER_NAME, next(networks.wireguard.v6.hosts())
 
     for line in lines:
         if line:

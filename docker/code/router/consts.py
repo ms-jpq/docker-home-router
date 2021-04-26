@@ -2,7 +2,6 @@ from os import environ
 from pathlib import Path
 from socket import getfqdn
 
-
 _TOP_LV = Path(__file__).resolve().parent
 
 _SRV = Path("/", "srv")
