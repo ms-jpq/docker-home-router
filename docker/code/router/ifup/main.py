@@ -1,20 +1,25 @@
+from ipaddress import ip_interface
 from subprocess import check_call
 from typing import AbstractSet
 
-from std2.types import IPAddress
+from std2.types import IPInterface, IPNetwork
 
 from ..consts import GUEST_IF, LAN_IF
 from ..ip import Addrs, addr_show
 from ..subnets import load_networks
 
 
-def _if_up(addrs: Addrs, interface: str, ips: AbstractSet[IPAddress]) -> None:
-    acc = {*ips}
+def _if_up(addrs: Addrs, interface: str, networks: AbstractSet[IPNetwork]) -> None:
+    acc: AbstractSet[IPInterface] = {
+        ip_interface(f"{next(network.hosts())}/{network.prefixlen}")
+        for network in networks
+    }
 
     for addr in addrs:
         if addr.ifname == interface:
             for info in addr.addr_info:
-                acc.discard(info.local)
+                local: IPInterface = ip_interface(f"{info.local}/{info.prefixlen}")
+                acc.discard(local)
             break
     else:
         raise ValueError(f"IF NOT FOUND - {interface}")
@@ -29,12 +34,12 @@ def main() -> None:
     _if_up(
         addrs,
         interface=LAN_IF,
-        ips={next(networks.lan.v4.hosts()), next(networks.lan.v6.hosts())},
+        networks={networks.lan.v4, networks.lan.v6},
     )
 
     if GUEST_IF:
         _if_up(
             addrs,
             interface=GUEST_IF,
-            ips={next(networks.guest.v4.hosts()), next(networks.guest.v6.hosts())},
+            networks={networks.guest.v4, networks.guest.v6},
         )
