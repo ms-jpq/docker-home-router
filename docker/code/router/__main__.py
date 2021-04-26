@@ -84,7 +84,7 @@ def _template() -> None:
         dest.parent.mkdir(parents=True, exist_ok=True)
         if path.is_symlink():
             dest.unlink(missing_ok=True)
-            dest.symlink_to(path.readlink())
+            dest.symlink_to(path.resolve())
         else:
             text = j2_render(j2, path=tpl, env=env)
             dest.write_text(text)
