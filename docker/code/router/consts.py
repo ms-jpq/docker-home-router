@@ -2,7 +2,6 @@ from os import environ
 from pathlib import Path
 from socket import getfqdn
 
-PORT = 8080
 
 _TOP_LV = Path(__file__).resolve().parent
 
@@ -22,6 +21,7 @@ UNBOUND_CONF = RUN / "unbound" / "0-include.conf"
 NETWORKS_JSON = _SRV / "run" / "networks" / "networks.json"
 WG_PEERS_JSON = RUN / "wireguard" / "wg-peers.json"
 
+STATS_PORT = int(environ["STATS_PORT"])
 USER = environ["USER"]
 
 WAN_IF = environ["WAN_IF"]

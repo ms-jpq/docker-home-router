@@ -9,7 +9,7 @@ from py_dev.srv.static import build_j2, get
 from std2.pathlib import is_relative_to
 from std2.types import never
 
-from ..consts import J2, PORT
+from ..consts import J2, STATS_PORT
 from ..render import j2_build, j2_render
 from ..wireguard.main import QR_DIR
 from .dhcp import feed as dhcp_feed
@@ -83,5 +83,5 @@ def main() -> None:
             else:
                 never(path)
 
-    srv = ThreadingHTTPServer(("localhost", PORT), Handler)
+    srv = ThreadingHTTPServer(("", STATS_PORT), Handler)
     srv.serve_forever()
