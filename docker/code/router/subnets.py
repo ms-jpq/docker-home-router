@@ -1,21 +1,24 @@
 from dataclasses import dataclass
-from ipaddress import IPv4Network, IPv6Network
-from itertools import islice
+from ipaddress import IPv4Network, IPv6Network, ip_interface
+from itertools import chain, islice
 from json import loads
 from random import randint
-from typing import Iterable, Iterator, Optional
+from typing import Iterable, Iterator, MutableSet, Optional
 
 from std2.ipaddress import RFC_1918
 from std2.lex import split
 from std2.pickle import decode
 from std2.pickle.coders import BUILTIN_DECODERS
+from std2.types import IPInterface
 
 from .consts import (
+    IF_EXCLUSIONS,
     IP4_EXCLUSION,
     IP6_ULA_GLOBAL,
     IP6_ULA_SUBNET_EXCLUSION,
     NETWORKS_JSON,
 )
+from .ip import addr_show
 from .types import DualStack, Networks
 
 
@@ -63,8 +66,18 @@ def _pick_private(
                 break
 
 
-def _v4(exclusions: str) -> _V4Stack:
-    nono = map(IPv4Network, split(exclusions))
+def _v4(if_exclusions: str, exclusions: str) -> _V4Stack:
+    ifs = {*split(if_exclusions)}
+    existing: MutableSet[IPv4Network] = set()
+
+    for addr in addr_show():
+        if addr.ifname in ifs:
+            for info in addr.addr_info:
+                net: IPInterface = ip_interface(f"{info.local}/{info.prefixlen}")
+                if isinstance(net.network, IPv4Network):
+                    existing.add(net.network)
+
+    nono = chain(map(IPv4Network, split(exclusions)), existing)
     lan, wg, tor, guest = _pick_private(nono, prefixes=(24, 24, 16, 24))
     stack = _V4Stack(lan=lan, wg=wg, tor=tor, guest=guest)
     return stack
@@ -89,7 +102,9 @@ def _v6(prefix: Optional[str], subnets: Optional[str]) -> _V6Stack:
 
 
 def calculate_networks() -> Networks:
-    v4, v6 = _v4(IP4_EXCLUSION), _v6(IP6_ULA_GLOBAL, IP6_ULA_SUBNET_EXCLUSION)
+    v4, v6 = _v4(IF_EXCLUSIONS, exclusions=IP4_EXCLUSION), _v6(
+        IP6_ULA_GLOBAL, IP6_ULA_SUBNET_EXCLUSION
+    )
     networks = Networks(
         lan=DualStack(v4=v4.lan, v6=v6.lan),
         wireguard=DualStack(v4=v4.wg, v6=v6.wg),

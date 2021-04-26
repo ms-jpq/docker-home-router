@@ -27,6 +27,7 @@ WAN_IF = environ["WAN_IF"]
 LAN_IF = environ["LAN_IF"]
 GUEST_IF = environ["GUEST_IF"]
 WG_IF = environ["WG_IF"]
+IF_EXCLUSIONS = environ["IF_EXCLUSIONS"]
 
 IP6_ULA_GLOBAL = environ["IP6_ULA_GLOBAL"]
 IP6_ULA_SUBNET_EXCLUSION = environ["IP6_ULA_SUBNET_EXCLUSION"]
