@@ -1,6 +1,6 @@
 from ipaddress import ip_interface
 from subprocess import check_call
-from typing import AbstractSet
+from typing import AbstractSet, MutableSet
 
 from std2.types import IPInterface, IPNetwork
 
@@ -10,7 +10,7 @@ from ..subnets import load_networks
 
 
 def _if_up(addrs: Addrs, interface: str, networks: AbstractSet[IPNetwork]) -> None:
-    acc: AbstractSet[IPInterface] = {
+    acc: MutableSet[IPInterface] = {
         ip_interface(f"{next(network.hosts())}/{network.prefixlen}")
         for network in networks
     }
