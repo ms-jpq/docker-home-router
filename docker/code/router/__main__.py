@@ -13,6 +13,7 @@ from .consts import (
     LAN_IF,
     NTP_SERVERS,
     RUN,
+    STATS_PORT,
     TEMPLATES,
     USER,
     WAN_IF,
@@ -65,6 +66,7 @@ def _env(networks: Networks) -> Mapping[str, Any]:
             "WG_NETWORK_V6": networks.wireguard.v6,
             "DNS_SERVERS": split(DNS_SERVERS),
             "NTP_SERVERS": split(NTP_SERVERS),
+            "STATS_PORT": STATS_PORT,
         }
         return env
 
