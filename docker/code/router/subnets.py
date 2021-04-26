@@ -3,7 +3,7 @@ from ipaddress import IPv4Network, IPv6Network, ip_interface
 from itertools import chain, islice
 from json import loads
 from random import randint
-from typing import Iterable, Iterator, MutableSet, Optional
+from typing import Iterable, Iterator, Optional
 
 from std2.ipaddress import RFC_1918
 from std2.lex import split
@@ -50,6 +50,16 @@ def _private_subnets(prefix: int) -> Iterator[IPv4Network]:
             yield subnet
 
 
+def _existing(if_exclusions: str) -> Iterator[IPv4Network]:
+    ifs = {*split(if_exclusions)}
+    for addr in addr_show():
+        if addr.ifname in ifs:
+            for info in addr.addr_info:
+                net: IPInterface = ip_interface(f"{info.local}/{info.prefixlen}")
+                if isinstance(net.network, IPv4Network):
+                    yield net.network
+
+
 def _pick_private(
     existing: Iterable[IPv4Network], prefixes: Iterable[int]
 ) -> Iterator[IPv4Network]:
@@ -67,17 +77,7 @@ def _pick_private(
 
 
 def _v4(if_exclusions: str, exclusions: str) -> _V4Stack:
-    ifs = {*split(if_exclusions)}
-    existing: MutableSet[IPv4Network] = set()
-
-    for addr in addr_show():
-        if addr.ifname in ifs:
-            for info in addr.addr_info:
-                net: IPInterface = ip_interface(f"{info.local}/{info.prefixlen}")
-                if isinstance(net.network, IPv4Network):
-                    existing.add(net.network)
-
-    nono = chain(map(IPv4Network, split(exclusions)), existing)
+    nono = chain(map(IPv4Network, split(exclusions)), _existing(if_exclusions))
     lan, wg, tor, guest = _pick_private(nono, prefixes=(24, 24, 16, 24))
     stack = _V4Stack(lan=lan, wg=wg, tor=tor, guest=guest)
     return stack
