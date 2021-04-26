@@ -1,5 +1,4 @@
 from argparse import ArgumentParser, Namespace
-from json import loads
 from subprocess import CalledProcessError, check_call
 from typing import Any, Mapping
 
