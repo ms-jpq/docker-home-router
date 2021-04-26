@@ -10,5 +10,5 @@ ARGS=(
   )
 
 
-mkdir -p "$UNBOUND"
+s6-setuidgid "$USER" mkdir -p "$UNBOUND"
 exec s6-setuidgid "$USER" unbound-anchor "${ARGS[@]}"
