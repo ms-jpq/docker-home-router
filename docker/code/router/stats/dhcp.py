@@ -9,4 +9,4 @@ def feed() -> str:
         path.touch()
 
     addns, dyn, leases = ADDN_HOSTS.read_text(), DYN.read_text(), LEASES.read_text()
-    return addns + linesep * 3 + dyn + linesep * 3 + leases
+    return addns.strip() + linesep * 3 + dyn.strip() + linesep * 3 + leases.strip()
