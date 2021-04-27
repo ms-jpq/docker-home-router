@@ -31,10 +31,6 @@ def feed() -> str:
         timeout=TIMEOUT,
     )
     data = _parse_stats(raw)
-    json = dumps(
-        data,
-        check_circular=False,
-        ensure_ascii=False,
-    )
+    json = dumps(data, check_circular=False, ensure_ascii=False)
     yaml = check_output(("sortd", "yaml"), text=True, input=json)
-    return yaml
+    return yaml.strip()
