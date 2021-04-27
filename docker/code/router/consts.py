@@ -13,7 +13,9 @@ TEMPLATES = SRV / Path("templates")
 RUN = SRV / Path("run")
 
 LEASES = DATA / "dnsmasq" / "leases"
-DYN = RUN / "dnsmasq" / "lan" / "5-dyn.conf"
+_DNSMASQ = RUN / "dnsmasq" / "lan"
+DYN = _DNSMASQ / "5-dyn.conf"
+ADDN_HOSTS = _DNSMASQ / "5-mappings.conf"
 
 UNBOUND_CONF = RUN / "unbound" / "0-include.conf"
 

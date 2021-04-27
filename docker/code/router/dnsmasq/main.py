@@ -5,19 +5,20 @@ from os import linesep
 from pathlib import Path
 from subprocess import check_call
 from time import sleep
-from typing import Iterator, Optional, Tuple
+from typing import Iterator, MutableMapping, MutableSet, Optional, Tuple
 
 from jinja2 import Environment
 from std2.pickle import decode
 from std2.pickle.coders import BUILTIN_DECODERS
 from std2.types import IPAddress
 
-from ..consts import DYN, J2, LEASES, SERVER_NAME, WG_PEERS_JSON
+from ..consts import ADDN_HOSTS, DYN, J2, LEASES, SERVER_NAME, WG_PEERS_JSON
 from ..render import j2_build, j2_render
 from ..subnets import load_networks
 from ..types import WGPeers
 
-_TPL = Path("dns", "5-dyn.conf")
+_DYN = Path("dns", "5-dyn.conf")
+_ADDN_HOSTS = Path("dns", "5-mappings.conf")
 _PID_FILE = Path("/", "var", "run", "dnsmsaq-lan.pid")
 
 
@@ -65,14 +66,21 @@ def _p_peers() -> Iterator[Tuple[str, IPAddress]]:
 
 def _forever(j2: Environment) -> None:
     dyn = DYN.read_text()
+    addn = ADDN_HOSTS.read_text()
     pid = _pid()
 
-    mappings = chain(_p_leases(), _p_peers())
-    env = {"MAPPINGS": mappings}
-    text = j2_render(j2, path=_TPL, env=env)
+    mappings: MutableMapping[str, MutableSet[IPAddress]] = {}
+    for name, addr in chain(_p_leases(), _p_peers()):
+        acc = mappings.setdefault(name, set())
+        acc.add(addr)
 
-    if pid and dyn != text:
-        DYN.write_text(text)
+    env = {"MAPPINGS": mappings}
+    t1 = j2_render(j2, path=_DYN, env=env)
+    t2 = j2_render(j2, path=_ADDN_HOSTS, env=env)
+
+    if pid and (dyn != t1 or addn != t2):
+        DYN.write_text(t1)
+        ADDN_HOSTS.write_text(t2)
         check_call(("kill", str(pid)))
 
 
