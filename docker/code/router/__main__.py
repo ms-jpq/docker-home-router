@@ -1,4 +1,5 @@
 from argparse import ArgumentParser, Namespace
+from shutil import copystat
 from subprocess import CalledProcessError, check_call
 from typing import Any, Mapping
 
@@ -88,6 +89,7 @@ def _template() -> None:
         else:
             text = j2_render(j2, path=tpl, env=env)
             dest.write_text(text)
+            copystat(path, dest)
 
 
 def _parse_args() -> Namespace:
