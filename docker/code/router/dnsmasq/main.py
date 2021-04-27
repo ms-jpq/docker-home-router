@@ -1,6 +1,7 @@
 from ipaddress import ip_address
 from itertools import chain
 from json import loads
+from locale import strxfrm
 from os import linesep
 from pathlib import Path
 from subprocess import check_call
@@ -15,8 +16,8 @@ from std2.types import IPAddress
 from ..consts import ADDN_HOSTS, DYN, GUEST_IF, J2, LEASES, SERVER_NAME, WG_PEERS_JSON
 from ..render import j2_build, j2_render
 from ..subnets import load_networks
-
 from ..types import WGPeers
+
 _DYN = Path("dns", "5-dyn.conf")
 _ADDN_HOSTS = Path("dns", "addrs.conf")
 _PID_FILE = Path("/", "var", "run", "dnsmsaq-lan.pid")
@@ -76,7 +77,7 @@ def _forever(j2: Environment) -> None:
         acc = mappings.setdefault(name, set())
         acc.add(addr)
 
-    env = {"MAPPINGS": mappings}
+    env = {"MAPPINGS": {key: mappings[key] for key in sorted(mappings, key=strxfrm)}}
     t1 = j2_render(j2, path=_DYN, env=env)
     t2 = j2_render(j2, path=_ADDN_HOSTS, env=env)
 
