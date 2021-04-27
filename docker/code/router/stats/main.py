@@ -62,6 +62,9 @@ def main() -> None:
     j2 = j2_build(J2)
 
     class Handler(BaseHTTPRequestHandler):
+        def log_message(self, format: str, *args: Any) -> None:
+            pass
+
         def do_GET(self) -> None:
             path = _route(self)
             if path is _Path.index:
