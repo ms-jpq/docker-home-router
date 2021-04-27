@@ -1,13 +1,12 @@
 from os import linesep
 
-from ..consts import DYN, LEASES
+from ..consts import ADDN_HOSTS, DYN, LEASES
 
 
 def feed() -> str:
-    DYN.parent.mkdir(parents=True, exist_ok=True)
-    LEASES.parent.mkdir(parents=True, exist_ok=True)
-    DYN.touch()
-    LEASES.touch()
+    for path in (ADDN_HOSTS, DYN, LEASES):
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.touch()
 
-    dyn, leases = DYN.read_text(), LEASES.read_text()
-    return dyn + linesep * 3 + leases
+    addns, dyn, leases = ADDN_HOSTS.read_text(), DYN.read_text(), LEASES.read_text()
+    return addns + linesep * 3 + dyn + linesep * 3 + leases
