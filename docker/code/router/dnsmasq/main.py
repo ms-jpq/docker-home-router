@@ -18,7 +18,7 @@ from ..subnets import load_networks
 from ..types import WGPeers
 
 _DYN = Path("dns", "5-dyn.conf")
-_ADDN_HOSTS = Path("dns", "5-mappings.conf")
+_ADDN_HOSTS = Path("dns", "addrs")
 _PID_FILE = Path("/", "var", "run", "dnsmsaq-lan.pid")
 
 
