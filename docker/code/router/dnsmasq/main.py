@@ -49,7 +49,8 @@ def _p_leases() -> Iterator[Tuple[str, IPAddress]]:
                 pass
             else:
                 name, _, _ = rhs.rpartition(" ")
-                yield name, ip_address(addr)
+                if name != "*":
+                    yield name, ip_address(addr)
 
 
 def _p_peers() -> Iterator[Tuple[str, IPAddress]]:
