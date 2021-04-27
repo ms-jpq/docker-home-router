@@ -168,8 +168,8 @@ def main() -> None:
     networks = load_networks()
     _gen_client_keys()
     _gen_qr(j2, networks=networks)
-    _add_link()
 
+    _add_link()
     _add_subnet(networks.wireguard.v4)
     _add_subnet(networks.wireguard.v6)
 
