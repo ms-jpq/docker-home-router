@@ -15,7 +15,7 @@ RUN = SRV / Path("run")
 LEASES = DATA / "dnsmasq" / "leases"
 _DNSMASQ = RUN / "dnsmasq"
 DYN = _DNSMASQ / "lan" / "5-dyn.conf"
-ADDN_HOSTS = _DNSMASQ / "hosts" / "addrs"
+ADDN_HOSTS = _DNSMASQ / "hosts" / "addrs.conf"
 
 UNBOUND_CONF = RUN / "unbound" / "0-include.conf"
 
