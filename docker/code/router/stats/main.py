@@ -14,6 +14,7 @@ from ..render import j2_build, j2_render
 from ..wireguard.main import QR_DIR
 from .dhcp import feed as dhcp_feed
 from .dns import feed as dns_feed
+from .nft import feed as nft_feed
 from .tc import feed as tc_feed
 
 Feed = Callable[[], str]
@@ -27,8 +28,9 @@ class _Path(Enum):
     index = PurePosixPath("/")
     dhcp = PurePosixPath("/", "dhcp")
     dns = PurePosixPath("/", "dns")
-    wg = PurePosixPath("/", "wg")
+    nft = PurePosixPath("/", "nft")
     tc = PurePosixPath("/", "tc")
+    wg = PurePosixPath("/", "wg")
 
 
 def _route(handler: BaseHTTPRequestHandler) -> _Path:
@@ -72,6 +74,10 @@ def main() -> None:
                 _get(self, page=page)
             elif path is _Path.dns:
                 env = {"TITLE": path.name, "BODY": dns_feed()}
+                page = j2_render(j2, path=_SHOW_TPL, env=env).encode()
+                _get(self, page=page)
+            elif path is _Path.nft:
+                env = {"TITLE": path.name, "BODY": nft_feed()}
                 page = j2_render(j2, path=_SHOW_TPL, env=env).encode()
                 _get(self, page=page)
             elif path is _Path.tc:
