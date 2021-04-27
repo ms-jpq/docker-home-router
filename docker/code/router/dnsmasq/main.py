@@ -15,8 +15,8 @@ from std2.types import IPAddress
 from ..consts import ADDN_HOSTS, DYN, GUEST_IF, J2, LEASES, SERVER_NAME, WG_PEERS_JSON
 from ..render import j2_build, j2_render
 from ..subnets import load_networks
-from ..types import WGPeers
 
+from ..types import WGPeers
 _DYN = Path("dns", "5-dyn.conf")
 _ADDN_HOSTS = Path("dns", "addrs.conf")
 _PID_FILE = Path("/", "var", "run", "dnsmsaq-lan.pid")
