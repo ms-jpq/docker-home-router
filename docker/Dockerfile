@@ -60,12 +60,15 @@ EXPOSE 53/tcp 53/udp \
 # WAN_IF, LAN_IF           -> Interface names: assigned different IP address space
 # GUEST_IF                 -> Optional: see above
 # WG_IF                    -> Name for wireguard interface
+# IF_EXCLUSIONS            -> ',' delimited : Interface IPv4 addrs with these GLOB patterns will be excluded
 # IP6_ULA_GLOBAL           -> Globally unique 40 bit prefix (in HEX)
 # IP6_ULA_SUBNET_EXCLUSION -> ',' delimited : Organizationally unique 16 bit prefix (in HEX)
 # IP4_EXCLUSION            -> ',' delimited : Networks to exclude from assignment in 'x.x.x.x/mask' form
 # DNS_SERVERS              -> Upstream DNS servers: default is unbound recursive resolver
 # NTP_SERVERS              -> Upstream NTP servers
 # WG_PEERS                 -> ',' delimited : List of peers to create for wireguard
+# STATS_PORT               -> Port for statistics
+# SERVER_NAME              -> Name of router
 ENV WAN_IF= \
     LAN_IF= \
     WG_IF=wg0 \
