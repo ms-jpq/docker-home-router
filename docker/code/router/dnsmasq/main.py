@@ -44,7 +44,7 @@ def _p_leases() -> Iterator[Tuple[str, IPAddress]]:
     for line in lines:
         if line:
             try:
-                _, _, addr, rhs = line.split(" ", maxsplit=4)
+                _, _, addr, rhs = line.split(" ", maxsplit=3)
             except ValueError:
                 pass
             else:
