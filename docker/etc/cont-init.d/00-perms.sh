@@ -8,6 +8,7 @@ ARGS=(
   /srv
   /data
   /var/run/unbound
+  /var/run/dnsmasq/leases
   /var/log/chrony
   )
 
