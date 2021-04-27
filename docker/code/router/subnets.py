@@ -3,7 +3,6 @@ from fnmatch import fnmatch
 from ipaddress import IPv4Network, IPv6Network, ip_interface
 from itertools import chain, islice
 from json import loads
-from random import randint
 from typing import Iterable, Iterator, Optional
 
 from std2.ipaddress import RFC_1918
@@ -18,6 +17,7 @@ from .consts import (
     IP6_ULA_GLOBAL,
     IP6_ULA_SUBNET_EXCLUSION,
     NETWORKS_JSON,
+    WAN_IF,
 )
 from .ip import addr_show
 from .types import DualStack, Networks
@@ -84,12 +84,20 @@ def _v4(if_exclusions: str, exclusions: str) -> _V4Stack:
     return stack
 
 
-def _v6(prefix: Optional[str], subnets: Optional[str]) -> _V6Stack:
-    if not prefix:
-        bits = format(randint(0, 2 ** 40 - 1), "08x")
-        prefix = f"{bits[:2]}:{bits[2:6]}:{bits[6:]}"
+def _gen_prefix() -> str:
+    for addr in addr_show():
+        if addr.ifname == WAN_IF:
+            if addr.address:
+                integer = hash(addr.address) % (2 ** 40 - 1)
+                bits = format(integer, "08x")
+                prefix = f"fd{bits[:2]}:{bits[2:6]}:{bits[6:]}"
+                return prefix
+    else:
+        raise ValueError()
 
-    org_prefix = f"fd{prefix}"
+
+def _v6(prefix: Optional[str], subnets: Optional[str]) -> _V6Stack:
+    org_prefix = prefix or _gen_prefix()
     org = IPv6Network(f"{org_prefix}::/48")
     seen = {
         IPv6Network(f"{org_prefix}:{subnet}::/64") for subnet in split(subnets or "")

@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from json import loads
 from subprocess import check_output
-from typing import Sequence
+from typing import Optional, Sequence
 
 from std2.pickle import decode
 from std2.pickle.coders import BUILTIN_DECODERS
@@ -24,6 +24,7 @@ class _AddrInfo:
 class Addr:
     ifname: str
     addr_info: Sequence[_AddrInfo]
+    address: Optional[str] = None
 
 
 Addrs = Sequence[Addr]
