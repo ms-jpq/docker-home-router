@@ -10,7 +10,7 @@ from std2.pickle import encode
 from std2.pickle.coders import BUILTIN_ENCODERS
 from std2.types import IPNetwork
 
-from ..consts import DATA, J2, SERVER_NAME, USER, WG_IF, WG_PEERS, WG_PEERS_JSON
+from ..consts import J2, SERVER_NAME, SRV, USER, WG_IF, WG_PEERS, WG_PEERS_JSON
 from ..ip import addr_show, link_show
 from ..render import j2_build, j2_render
 from ..subnets import load_networks
@@ -20,7 +20,7 @@ _SRV_TPL = Path("wg", "server.conf")
 _CLIENT_TPL = Path("wg", "client.conf")
 
 
-_WG_DATA = DATA / "wireguard"
+_WG_DATA = SRV / "wireguard"
 _SRV_KEY = _WG_DATA / "keys" / "server" / "private.key"
 _CLIENT_KEYS = _WG_DATA / "keys" / "clients"
 QR_DIR = _WG_DATA / "pub"

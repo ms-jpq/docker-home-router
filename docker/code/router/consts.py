@@ -4,20 +4,20 @@ from socket import getfqdn
 
 _TOP_LV = Path(__file__).resolve().parent
 
-_SRV = Path("/", "srv")
+SRV = Path("/", "srv")
 DATA = Path("/", "data")
 
 J2 = _TOP_LV / "j2"
 
-TEMPLATES = _SRV / Path("templates")
-RUN = _SRV / Path("run")
+TEMPLATES = SRV / Path("templates")
+RUN = SRV / Path("run")
 
 LEASES = RUN / "dnsmasq" / "leases"
 DYN = RUN / "dnsmasq" / "lan" / "5-dyn.conf"
 
 UNBOUND_CONF = RUN / "unbound" / "0-include.conf"
 
-NETWORKS_JSON = _SRV / "run" / "networks" / "networks.json"
+NETWORKS_JSON = SRV / "run" / "networks" / "networks.json"
 WG_PEERS_JSON = RUN / "wireguard" / "wg-peers.json"
 
 STATS_PORT = int(environ["STATS_PORT"])
