@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from fnmatch import fnmatch
 from ipaddress import IPv4Network, IPv6Network, ip_interface
 from itertools import chain, islice
 from json import loads
@@ -51,9 +52,9 @@ def _private_subnets(prefix: int) -> Iterator[IPv4Network]:
 
 
 def _existing(if_exclusions: str) -> Iterator[IPv4Network]:
-    ifs = {*split(if_exclusions)}
+    patterns = tuple(split(if_exclusions))
     for addr in addr_show():
-        if addr.ifname in ifs:
+        if any(fnmatch(addr.ifname, pat=pattern) for pattern in patterns):
             for info in addr.addr_info:
                 net: IPInterface = ip_interface(f"{info.local}/{info.prefixlen}")
                 if isinstance(net.network, IPv4Network):
