@@ -12,7 +12,7 @@ J2 = _TOP_LV / "j2"
 TEMPLATES = _SRV / Path("templates")
 RUN = _SRV / Path("run")
 
-LEASES = Path("/", "var", "run", "dnsmasq", "leases")
+LEASES = RUN / "dnsmasq" / "leases"
 DYN = RUN / "dnsmasq" / "lan" / "5-dyn.conf"
 
 UNBOUND_CONF = RUN / "unbound" / "0-include.conf"
