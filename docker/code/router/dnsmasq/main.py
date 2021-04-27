@@ -1,4 +1,4 @@
-from ipaddress import IPv4Address
+from ipaddress import ip_address
 from itertools import chain
 from json import loads
 from os import linesep
@@ -44,12 +44,12 @@ def _p_leases() -> Iterator[Tuple[str, IPAddress]]:
     for line in lines:
         if line:
             try:
-                _, _, ipv4, rhs = line.split(" ", maxsplit=4)
+                _, _, addr, rhs = line.split(" ", maxsplit=4)
             except ValueError:
                 pass
             else:
                 name, _, _ = rhs.rpartition(" ")
-                yield name, IPv4Address(ipv4)
+                yield name, ip_address(addr)
 
 
 def _p_peers() -> Iterator[Tuple[str, IPAddress]]:
