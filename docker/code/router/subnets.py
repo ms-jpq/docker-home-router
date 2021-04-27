@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from fnmatch import fnmatch
+from hashlib import sha256
 from ipaddress import IPv4Network, IPv6Network, ip_interface
 from itertools import chain, islice
 from json import loads
@@ -88,7 +89,8 @@ def _gen_prefix() -> str:
     for addr in addr_show():
         if addr.ifname == WAN_IF:
             if addr.address:
-                integer = hash(addr.address) % (2 ** 40 - 1)
+                hashed = int(sha256(addr.address.encode()).hexdigest(), 16)
+                integer = hashed % (2 ** 40 - 1)
                 bits = format(integer, "08x")
                 prefix = f"fd{bits[:2]}:{bits[2:6]}:{bits[6:]}"
                 return prefix
