@@ -14,4 +14,4 @@ EOF
 )"
 
 
-exec nftables --file - <<< "$SCRIPT"
+exec nft --file - <<< "$SCRIPT"
