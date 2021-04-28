@@ -1,3 +1,4 @@
+from itertools import chain
 from typing import AbstractSet, Any, Mapping, MutableMapping, MutableSet, Union
 
 from std2.pickle import decode
@@ -11,7 +12,7 @@ def forwarded_ports() -> Mapping[str, AbstractSet[Mapping[str, Union[str, int]]]
     PORT_FWD.parent.mkdir(parents=True, exist_ok=True)
 
     acc: MutableMapping[str, Any] = {}
-    for path in PORT_FWD.glob("*.[yml|yaml]"):
+    for path in chain(PORT_FWD.glob("*.yaml"), PORT_FWD.glob("*.yml")):
         raw = path.read_text()
         yaml = safe_load(raw)
         acc.update(yaml)
