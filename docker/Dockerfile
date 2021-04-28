@@ -13,6 +13,7 @@ RUN apt-get update && \
     iproute2 \
     python3-pip \
     dnsmasq \
+    avahi-daemon \
     chrony \
     tor \
     wireguard \
@@ -37,22 +38,19 @@ RUN useradd --user-group --shell=/usr/sbin/nologin "$USER" && \
     pip3 install --upgrade /code
 
 
+# TODO -- Add everything
 # 53    TCP/UDP -> DNS
 # 67    UDP     -> DHCP
 # 123   UDP     -> NTP
-# 500   UDP     -> L2TP
 # 1080  TCP     -> TOR PROXY
-# 4500  UDP     -> L2TP
-# 5335  TCP/UDP -> DNS2
+# 5353  UDP     -> Bonjour
 # 8080  TCP     -> HTTP ALT
 # 51820 UDP     -> WIREGUARD
 EXPOSE 53/tcp 53/udp \
        67/udp \
        123/udp \
-       500/udp \
        1080/tcp \
-       4500/udp \
-       5335/tcp 5335/udp \
+       5353/udp \
        8080/tcp \
        51820/udp
 

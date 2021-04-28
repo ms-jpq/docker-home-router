@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+set -eu
+set -o pipefail
+
+
+ARGS=(
+  --no-chroot
+  --file /srv/run/avahi/0-main.conf
+  )
+
+
+exec avahi-daemon "${ARGS[@]}"
