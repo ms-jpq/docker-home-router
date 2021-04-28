@@ -16,8 +16,9 @@ def forwarded_ports() -> Mapping[str, AbstractSet[Mapping[str, Union[str, int]]]
         yaml = safe_load(raw)
         acc.update(yaml)
 
-    forwards: Forwards = decode(Forwards, acc)
+    forwards: Forwards = decode(Forwards, acc, strict=False)
     fwds: MutableMapping[str, MutableSet[Mapping[str, Union[str, int]]]] = {}
+
     for hostname, fws in forwards.items():
         specs = fwds.setdefault(hostname, set())
         for fw in fws:
