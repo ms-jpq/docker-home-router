@@ -11,6 +11,7 @@ from .consts import (
     DNS_SERVERS,
     GUEST_IF,
     LAN_IF,
+    LOOPBACK,
     NTP_SERVERS,
     RUN,
     STATS_PORT,
@@ -68,6 +69,7 @@ def _env(networks: Networks) -> Mapping[str, Any]:
             "DNS_SERVERS": split(DNS_SERVERS),
             "NTP_SERVERS": split(NTP_SERVERS),
             "STATS_PORT": STATS_PORT,
+            "LOOPBACK": LOOPBACK,
             "FORWARDED_PORTS": forwarded_ports(),
         }
         return env

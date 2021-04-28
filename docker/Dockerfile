@@ -78,6 +78,7 @@ ENV WAN_IF= \
     IP6_ULA_SUBNET_EXCLUSION= \
     IP4_EXCLUSION=10.0.0.0/20,192.168.0.0/20,172.16.0.0/13 \
     DNS_SERVERS=127.0.0.53#53 \
+    LOOPBACK=127.69.69.69 \
     NTP_SERVERS=0.ca.pool.ntp.org,1.ca.pool.ntp.org,2.ca.pool.ntp.org,3.ca.pool.ntp.org \
     WG_PEERS="me,my wife,my wife's boyfriend" \
     SERVER_NAME= \

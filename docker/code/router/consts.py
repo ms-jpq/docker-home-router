@@ -40,4 +40,6 @@ NTP_SERVERS = environ["NTP_SERVERS"]
 WG_PEERS = environ["WG_PEERS"]
 SERVER_NAME = environ["SERVER_NAME"] or getfqdn()
 
+LOOPBACK = environ["LOOPBACK"]
+
 TIMEOUT = 1
