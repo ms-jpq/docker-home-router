@@ -5,6 +5,7 @@ from locale import strxfrm
 from os import linesep
 from pathlib import Path
 from subprocess import check_call
+from tempfile import TemporaryDirectory
 from time import sleep
 from typing import Iterator, MutableMapping, MutableSet, Optional, Tuple
 
@@ -81,9 +82,14 @@ def _forever(j2: Environment) -> None:
     t1 = j2_render(j2, path=_DYN, env=env)
     t2 = j2_render(j2, path=_ADDN_HOSTS, env=env)
 
-    if pid and (dyn != t1 or addn != t2):
+    if addn != t2:
+        with TemporaryDirectory() as temp:
+            tmp = Path(temp) / "tmp"
+            tmp.write_text(t2)
+            tmp.rename(ADDN_HOSTS)
+
+    if pid and dyn != t1:
         DYN.write_text(t1)
-        ADDN_HOSTS.write_text(t2)
         check_call(("kill", str(pid)))
 
 
