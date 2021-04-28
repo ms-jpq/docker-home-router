@@ -6,6 +6,7 @@ set -o pipefail
 
 ARGS=(
   /srv
+  /config
   /data
   /var/run/unbound
   /var/log/chrony

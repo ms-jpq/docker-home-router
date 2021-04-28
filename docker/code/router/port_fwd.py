@@ -8,6 +8,8 @@ from .types import Forwards
 
 
 def port_fwd() -> Mapping[str, AbstractSet[Mapping[str, Union[str, int]]]]:
+    PORT_FWD.parent.mkdir(parents=True, exist_ok=True)
+
     acc: MutableMapping[str, Any] = {}
     for path in PORT_FWD.glob("*.[yml|yaml]"):
         raw = path.read_text()
