@@ -31,8 +31,8 @@ class _Path(Enum):
     dhcp = PurePosixPath("/", "dhcp")
     dns = PurePosixPath("/", "dns")
     fwd = PurePosixPath("/", "fwd")
+    nets = PurePosixPath("/", "nets")
     nft = PurePosixPath("/", "nft")
-    subnets = PurePosixPath("/", "subnets")
     tc = PurePosixPath("/", "tc")
     wg = PurePosixPath("/", "wg")
 
@@ -87,13 +87,13 @@ def main() -> None:
             page = j2_render(j2, path=_SHOW_TPL, env=env).encode()
             _get(handler, page=page)
 
-        elif path is _Path.nft:
-            env = {"TITLE": path.name, "BODY": nft_feed()}
+        elif path is _Path.nets:
+            env = {"TITLE": path.name, "BODY": subnets_feed()}
             page = j2_render(j2, path=_SHOW_TPL, env=env).encode()
             _get(handler, page=page)
 
-        elif path is _Path.subnets:
-            env = {"TITLE": path.name, "BODY": subnets_feed()}
+        elif path is _Path.nft:
+            env = {"TITLE": path.name, "BODY": nft_feed()}
             page = j2_render(j2, path=_SHOW_TPL, env=env).encode()
             _get(handler, page=page)
 
