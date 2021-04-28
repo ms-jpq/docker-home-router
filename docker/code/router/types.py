@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from ipaddress import IPv4Address, IPv4Network, IPv6Address, IPv6Network
-from typing import Mapping
+from typing import AbstractSet, Literal, Mapping
 
 
 @dataclass(frozen=True)
@@ -24,3 +24,14 @@ class WGPeer:
 
 
 WGPeers = Mapping[str, WGPeer]
+
+
+@dataclass(frozen=True)
+class PortFwd:
+    proto: Literal["tcp", "udp"]
+    from_port: int
+    to_port: int
+    proxy_proto: bool = False
+
+
+Forwards = Mapping[str, AbstractSet[PortFwd]]

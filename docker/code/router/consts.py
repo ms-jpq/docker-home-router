@@ -3,14 +3,15 @@ from pathlib import Path
 from socket import getfqdn
 
 _TOP_LV = Path(__file__).resolve().parent
+J2 = _TOP_LV / "j2"
 
 SRV = Path("/", "srv")
 DATA = Path("/", "data")
-
-J2 = _TOP_LV / "j2"
+_CONFIG = Path("/", "config")
 
 TEMPLATES = SRV / Path("templates")
 RUN = SRV / Path("run")
+PORT_FWD = _CONFIG / "port_fwd"
 
 LEASES = DATA / "dnsmasq" / "leases"
 _DNSMASQ = RUN / "dnsmasq"

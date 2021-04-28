@@ -22,6 +22,7 @@ from .consts import (
 from .dnsmasq.main import main as dnsmsq_main
 from .ifup.main import main as ifup_main
 from .ip import ipv6_enabled
+from .port_fwd import port_fwd
 from .render import j2_build, j2_render
 from .stats.main import main as stats_main
 from .subnets import calculate_networks, load_networks
@@ -67,6 +68,7 @@ def _env(networks: Networks) -> Mapping[str, Any]:
             "DNS_SERVERS": split(DNS_SERVERS),
             "NTP_SERVERS": split(NTP_SERVERS),
             "STATS_PORT": STATS_PORT,
+            "PORT_FORWARD": port_fwd(),
         }
         return env
 
