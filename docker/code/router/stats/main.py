@@ -14,6 +14,7 @@ from ..render import j2_build, j2_render
 from ..wireguard.main import QR_DIR
 from .dhcp import feed as dhcp_feed
 from .dns import feed as dns_feed
+from .fwds import feed as fwd_feed
 from .nft import feed as nft_feed
 from .subnets import feed as subnets_feed
 from .tc import feed as tc_feed
@@ -29,6 +30,7 @@ class _Path(Enum):
     index = PurePosixPath("/")
     dhcp = PurePosixPath("/", "dhcp")
     dns = PurePosixPath("/", "dns")
+    fwd = PurePosixPath("/", "fwd")
     nft = PurePosixPath("/", "nft")
     subnets = PurePosixPath("/", "subnets")
     tc = PurePosixPath("/", "tc")
@@ -81,6 +83,11 @@ def main() -> None:
 
             elif path is _Path.dns:
                 env = {"TITLE": path.name, "BODY": dns_feed()}
+                page = j2_render(j2, path=_SHOW_TPL, env=env).encode()
+                _get(self, page=page)
+
+            elif path is _Path.fwd:
+                env = {"TITLE": path.name, "BODY": fwd_feed()}
                 page = j2_render(j2, path=_SHOW_TPL, env=env).encode()
                 _get(self, page=page)
 
