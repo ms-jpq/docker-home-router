@@ -63,54 +63,57 @@ def main() -> None:
     static_j2 = build_j2()
     j2 = j2_build(J2)
 
+    def http_get(handler: BaseHTTPRequestHandler):
+        path = _route(handler)
+        if path is _Path.index:
+            env: Mapping[str, Any] = {
+                "SERVICES": ((path.name, path.value) for path in _Path)
+            }
+            page = j2_render(j2, path=_INDEX_TPL, env=env).encode()
+            _get(handler, page=page)
+
+        elif path is _Path.dhcp:
+            env = {"TITLE": path.name, "BODY": dhcp_feed()}
+            page = j2_render(j2, path=_SHOW_TPL, env=env).encode()
+            _get(handler, page=page)
+
+        elif path is _Path.dns:
+            env = {"TITLE": path.name, "BODY": dns_feed()}
+            page = j2_render(j2, path=_SHOW_TPL, env=env).encode()
+            _get(handler, page=page)
+
+        elif path is _Path.fwd:
+            env = {"TITLE": path.name, "BODY": fwd_feed()}
+            page = j2_render(j2, path=_SHOW_TPL, env=env).encode()
+            _get(handler, page=page)
+
+        elif path is _Path.nft:
+            env = {"TITLE": path.name, "BODY": nft_feed()}
+            page = j2_render(j2, path=_SHOW_TPL, env=env).encode()
+            _get(handler, page=page)
+
+        elif path is _Path.subnets:
+            env = {"TITLE": path.name, "BODY": subnets_feed()}
+            page = j2_render(j2, path=_SHOW_TPL, env=env).encode()
+            _get(handler, page=page)
+
+        elif path is _Path.tc:
+            env = {"TITLE": path.name, "BODY": tc_feed()}
+            page = j2_render(j2, path=_SHOW_TPL, env=env).encode()
+            _get(handler, page=page)
+
+        elif path is _Path.wg:
+            get(static_j2, handler=handler, base=_Path.wg.value, root=QR_DIR)
+
+        else:
+            never(path)
+
     class Handler(BaseHTTPRequestHandler):
-        def log_message(self, format: str, *args: Any) -> None:
-            pass
-
         def do_GET(self) -> None:
-            path = _route(self)
-            if path is _Path.index:
-                env: Mapping[str, Any] = {
-                    "SERVICES": ((path.name, path.value) for path in _Path)
-                }
-                page = j2_render(j2, path=_INDEX_TPL, env=env).encode()
-                _get(self, page=page)
-
-            elif path is _Path.dhcp:
-                env = {"TITLE": path.name, "BODY": dhcp_feed()}
-                page = j2_render(j2, path=_SHOW_TPL, env=env).encode()
-                _get(self, page=page)
-
-            elif path is _Path.dns:
-                env = {"TITLE": path.name, "BODY": dns_feed()}
-                page = j2_render(j2, path=_SHOW_TPL, env=env).encode()
-                _get(self, page=page)
-
-            elif path is _Path.fwd:
-                env = {"TITLE": path.name, "BODY": fwd_feed()}
-                page = j2_render(j2, path=_SHOW_TPL, env=env).encode()
-                _get(self, page=page)
-
-            elif path is _Path.nft:
-                env = {"TITLE": path.name, "BODY": nft_feed()}
-                page = j2_render(j2, path=_SHOW_TPL, env=env).encode()
-                _get(self, page=page)
-
-            elif path is _Path.subnets:
-                env = {"TITLE": path.name, "BODY": subnets_feed()}
-                page = j2_render(j2, path=_SHOW_TPL, env=env).encode()
-                _get(self, page=page)
-
-            elif path is _Path.tc:
-                env = {"TITLE": path.name, "BODY": tc_feed()}
-                page = j2_render(j2, path=_SHOW_TPL, env=env).encode()
-                _get(self, page=page)
-
-            elif path is _Path.wg:
-                get(static_j2, handler=self, base=_Path.wg.value, root=QR_DIR)
-
-            else:
-                never(path)
+            try:
+                http_get(self)
+            except BrokenPipeError:
+                pass
 
     srv = ThreadingHTTPServer(("", STATS_PORT), Handler)
     srv.serve_forever()
