@@ -84,3 +84,6 @@ ENV WAN_IF= \
     SERVER_NAME= \
     STATS_PORT=8888
 
+
+VOLUME /config \
+       /data
