@@ -13,7 +13,6 @@ RUN apt-get update && \
     iproute2 \
     python3-pip \
     dnsmasq \
-    unbound \
     chrony \
     tor \
     wireguard \
@@ -65,7 +64,7 @@ EXPOSE 53/tcp 53/udp \
 # IP6_ULA_GLOBAL           -> Globally unique 40 bit prefix (in HEX)
 # IP6_ULA_SUBNET_EXCLUSION -> ',' delimited : Organizationally unique 16 bit prefix (in HEX)
 # IP4_EXCLUSION            -> ',' delimited : Networks to exclude from assignment in 'x.x.x.x/mask' form
-# DNS_SERVERS              -> Upstream DNS servers: default is unbound recursive resolver
+# DNS_SERVERS              -> Upstream DNS servers: default is systemd-resolve
 # NTP_SERVERS              -> Upstream NTP servers
 # WG_PEERS                 -> ',' delimited : List of peers to create for wireguard
 # STATS_PORT               -> Port for statistics
@@ -78,7 +77,7 @@ ENV WAN_IF= \
     IP6_ULA_GLOBAL= \
     IP6_ULA_SUBNET_EXCLUSION= \
     IP4_EXCLUSION=10.0.0.0/20,192.168.0.0/20,172.16.0.0/13 \
-    DNS_SERVERS=127.0.0.1#5335,::1#5335 \
+    DNS_SERVERS=127.0.0.53#53 \
     NTP_SERVERS=0.ca.pool.ntp.org,1.ca.pool.ntp.org,2.ca.pool.ntp.org,3.ca.pool.ntp.org \
     WG_PEERS="me,my wife,my wife's boyfriend" \
     SERVER_NAME= \

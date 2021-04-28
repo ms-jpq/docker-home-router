@@ -18,8 +18,6 @@ _DNSMASQ = RUN / "dnsmasq"
 DYN = _DNSMASQ / "lan" / "5-dyn.conf"
 ADDN_HOSTS = _DNSMASQ / "hosts" / "addrs.conf"
 
-UNBOUND_CONF = RUN / "unbound" / "0-include.conf"
-
 NETWORKS_JSON = SRV / "run" / "networks" / "networks.json"
 WG_PEERS_JSON = RUN / "wireguard" / "wg-peers.json"
 
