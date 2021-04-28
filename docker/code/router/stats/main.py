@@ -63,7 +63,7 @@ def main() -> None:
     static_j2 = build_j2()
     j2 = j2_build(J2)
 
-    def http_get(handler: BaseHTTPRequestHandler):
+    def http_get(handler: BaseHTTPRequestHandler) -> None:
         path = _route(handler)
         if path is _Path.index:
             env: Mapping[str, Any] = {
