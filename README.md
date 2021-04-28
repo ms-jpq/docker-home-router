@@ -10,21 +10,35 @@ You can talk to guest devices, not vice versa.
 
 #### Per host / stream Fairness
 
-- Good for torrenting
+Are you mad that your roommate is hogging the internet?
+
+What if we just **distribute bandwidth** on a per-computer basis?
+
+Much better!
 
 #### Lowered ping under load
 
+Latency goes up dramatically when traffic exceeds bandwidth, making everything laggy.
+
+What if we just shape traffic to **avoid congestion**?
+
+**Good for torrenting**
+
 #### Zero Conf :: Forget abot IP / MAC
 
-Port forwarding is wack, you need to copy MAC & IP addresses around, hard to remember.
+Port forwarding is wack, you need to shuffle MAC & IP addresses around, hard for humans.
 
-Why not just use `hostname`s ?
+Especially for many machines.
 
-#### Guest zones with one way traffic filter
+Why not just **use the names of your computers**?
 
-You can talk to guest devices, not vice versa.
+\*See the section on forwarding ports
 
-Good for IOT.
+#### Guest zones with one way traffic
+
+The Internet of Things is convenient! The Internet of Things is insecure!
+
+Why not just **put untrusted devices in a jail**?
 
 ### For VPN Users
 
