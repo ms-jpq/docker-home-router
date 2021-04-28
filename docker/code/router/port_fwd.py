@@ -1,5 +1,5 @@
 from itertools import chain
-from typing import AbstractSet, Any, Mapping, MutableMapping, MutableSet, Union
+from typing import Any, Mapping, MutableMapping, MutableSequence, Sequence, Union
 
 from std2.pickle import decode
 from yaml import safe_load
@@ -8,7 +8,7 @@ from .consts import PORT_FWD
 from .types import Forwards
 
 
-def forwarded_ports() -> Mapping[str, AbstractSet[Mapping[str, Union[str, int]]]]:
+def forwarded_ports() -> Mapping[str, Sequence[Mapping[str, Union[str, int]]]]:
     PORT_FWD.parent.mkdir(parents=True, exist_ok=True)
 
     acc: MutableMapping[str, Any] = {}
@@ -18,10 +18,10 @@ def forwarded_ports() -> Mapping[str, AbstractSet[Mapping[str, Union[str, int]]]
         acc.update(yaml)
 
     forwards: Forwards = decode(Forwards, acc, strict=False)
-    fwds: MutableMapping[str, MutableSet[Mapping[str, Union[str, int]]]] = {}
+    fwds: MutableMapping[str, MutableSequence[Mapping[str, Union[str, int]]]] = {}
 
     for hostname, fws in forwards.items():
-        specs = fwds.setdefault(hostname, set())
+        specs = fwds.setdefault(hostname, [])
         for fw in fws:
             spec = {
                 "PROTO": fw.proto,
@@ -29,5 +29,5 @@ def forwarded_ports() -> Mapping[str, AbstractSet[Mapping[str, Union[str, int]]]
                 "TO_PORT": fw.to_port,
                 "PROXY_PROTO": fw.proxy_proto,
             }
-            specs.add(spec)
+            specs.append(spec)
     return fwds
