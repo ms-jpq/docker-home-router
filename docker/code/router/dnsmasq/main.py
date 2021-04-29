@@ -90,7 +90,7 @@ def _forever(j2: Environment) -> None:
 
     if pid and dyn != t1:
         DYN.write_text(t1)
-        check_call(("kill", "-SIGHUP", str(pid)))
+        check_call(("kill", str(pid)))
 
 
 def main() -> None:
