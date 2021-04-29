@@ -16,4 +16,4 @@ VirtualAddrNetworkIPv4 {{ TOR_NETWORK_V4 }}
 VirtualAddrNetworkIPv6 {{ TOR_NETWORK_V6 }}
 
 
-DataDirectory /data/tor
+DataDirectory /tmp/tor
