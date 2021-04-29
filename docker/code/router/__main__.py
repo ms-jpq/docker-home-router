@@ -11,8 +11,6 @@ from .consts import (
     DNS_SERVERS,
     GUEST_IF,
     LAN_IF,
-    LOOPBACK,
-    LOOPBACK_LOCAL,
     NTP_SERVERS,
     RUN,
     STATS_PORT,
@@ -27,7 +25,7 @@ from .ip import ipv6_enabled
 from .port_fwd import forwarded_ports
 from .render import j2_build, j2_render
 from .stats.main import main as stats_main
-from .subnets import calculate_networks, load_networks
+from .subnets import calculate_loopback, calculate_networks, load_networks
 from .types import Networks
 from .wireguard.main import main as wg_main
 
@@ -52,6 +50,7 @@ def _env(networks: Networks) -> Mapping[str, Any]:
     elif not NTP_SERVERS:
         raise ValueError("NTP_SERVERS - required")
     else:
+        lo1, lo2 = calculate_loopback()
         env = {
             "USER": USER,
             "WAN_IF": WAN_IF,
@@ -70,8 +69,8 @@ def _env(networks: Networks) -> Mapping[str, Any]:
             "DNS_SERVERS": split(DNS_SERVERS),
             "NTP_SERVERS": split(NTP_SERVERS),
             "STATS_PORT": STATS_PORT,
-            "LOOPBACK": LOOPBACK,
-            "LOOPBACK_LOCAL": LOOPBACK_LOCAL,
+            "LOOPBACK": lo1,
+            "LOOPBACK_LOCAL": lo2,
             "FORWARDED_PORTS": forwarded_ports(),
         }
         return env

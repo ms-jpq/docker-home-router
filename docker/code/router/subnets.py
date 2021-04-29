@@ -1,10 +1,10 @@
 from dataclasses import dataclass
 from fnmatch import fnmatch
 from hashlib import sha256
-from ipaddress import IPv4Network, IPv6Network, ip_interface
+from ipaddress import IPv4Address, IPv4Network, IPv6Network, ip_interface
 from itertools import chain, islice
 from json import loads
-from typing import Iterable, Iterator, Optional
+from typing import Iterable, Iterator, Optional, Tuple
 
 from std2.ipaddress import RFC_1918
 from std2.lex import split
@@ -17,11 +17,14 @@ from .consts import (
     IP4_EXCLUSION,
     IP6_ULA_GLOBAL,
     IP6_ULA_SUBNET_EXCLUSION,
+    LOOPBACK_EXCLUSION,
     NETWORKS_JSON,
     WAN_IF,
 )
 from .ip import addr_show
 from .types import DualStack, Networks
+
+_LO = IPv4Network("127.0.0.0/8")
 
 
 @dataclass(frozen=True)
@@ -123,3 +126,9 @@ def calculate_networks() -> Networks:
         guest=DualStack(v4=v4.guest, v6=v6.guest),
     )
     return networks
+
+
+def calculate_loopback() -> Tuple[IPv4Address, IPv4Address]:
+    exclusions = tuple(map(IPv4Network, split(LOOPBACK_EXCLUSION)))
+    it = (ip for ip in _LO.hosts() if all(ip not in network for network in exclusions))
+    return next(it), next(it)
