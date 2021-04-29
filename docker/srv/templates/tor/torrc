@@ -1,9 +1,5 @@
 SocksPort              0
-DNSPort                127.0.0.1:28991
-
-{% if IPV6_ENABLED %}
-DNSPort                [::1]:28991
-{% endif %}
+DNSPort                {{ LOOPBACK_LOCAL }}:9050
 
 TransPort              0.0.0.0:1080
 

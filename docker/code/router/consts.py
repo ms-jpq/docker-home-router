@@ -41,5 +41,6 @@ WG_PEERS = environ["WG_PEERS"]
 SERVER_NAME = environ["SERVER_NAME"] or getfqdn()
 
 LOOPBACK = environ["LOOPBACK"]
+LOOPBACK_LOCAL = environ["LOOPBACK_LOCAL"]
 
 TIMEOUT = 1
