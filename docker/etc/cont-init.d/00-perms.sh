@@ -8,7 +8,6 @@ ARGS=(
   /srv
   /config
   /data
-  /var/log/chrony
   )
 
 
