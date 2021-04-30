@@ -54,6 +54,7 @@ def forwarded_ports(
     }
 
     fwds: MutableSequence[Mapping[str, Any]] = []
+
     for hostname, fws in forwards.guest.items():
         for fw in fws:
             it = cast(
