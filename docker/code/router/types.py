@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from enum import Enum, auto
 from ipaddress import IPv4Address, IPv4Network, IPv6Address, IPv6Network
-from typing import AbstractSet, Literal, Mapping
+from typing import AbstractSet, Mapping
 
 
 @dataclass(frozen=True)
@@ -46,7 +46,10 @@ class PortFwd:
     ip_ver: IPver = IPver.v4
 
 
+FWDs = Mapping[str, AbstractSet[PortFwd]]
+
+
 @dataclass(frozen=True)
 class Forwards:
-    lan: Mapping[str, AbstractSet[PortFwd]]
-    guest: Mapping[str, AbstractSet[PortFwd]]
+    lan: FWDs
+    guest: FWDs

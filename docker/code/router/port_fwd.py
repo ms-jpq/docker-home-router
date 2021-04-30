@@ -1,14 +1,6 @@
 from ipaddress import IPv4Address
 from itertools import chain
-from typing import (
-    Any,
-    Iterator,
-    Mapping,
-    MutableMapping,
-    MutableSequence,
-    Sequence,
-    cast,
-)
+from typing import Any, Iterator, Mapping, MutableMapping, cast
 
 from std2.pickle import decode
 from std2.tree import merge
@@ -17,7 +9,7 @@ from yaml import safe_load
 
 from .consts import PORT_FWD
 from .leases import leases
-from .types import Forwards, IPver, Networks, PortFwd
+from .types import DualStack, Forwards, FWDs, IPver, Networks, PortFwd
 
 
 def _mk_spec(hostname: str, fwd: PortFwd, addr: IPAddress) -> Mapping[str, Any]:
@@ -35,7 +27,7 @@ def _mk_spec(hostname: str, fwd: PortFwd, addr: IPAddress) -> Mapping[str, Any]:
 
 def forwarded_ports(
     networks: Networks,
-) -> Sequence[Mapping[str, Any]]:
+) -> Iterator[Mapping[str, Any]]:
     PORT_FWD.parent.mkdir(parents=True, exist_ok=True)
 
     acc: MutableMapping[str, Any] = {"lan": {}, "guest": {}}
@@ -53,40 +45,21 @@ def forwarded_ports(
         next(networks.lan.v6.hosts()),
     }
 
-    fwds: MutableSequence[Mapping[str, Any]] = []
+    def cont(stack: DualStack, forwards: FWDs) -> Iterator[Mapping[str, Any]]:
+        for hostname, fws in forwards.items():
+            for fw in fws:
+                it = cast(
+                    Iterator[IPAddress],
+                    (stack.v4.hosts() if fw.ip_ver is IPver.v4 else stack.v6.hosts()),
+                )
+                addr = leased.get(
+                    hostname, next(addr for addr in it if addr not in nono)
+                )
 
-    for hostname, fws in forwards.guest.items():
-        for fw in fws:
-            it = cast(
-                Iterator[IPAddress],
-                (
-                    networks.guest.v4.hosts()
-                    if fw.ip_ver is IPver.v4
-                    else networks.guest.v6.hosts()
-                ),
-            )
-            addr = leased.get(hostname, next(addr for addr in it if addr not in nono))
+                leased[hostname] = addr
+                nono.add(addr)
+                spec = _mk_spec(hostname, fwd=fw, addr=addr)
+                yield spec
 
-            leased[hostname] = addr
-            nono.add(addr)
-            spec = _mk_spec(hostname, fwd=fw, addr=addr)
-            fwds.append(spec)
-
-    for hostname, fws in forwards.lan.items():
-        for fw in fws:
-            it = cast(
-                Iterator[IPAddress],
-                (
-                    networks.lan.v4.hosts()
-                    if fw.ip_ver is IPver.v4
-                    else networks.lan.v6.hosts()
-                ),
-            )
-            addr = leased.get(hostname, next(addr for addr in it if addr not in nono))
-
-            leased[hostname] = addr
-            nono.add(addr)
-            spec = _mk_spec(hostname, fwd=fw, addr=addr)
-            fwds.append(spec)
-
-    return fwds
+    yield from cont(networks.guest, forwards=forwards.guest)
+    yield from cont(networks.lan, forwards=forwards.lan)
