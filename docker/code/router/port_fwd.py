@@ -38,7 +38,7 @@ def forwarded_ports(
 ) -> Sequence[Mapping[str, Any]]:
     PORT_FWD.parent.mkdir(parents=True, exist_ok=True)
 
-    acc: MutableMapping[str, Any] = {}
+    acc: MutableMapping[str, Any] = {"lan": {}, "guest": {}}
     for path in chain(PORT_FWD.glob("*.yaml"), PORT_FWD.glob("*.yml")):
         raw = path.read_text()
         yaml = safe_load(raw)
