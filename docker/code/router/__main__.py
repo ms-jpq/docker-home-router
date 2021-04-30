@@ -50,7 +50,6 @@ def _env(networks: Networks) -> Mapping[str, Any]:
     elif not NTP_SERVERS:
         raise ValueError("NTP_SERVERS - required")
     else:
-        lo1, lo2 = calculate_loopback()
         env = {
             "USER": USER,
             "WAN_IF": WAN_IF,
@@ -69,8 +68,7 @@ def _env(networks: Networks) -> Mapping[str, Any]:
             "DNS_SERVERS": split(DNS_SERVERS),
             "NTP_SERVERS": split(NTP_SERVERS),
             "STATS_PORT": STATS_PORT,
-            "LOOPBACK": lo1,
-            "LOOPBACK_LOCAL": lo2,
+            "LOOPBACK_LOCAL": calculate_loopback(),
             "FORWARDED_PORTS": forwarded_ports(),
         }
         return env

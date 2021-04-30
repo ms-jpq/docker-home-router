@@ -4,7 +4,7 @@ from hashlib import sha256
 from ipaddress import IPv4Address, IPv4Network, IPv6Network, ip_interface
 from itertools import chain, islice
 from json import loads
-from typing import Iterable, Iterator, Optional, Tuple
+from typing import Iterable, Iterator, Optional
 
 from std2.ipaddress import RFC_1918
 from std2.lex import split
@@ -128,7 +128,7 @@ def calculate_networks() -> Networks:
     return networks
 
 
-def calculate_loopback() -> Tuple[IPv4Address, IPv4Address]:
+def calculate_loopback() -> IPv4Address:
     exclusions = tuple(map(IPv4Network, split(LOOPBACK_EXCLUSION)))
     it = (ip for ip in _LO.hosts() if all(ip not in network for network in exclusions))
-    return next(it), next(it)
+    return next(it)
