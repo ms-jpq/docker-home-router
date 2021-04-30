@@ -30,4 +30,5 @@ def forwarded_ports() -> Mapping[str, Sequence[Mapping[str, Union[str, int]]]]:
                 "PROXY_PROTO": fw.proxy_proto,
             }
             specs.append(spec)
+
     return fwds

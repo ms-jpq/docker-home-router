@@ -34,4 +34,8 @@ class PortFwd:
     proxy_proto: bool = False
 
 
-Forwards = Mapping[str, AbstractSet[PortFwd]]
+@dataclass(frozen=True)
+class Forwards:
+    lan: Mapping[str, AbstractSet[PortFwd]]
+    guest: Mapping[str, AbstractSet[PortFwd]]
+
