@@ -48,13 +48,19 @@ def forwarded_ports(
     def cont(stack: DualStack, forwards: FWDs) -> Iterator[Mapping[str, Any]]:
         for hostname, fws in forwards.items():
             for fw in fws:
-                it = cast(
-                    Iterator[IPAddress],
-                    (stack.v4.hosts() if fw.ip_ver is IPver.v4 else stack.v6.hosts()),
+                it = (
+                    addr
+                    for addr in cast(
+                        Iterator[IPAddress],
+                        (
+                            stack.v4.hosts()
+                            if fw.ip_ver is IPver.v4
+                            else stack.v6.hosts()
+                        ),
+                    )
+                    if addr not in nono
                 )
-                addr = leased.setdefault(
-                    hostname, next(addr for addr in it if addr not in nono)
-                )
+                addr = leased.setdefault(hostname, next(it))
                 nono.add(addr)
                 spec = _mk_spec(hostname, fwd=fw, addr=addr)
                 yield spec
