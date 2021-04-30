@@ -45,7 +45,8 @@ def forwarded_ports(
         acc = merge(acc, yaml)
 
     forwards: Forwards = decode(Forwards, acc, strict=False)
-    nono = {*(addr for _, addr in leases(networks))} | {
+    leased = {name: addr for name, addr in leases(networks)}
+    nono = {*leased.values()} | {
         next(networks.guest.v4.hosts()),
         next(networks.guest.v6.hosts()),
         next(networks.lan.v4.hosts()),
@@ -63,7 +64,9 @@ def forwarded_ports(
                     else networks.guest.v6.hosts()
                 ),
             )
-            addr = next(addr for addr in it if addr not in nono)
+            addr = leased.get(hostname, next(addr for addr in it if addr not in nono))
+
+            leased[hostname] = addr
             nono.add(addr)
             spec = _mk_spec(hostname, fwd=fw, addr=addr)
             fwds.append(spec)
@@ -78,7 +81,9 @@ def forwarded_ports(
                     else networks.lan.v6.hosts()
                 ),
             )
-            addr = next(addr for addr in it if addr not in nono)
+            addr = leased.get(hostname, next(addr for addr in it if addr not in nono))
+
+            leased[hostname] = addr
             nono.add(addr)
             spec = _mk_spec(hostname, fwd=fw, addr=addr)
             fwds.append(spec)
