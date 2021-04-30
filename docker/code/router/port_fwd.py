@@ -24,7 +24,7 @@ def _mk_spec(hostname: str, fwd: PortFwd, addr: IPAddress) -> Mapping[str, Any]:
     spec = {
         "IP_VER": "ip" if isinstance(addr, IPv4Address) else "ip6",
         "FROM_NAME": hostname,
-        "PROTO": str(fwd.proto),
+        "PROTO": fwd.proto.name,
         "FROM_PORT": fwd.from_port,
         "TO_PORT": fwd.to_port,
         "PROXY_PROTO": fwd.proxy_proto,
