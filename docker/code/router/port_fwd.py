@@ -1,34 +1,72 @@
+from ipaddress import IPv4Address
 from itertools import chain
-from typing import Any, Mapping, MutableMapping, MutableSequence, Sequence, Union
+from typing import Any, Mapping, MutableMapping, MutableSequence, Sequence
 
 from std2.pickle import decode
+from std2.tree import merge
+from std2.types import IPAddress
 from yaml import safe_load
 
 from .consts import PORT_FWD
-from .types import Forwards, Networks
+from .leases import leases
+from .types import Forwards, IPver, Networks, PortFwd
 
 
-def forwarded_ports(networks: Networks) -> Mapping[str, Sequence[Mapping[str, Union[str, int]]]]:
+def _mk_spec(hostname: str, fwd: PortFwd, addr: IPAddress) -> Mapping[str, Any]:
+    spec = {
+        "IP_VER": "ip" if isinstance(addr, IPv4Address) else "ip6",
+        "FROM_NAME": hostname,
+        "PROTO": fwd.proto,
+        "FROM_PORT": fwd.from_port,
+        "TO_PORT": fwd.to_port,
+        "PROXY_PROTO": fwd.proxy_proto,
+        "TO_ADDR": addr,
+    }
+    return spec
+
+
+def forwarded_ports(
+    networks: Networks,
+) -> Sequence[Mapping[str, Any]]:
     PORT_FWD.parent.mkdir(parents=True, exist_ok=True)
 
     acc: MutableMapping[str, Any] = {}
     for path in chain(PORT_FWD.glob("*.yaml"), PORT_FWD.glob("*.yml")):
         raw = path.read_text()
         yaml = safe_load(raw)
-        acc.update(yaml)
+        acc = merge(acc, yaml)
 
     forwards: Forwards = decode(Forwards, acc, strict=False)
-    fwds: MutableMapping[str, MutableSequence[Mapping[str, Union[str, int]]]] = {}
+    nono = {*(addr for _, addr in leases(networks))} | {
+        next(networks.guest.v4.hosts()),
+        next(networks.guest.v6.hosts()),
+        next(networks.lan.v4.hosts()),
+        next(networks.lan.v6.hosts()),
+    }
 
-    for hostname, fws in forwards.items():
-        specs = fwds.setdefault(hostname, [])
+    fwds: MutableSequence[Mapping[str, Any]] = []
+    for hostname, fws in forwards.guest.items():
         for fw in fws:
-            spec = {
-                "PROTO": fw.proto,
-                "FROM_PORT": fw.from_port,
-                "TO_PORT": fw.to_port,
-                "PROXY_PROTO": fw.proxy_proto,
-            }
-            specs.append(spec)
+            it = (
+                networks.guest.v4.hosts()
+                if fw.ip_ver is IPver.v4
+                else networks.guest.v6.hosts()
+            )
+            addr = next(addr for addr in it if addr not in nono)
+            nono.add(addr)
+            spec = _mk_spec(hostname, fwd=fw, addr=addr)
+            fwds.append(spec)
+
+    for hostname, fws in forwards.lan.items():
+        for fw in fws:
+            it = (
+                networks.lan.v4.hosts()
+                if fw.ip_ver is IPver.v4
+                else networks.lan.v6.hosts()
+            )
+            addr = next(addr for addr in it if addr not in nono)
+            nono.add(addr)
+            spec = _mk_spec(hostname, fwd=fw, addr=addr)
+            fwds.append(spec)
 
     return fwds
