@@ -52,11 +52,9 @@ def forwarded_ports(
                     Iterator[IPAddress],
                     (stack.v4.hosts() if fw.ip_ver is IPver.v4 else stack.v6.hosts()),
                 )
-                addr = leased.get(
+                addr = leased.setdefault(
                     hostname, next(addr for addr in it if addr not in nono)
                 )
-
-                leased[hostname] = addr
                 nono.add(addr)
                 spec = _mk_spec(hostname, fwd=fw, addr=addr)
                 yield spec
