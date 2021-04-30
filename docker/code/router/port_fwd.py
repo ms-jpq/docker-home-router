@@ -1,6 +1,14 @@
 from ipaddress import IPv4Address
 from itertools import chain
-from typing import Any, Mapping, MutableMapping, MutableSequence, Sequence
+from typing import (
+    Any,
+    Iterator,
+    Mapping,
+    MutableMapping,
+    MutableSequence,
+    Sequence,
+    cast,
+)
 
 from std2.pickle import decode
 from std2.tree import merge
@@ -47,10 +55,13 @@ def forwarded_ports(
     fwds: MutableSequence[Mapping[str, Any]] = []
     for hostname, fws in forwards.guest.items():
         for fw in fws:
-            it = (
-                networks.guest.v4.hosts()
-                if fw.ip_ver is IPver.v4
-                else networks.guest.v6.hosts()
+            it = cast(
+                Iterator[IPAddress],
+                (
+                    networks.guest.v4.hosts()
+                    if fw.ip_ver is IPver.v4
+                    else networks.guest.v6.hosts()
+                ),
             )
             addr = next(addr for addr in it if addr not in nono)
             nono.add(addr)
@@ -59,10 +70,13 @@ def forwarded_ports(
 
     for hostname, fws in forwards.lan.items():
         for fw in fws:
-            it = (
-                networks.lan.v4.hosts()
-                if fw.ip_ver is IPver.v4
-                else networks.lan.v6.hosts()
+            it = cast(
+                Iterator[IPAddress],
+                (
+                    networks.lan.v4.hosts()
+                    if fw.ip_ver is IPver.v4
+                    else networks.lan.v6.hosts()
+                ),
             )
             addr = next(addr for addr in it if addr not in nono)
             nono.add(addr)

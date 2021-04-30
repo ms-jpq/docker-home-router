@@ -69,7 +69,7 @@ def _env(networks: Networks) -> Mapping[str, Any]:
             "NTP_SERVERS": split(NTP_SERVERS),
             "STATS_PORT": STATS_PORT,
             "LOOPBACK_LOCAL": calculate_loopback(),
-            "FORWARDED_PORTS": forwarded_ports(),
+            "FORWARDED_PORTS": forwarded_ports(networks),
         }
         return env
 
