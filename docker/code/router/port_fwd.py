@@ -5,10 +5,10 @@ from std2.pickle import decode
 from yaml import safe_load
 
 from .consts import PORT_FWD
-from .types import Forwards
+from .types import Forwards, Networks
 
 
-def forwarded_ports() -> Mapping[str, Sequence[Mapping[str, Union[str, int]]]]:
+def forwarded_ports(networks: Networks) -> Mapping[str, Sequence[Mapping[str, Union[str, int]]]]:
     PORT_FWD.parent.mkdir(parents=True, exist_ok=True)
 
     acc: MutableMapping[str, Any] = {}

@@ -1,8 +1,6 @@
-from ipaddress import ip_address
 from itertools import chain
 from json import loads
 from locale import strxfrm
-from os import linesep
 from pathlib import Path
 from subprocess import check_call
 from tempfile import TemporaryDirectory
@@ -14,7 +12,8 @@ from std2.pickle import decode
 from std2.pickle.coders import BUILTIN_DECODERS
 from std2.types import IPAddress
 
-from ..consts import ADDN_HOSTS, DYN, GUEST_IF, J2, LEASES, SERVER_NAME, WG_PEERS_JSON
+from ..consts import ADDN_HOSTS, DYN, J2, WG_PEERS_JSON
+from ..leases import leases
 from ..render import j2_build, j2_render
 from ..subnets import load_networks
 from ..types import WGPeers
@@ -33,31 +32,6 @@ def _pid() -> Optional[int]:
         return int(pid)
 
 
-def _p_leases() -> Iterator[Tuple[str, IPAddress]]:
-    LEASES.parent.mkdir(parents=True, exist_ok=True)
-    LEASES.touch()
-    lines = LEASES.read_text().rstrip().split(linesep)
-
-    networks = load_networks()
-    if GUEST_IF:
-        yield SERVER_NAME, next(networks.guest.v4.hosts())
-        yield SERVER_NAME, next(networks.guest.v6.hosts())
-    else:
-        yield SERVER_NAME, next(networks.lan.v4.hosts())
-        yield SERVER_NAME, next(networks.lan.v6.hosts())
-
-    for line in lines:
-        if line:
-            try:
-                _, _, addr, rhs = line.split(" ", maxsplit=3)
-            except ValueError:
-                pass
-            else:
-                name, _, _ = rhs.rpartition(" ")
-                if name != "*":
-                    yield name, ip_address(addr)
-
-
 def _p_peers() -> Iterator[Tuple[str, IPAddress]]:
     WG_PEERS_JSON.parent.mkdir(parents=True, exist_ok=True)
     WG_PEERS_JSON.touch()
@@ -73,8 +47,9 @@ def _forever(j2: Environment) -> None:
     addn = ADDN_HOSTS.read_text()
     pid = _pid()
 
+    networks = load_networks()
     mappings: MutableMapping[str, MutableSet[IPAddress]] = {}
-    for name, addr in chain(_p_leases(), _p_peers()):
+    for name, addr in chain(leases(networks), _p_peers()):
         acc = mappings.setdefault(name, set())
         acc.add(addr)
 
