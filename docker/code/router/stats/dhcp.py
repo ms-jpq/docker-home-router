@@ -8,5 +8,5 @@ def feed() -> str:
         path.parent.mkdir(parents=True, exist_ok=True)
         path.touch()
 
-    addns, dyn, leases = ADDN_HOSTS.read_text(), DYN.read_text(), LEASES.read_text()
-    return addns.strip() + linesep * 3 + dyn.strip() + linesep * 3 + leases.strip()
+    addns, leases = ADDN_HOSTS.read_text(), LEASES.read_text()
+    return addns.strip() + linesep * 3 + leases.strip()
