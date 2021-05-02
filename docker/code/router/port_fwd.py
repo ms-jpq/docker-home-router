@@ -61,9 +61,10 @@ def forwarded_ports(
                     if addr not in nono
                 )
                 addr = leased.setdefault(hostname, next(it))
-                nono.add(addr)
-                spec = _mk_spec(hostname, fwd=fw, addr=addr)
-                yield spec
+                if addr not in nono:
+                    nono.add(addr)
+                    spec = _mk_spec(hostname, fwd=fw, addr=addr)
+                    yield spec
 
     yield from cont(networks.guest, forwards=forwards.guest)
     yield from cont(networks.lan, forwards=forwards.lan)
