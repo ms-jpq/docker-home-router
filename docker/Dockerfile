@@ -43,13 +43,13 @@ RUN useradd --user-group --shell=/usr/sbin/nologin "$USER" && \
 # 123   UDP     -> NTP
 # 1080  TCP     -> TOR PROXY
 # 5353  UDP     -> Bonjour
-# 8080  TCP     -> HTTP ALT
+# 8888  TCP     -> HTTP ALT
 # 51820 UDP     -> WIREGUARD
 EXPOSE 53/tcp 53/udp \
        67/udp \
        123/udp \
        1080/tcp \
-       8080/tcp \
+       8888/tcp \
        51820/udp
 
 
