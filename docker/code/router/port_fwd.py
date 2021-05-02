@@ -1,4 +1,4 @@
-from ipaddress import IPv4Address
+from ipaddress import IPv4Address, IPv6Address
 from itertools import chain
 from typing import (
     AbstractSet,
@@ -8,6 +8,7 @@ from typing import (
     MutableMapping,
     MutableSet,
     Sequence,
+    Tuple,
     cast,
 )
 
@@ -18,18 +19,22 @@ from yaml import safe_load
 
 from .consts import PORT_FWD, SERVER_NAME
 from .leases import leases
-from .types import DualStack, Forwards, FWDs, IPver, Networks, PortFwd
+from .types import DualStack, Forwards, FWDs, Networks, PortFwd
 
 
-def _mk_spec(hostname: str, fwd: PortFwd, addr: IPAddress) -> Mapping[str, Any]:
+def _mk_spec(
+    hostname: str, fwd: PortFwd, v4: IPv4Address, v6: IPv6Address
+) -> Mapping[str, Any]:
     spec = {
-        "IP_VER": "ip" if isinstance(addr, IPv4Address) else "ip6",
         "FROM_NAME": hostname,
         "PROTO": fwd.proto.name,
         "FROM_PORT": fwd.from_port,
         "TO_PORT": fwd.to_port,
         "PROXY_PROTO": fwd.proxy_proto,
-        "TO_ADDR": addr,
+        "TO_ADDR": {
+            "V4": v4,
+            "V6": v6,
+        },
     }
     return spec
 
@@ -54,15 +59,34 @@ def _leased(networks: Networks) -> MutableMapping[str, MutableSet[IPAddress]]:
     return leased
 
 
-def _unseen(
-    leased: Mapping[str, AbstractSet[IPAddress]], stack: DualStack, ver: IPver
-) -> Iterator[IPAddress]:
-    for addr in cast(
-        Iterator[IPAddress],
-        (stack.v4.hosts() if ver is IPver.v4 else stack.v6.hosts()),
-    ):
-        if not any(addr in addrs for addrs in leased.values()):
-            yield addr
+def _pick(
+    leased: Mapping[str, AbstractSet[IPAddress]], stack: DualStack, hostname: str
+) -> Tuple[IPv4Address, IPv6Address]:
+    v4 = next(
+        v4_addr
+        for v4_addr in chain(
+            (
+                addr
+                for addr in leased.get(hostname, ())
+                if isinstance(addr, IPv4Address)
+            ),
+            stack.v4.hosts(),
+        )
+        if any(v4_addr in addrs for addrs in leased.values())
+    )
+    v6 = next(
+        v6_addr
+        for v6_addr in chain(
+            (
+                addr
+                for addr in leased.get(hostname, ())
+                if isinstance(addr, IPv6Address)
+            ),
+            stack.v6.hosts(),
+        )
+        if any(v6_addr in addrs for addrs in leased.values())
+    )
+    return v4, v6
 
 
 def forwarded_ports(
@@ -82,12 +106,8 @@ def forwarded_ports(
     def cont(stack: DualStack, forwards: FWDs) -> Iterator[Mapping[str, Any]]:
         for hostname, fws in forwards.items():
             for fw in fws:
-                unseen = _unseen(leased, stack=stack, ver=fw.ip_ver)
-                addrs = leased.setdefault(hostname, set())
-                addr = next(iter(addrs)) or next(unseen)
-                addrs.add(addr)
-
-                spec = _mk_spec(hostname, fwd=fw, addr=addr)
+                v4, v6 = _pick(leased, stack=stack, hostname=hostname)
+                spec = _mk_spec(hostname, fwd=fw, v4=v4, v6=v6)
                 yield spec
 
     yield from cont(networks.guest, forwards=forwards.guest)
