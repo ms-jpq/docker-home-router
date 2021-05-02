@@ -1,10 +1,11 @@
-SocksPort                     0
-DNSPort                       {{ LOOPBACK_LOCAL }}:9050
+Tor2webMode 1
+SocksPort   0
+DNSPort     {{ LOOPBACK_LOCAL }}:9050
 
-TransPort                     0.0.0.0:1080
+TransPort   0.0.0.0:1080
 
 {% if IPV6_ENABLED %}
-TransPort                     [::]:1080
+TransPort   [::]:1080
 {% endif %}
 
 
