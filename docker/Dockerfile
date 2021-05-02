@@ -49,7 +49,6 @@ EXPOSE 53/tcp 53/udp \
        67/udp \
        123/udp \
        1080/tcp \
-       5353/udp \
        8080/tcp \
        51820/udp
 
