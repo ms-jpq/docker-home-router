@@ -77,6 +77,7 @@ def forwarded_ports(
                 unseen = _unseen(leased, stack=stack, ver=fw.ip_ver)
                 if hostname not in seen_hosts:
                     seen_hosts.add(hostname)
+
                     addrs = leased.setdefault(hostname, set())
                     addr = next(iter(addrs), next(unseen))
                     addrs.add(addr)
