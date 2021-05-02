@@ -32,11 +32,14 @@ def _leased(networks: Networks) -> MutableMapping[str, MutableSet[IPAddress]]:
         addrs.add(addr)
 
     addrs = leased.setdefault(SERVER_NAME)
-    for addr in (
-        next(networks.guest.v4.hosts()),
-        next(networks.guest.v6.hosts()),
-        next(networks.lan.v4.hosts()),
-        next(networks.lan.v6.hosts()),
+    for addr in cast(
+        Iterator[IPAddress],
+        (
+            next(networks.guest.v4.hosts()),
+            next(networks.guest.v6.hosts()),
+            next(networks.lan.v4.hosts()),
+            next(networks.lan.v6.hosts()),
+        ),
     ):
         addrs.add(addr)
     return leased
