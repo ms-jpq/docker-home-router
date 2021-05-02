@@ -1,6 +1,3 @@
-HiddenServiceNonAnonymousMode 1
-HiddenServiceSingleHopMode    1
-
 SocksPort                     0
 DNSPort                       {{ LOOPBACK_LOCAL }}:9050
 
