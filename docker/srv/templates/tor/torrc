@@ -1,11 +1,15 @@
-SocksPort              0
-DNSPort                {{ LOOPBACK_LOCAL }}:9050
+HiddenServiceNonAnonymousMode 1
+HiddenServiceSingleHopMode    1
 
-TransPort              0.0.0.0:1080
+SocksPort                     0
+DNSPort                       {{ LOOPBACK_LOCAL }}:9050
+
+TransPort                     0.0.0.0:1080
 
 {% if IPV6_ENABLED %}
-TransPort              [::]:1080
+TransPort                     [::]:1080
 {% endif %}
+
 
 AutomapHostsOnResolve  1
 VirtualAddrNetworkIPv4 {{ TOR_NETWORK_V4 }}
