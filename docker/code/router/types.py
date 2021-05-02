@@ -32,18 +32,12 @@ class Protocol(Enum):
     udp = auto()
 
 
-class IPver(Enum):
-    v4 = auto()
-    v6 = auto()
-
-
 @dataclass(frozen=True)
 class PortFwd:
     proto: Protocol
     from_port: int
     to_port: int
     proxy_proto: bool = False
-    ip_ver: IPver = IPver.v4
 
 
 FWDs = Mapping[str, AbstractSet[PortFwd]]
