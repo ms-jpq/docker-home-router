@@ -12,7 +12,7 @@ from std2.pickle import decode
 from std2.pickle.coders import BUILTIN_DECODERS
 from std2.types import IPAddress
 
-from ..consts import ADDN_HOSTS, DYN, J2, WG_PEERS_JSON
+from ..consts import ADDN_HOSTS, DYN, J2, LAN_DOMAIN, WG_PEERS_JSON
 from ..leases import leases
 from ..render import j2_build, j2_render
 from ..subnets import load_networks
@@ -53,7 +53,10 @@ def _forever(j2: Environment) -> None:
         acc = mappings.setdefault(name, set())
         acc.add(addr)
 
-    env = {"MAPPINGS": {key: mappings[key] for key in sorted(mappings, key=strxfrm)}}
+    env = {
+        "MAPPINGS": {key: mappings[key] for key in sorted(mappings, key=strxfrm)},
+        "LAN_DOMAIN": LAN_DOMAIN,
+    }
     t1 = j2_render(j2, path=_DYN, env=env)
     t2 = j2_render(j2, path=_ADDN_HOSTS, env=env)
 

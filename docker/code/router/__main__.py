@@ -10,6 +10,7 @@ from .cake.main import main as cake_main
 from .consts import (
     DNS_SERVERS,
     GUEST_IF,
+    LAN_DOMAIN,
     LAN_IF,
     NTP_SERVERS,
     RUN,
@@ -69,6 +70,7 @@ def _env(networks: Networks) -> Mapping[str, Any]:
             "NTP_SERVERS": split(NTP_SERVERS),
             "STATS_PORT": STATS_PORT,
             "LOOPBACK_LOCAL": calculate_loopback(),
+            "LAN_DOMAIN": LAN_DOMAIN,
             "FORWARDED_PORTS": forwarded_ports(networks),
         }
         return env
