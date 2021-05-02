@@ -71,7 +71,7 @@ def _env(networks: Networks) -> Mapping[str, Any]:
             "STATS_PORT": STATS_PORT,
             "LOOPBACK_LOCAL": calculate_loopback(),
             "LAN_DOMAIN": LAN_DOMAIN,
-            "FORWARDED_PORTS": forwarded_ports(networks),
+            "FORWARDED_PORTS": tuple(forwarded_ports(networks)),
         }
         return env
 
