@@ -1,6 +1,15 @@
 from ipaddress import IPv4Address
 from itertools import chain
-from typing import AbstractSet, Any, Iterator, Mapping, MutableMapping, MutableSet, cast
+from typing import (
+    AbstractSet,
+    Any,
+    Iterator,
+    Mapping,
+    MutableMapping,
+    MutableSet,
+    Sequence,
+    cast,
+)
 
 from std2.pickle import decode
 from std2.tree import merge
@@ -69,21 +78,26 @@ def forwarded_ports(
 
     forwards: Forwards = decode(Forwards, acc, strict=False)
     leased = _leased(networks)
-    seen_hosts: MutableSet[str] = set()
 
     def cont(stack: DualStack, forwards: FWDs) -> Iterator[Mapping[str, Any]]:
         for hostname, fws in forwards.items():
             for fw in fws:
                 unseen = _unseen(leased, stack=stack, ver=fw.ip_ver)
-                if hostname not in seen_hosts:
-                    seen_hosts.add(hostname)
+                addrs = leased.setdefault(hostname, set())
+                addr = next(iter(addrs)) or next(unseen)
+                addrs.add(addr)
 
-                    addrs = leased.setdefault(hostname, set())
-                    addr = next(iter(addrs)) or next(unseen)
-                    addrs.add(addr)
-
-                    spec = _mk_spec(hostname, fwd=fw, addr=addr)
-                    yield spec
+                spec = _mk_spec(hostname, fwd=fw, addr=addr)
+                yield spec
 
     yield from cont(networks.guest, forwards=forwards.guest)
     yield from cont(networks.lan, forwards=forwards.lan)
+
+
+def dhcp_fixed(fwds: Sequence[Mapping[str, Any]]) -> Iterator[Mapping[str, Any]]:
+    seen: MutableSet[str] = set()
+    for fwd in fwds:
+        name = fwd["FROM_NAME"]
+        if name not in seen:
+            seen.add(name)
+            yield fwd

@@ -23,7 +23,7 @@ from .consts import (
 from .dnsmasq.main import main as dnsmsq_main
 from .ifup.main import main as ifup_main
 from .ip import ipv6_enabled
-from .port_fwd import forwarded_ports
+from .port_fwd import dhcp_fixed, forwarded_ports
 from .render import j2_build, j2_render
 from .stats.main import main as stats_main
 from .subnets import calculate_loopback, calculate_networks, load_networks
@@ -51,6 +51,7 @@ def _env(networks: Networks) -> Mapping[str, Any]:
     elif not NTP_SERVERS:
         raise ValueError("NTP_SERVERS - required")
     else:
+        fwds = tuple(forwarded_ports(networks))
         env = {
             "USER": USER,
             "WAN_IF": WAN_IF,
@@ -71,7 +72,8 @@ def _env(networks: Networks) -> Mapping[str, Any]:
             "STATS_PORT": STATS_PORT,
             "LOOPBACK_LOCAL": calculate_loopback(),
             "LAN_DOMAIN": LAN_DOMAIN,
-            "FORWARDED_PORTS": tuple(forwarded_ports(networks)),
+            "FORWARDED_PORTS": fwds,
+            "DHCP_FIXED": dhcp_fixed(fwds),
         }
         return env
 
