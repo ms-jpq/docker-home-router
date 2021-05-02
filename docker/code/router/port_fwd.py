@@ -79,7 +79,7 @@ def forwarded_ports(
                     seen_hosts.add(hostname)
 
                     addrs = leased.setdefault(hostname, set())
-                    addr = next(iter(addrs), next(unseen))
+                    addr = next(iter(addrs)) or next(unseen)
                     addrs.add(addr)
 
                     spec = _mk_spec(hostname, fwd=fw, addr=addr)
