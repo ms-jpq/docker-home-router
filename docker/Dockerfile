@@ -49,6 +49,7 @@ EXPOSE 53/tcp 53/udp \
        67/udp \
        123/udp \
        1080/tcp \
+       5353/udp \
        8888/tcp \
        51820/udp
 
@@ -77,6 +78,7 @@ ENV WAN_IF= \
     DNS_SERVERS=127.0.0.53#53 \
     NTP_SERVERS=0.ca.pool.ntp.org,1.ca.pool.ntp.org,2.ca.pool.ntp.org,3.ca.pool.ntp.org \
     WG_PEERS="me,my wife,my wife's boyfriend" \
+    DOMAIN=lan \
     SERVER_NAME= \
     STATS_PORT=8888
 
