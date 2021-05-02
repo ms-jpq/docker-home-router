@@ -80,6 +80,7 @@ ENV WAN_IF= \
     WG_PEERS="me,my wife,my wife's boyfriend" \
     WAN_DOMAIN= \
     LAN_DOMAIN=lan \
+    TOR_PORT=1080 \
     STATS_PORT=8888
 
 
