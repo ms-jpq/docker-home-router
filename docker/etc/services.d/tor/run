@@ -5,7 +5,7 @@ set -o pipefail
 
 
 ARGS=(
-  -f /srv/run/tor/torrc
+  -f /srv/run/tor/0-main.conf
   --hush
   )
 
