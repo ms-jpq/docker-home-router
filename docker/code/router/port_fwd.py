@@ -1,7 +1,6 @@
 from ipaddress import IPv4Address, IPv6Address
 from itertools import chain
 from typing import (
-    AbstractSet,
     Any,
     Iterator,
     Mapping,
@@ -60,16 +59,14 @@ def _leased(networks: Networks) -> MutableMapping[str, MutableSet[IPAddress]]:
 
 
 def _pick(
-    leased: Mapping[str, AbstractSet[IPAddress]], stack: DualStack, hostname: str
+    leased: MutableMapping[str, MutableSet[IPAddress]], stack: DualStack, hostname: str
 ) -> Tuple[IPv4Address, IPv6Address]:
+    lease_addrs = leased.setdefault(hostname, set())
+
     v4 = next(
         v4_addr
         for v4_addr in chain(
-            (
-                addr
-                for addr in leased.get(hostname, ())
-                if isinstance(addr, IPv4Address)
-            ),
+            (addr for addr in lease_addrs if isinstance(addr, IPv4Address)),
             stack.v4.hosts(),
         )
         if any(v4_addr in addrs for addrs in leased.values())
@@ -77,15 +74,14 @@ def _pick(
     v6 = next(
         v6_addr
         for v6_addr in chain(
-            (
-                addr
-                for addr in leased.get(hostname, ())
-                if isinstance(addr, IPv6Address)
-            ),
+            (addr for addr in lease_addrs if isinstance(addr, IPv6Address)),
             stack.v6.hosts(),
         )
         if any(v6_addr in addrs for addrs in leased.values())
     )
+
+    lease_addrs.add(v4)
+    lease_addrs.add(v6)
     return v4, v6
 
 
