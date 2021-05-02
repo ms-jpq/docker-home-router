@@ -16,6 +16,7 @@ RUN apt-get update && \
     avahi-daemon \
     chrony \
     tor \
+    squid \
     wireguard \
     qrencode && \
     rm -rf /var/lib/apt/lists/*
@@ -80,6 +81,7 @@ ENV WAN_IF= \
     WG_PEERS="me,my wife,my wife's boyfriend" \
     WAN_DOMAIN= \
     LAN_DOMAIN=lan \
+    SQUID_PORT=3128 \
     TOR_PORT=1080 \
     STATS_PORT=8888
 

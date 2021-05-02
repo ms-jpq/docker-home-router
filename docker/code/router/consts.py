@@ -24,6 +24,7 @@ NETWORKS_JSON = SRV / "run" / "networks" / "networks.json"
 WG_PEERS_JSON = RUN / "wireguard" / "wg-peers.json"
 
 STATS_PORT = int(environ["STATS_PORT"])
+SQUID_PORT = int(environ["SQUID_PORT"])
 TOR_PORT = int(environ["TOR_PORT"])
 
 USER = environ["USER"]

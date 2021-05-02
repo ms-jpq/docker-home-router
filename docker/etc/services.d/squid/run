@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -eu
+set -o pipefail
+
+
+ARGS=(
+  -f /srv/run/squid/0-main.conf
+  --foreground
+  )
+
+
+exec s6-setuidgid "$USER" squid "${ARGS[@]}"
+
