@@ -11,7 +11,7 @@ from .subnets import load_networks
 
 def feed() -> str:
     networks = load_networks()
-    data = encode(forwarded_ports(networks), encoders=BUILTIN_ENCODERS)
+    data = encode(tuple(forwarded_ports(networks)), encoders=BUILTIN_ENCODERS)
     json = dumps(data, check_circular=False, ensure_ascii=False)
     raw = check_output(("sortd", "yaml"), text=True, input=json, timeout=TIMEOUT)
     return raw.strip()
