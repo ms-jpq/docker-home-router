@@ -11,7 +11,7 @@ from .types import Networks
 def leases(networks: Networks) -> Iterator[Tuple[str, IPAddress]]:
     LEASES.parent.mkdir(parents=True, exist_ok=True)
     LEASES.touch()
-    lines = LEASES.read_text().rstrip().split(linesep)
+    lines = LEASES.read_text().split(linesep)
 
     if GUEST_IF:
         yield SERVER_NAME, next(networks.guest.v4.hosts())
@@ -20,7 +20,7 @@ def leases(networks: Networks) -> Iterator[Tuple[str, IPAddress]]:
         yield SERVER_NAME, next(networks.lan.v4.hosts())
         yield SERVER_NAME, next(networks.lan.v6.hosts())
 
-    for line in lines:
+    for line in reversed(lines):
         if line:
             try:
                 _, _, addr, rhs = line.split(" ", maxsplit=3)
