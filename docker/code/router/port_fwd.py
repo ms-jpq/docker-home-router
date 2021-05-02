@@ -45,8 +45,15 @@ def _leased(networks: Networks) -> MutableMapping[str, MutableSet[IPAddress]]:
     return leased
 
 
-def _seen(leased: Mapping[str, AbstractSet[IPAddress]], addr: IPAddress) -> bool:
-    return any(addr in addrs for addrs in leased.values())
+def _unseen(
+    leased: Mapping[str, AbstractSet[IPAddress]], stack: DualStack, ver: IPver
+) -> Iterator[IPAddress]:
+    for addr in cast(
+        Iterator[IPAddress],
+        (stack.v4.hosts() if ver is IPver.v4 else stack.v6.hosts()),
+    ):
+        if not any(addr in addrs for addrs in leased.values()):
+            yield addr
 
 
 def forwarded_ports(
@@ -67,22 +74,11 @@ def forwarded_ports(
     def cont(stack: DualStack, forwards: FWDs) -> Iterator[Mapping[str, Any]]:
         for hostname, fws in forwards.items():
             for fw in fws:
-                it = (
-                    addr
-                    for addr in cast(
-                        Iterator[IPAddress],
-                        (
-                            stack.v4.hosts()
-                            if fw.ip_ver is IPver.v4
-                            else stack.v6.hosts()
-                        ),
-                    )
-                    if not _seen(leased, addr=addr)
-                )
+                unseen = _unseen(leased, stack=stack, ver=fw.ip_ver)
                 if hostname not in seen_hosts:
                     seen_hosts.add(hostname)
                     addrs = leased.setdefault(hostname, set())
-                    addr = next(iter(addrs), next(it))
+                    addr = next(iter(addrs), next(unseen))
                     addrs.add(addr)
 
                     spec = _mk_spec(hostname, fwd=fw, addr=addr)
