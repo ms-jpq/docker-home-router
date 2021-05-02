@@ -1,6 +1,6 @@
 from ipaddress import IPv4Address
 from itertools import chain
-from typing import Any, Iterator, Mapping, MutableMapping, cast
+from typing import Any, Iterator, Mapping, MutableMapping, MutableSet, cast
 
 from std2.pickle import decode
 from std2.tree import merge
@@ -44,6 +44,7 @@ def forwarded_ports(
         next(networks.lan.v4.hosts()),
         next(networks.lan.v6.hosts()),
     }
+    seen_hosts: MutableSet[str] = set()
 
     def cont(stack: DualStack, forwards: FWDs) -> Iterator[Mapping[str, Any]]:
         for hostname, fws in forwards.items():
@@ -60,8 +61,11 @@ def forwarded_ports(
                     )
                     if addr not in nono
                 )
-                addr = leased.setdefault(hostname, next(it))
-                if addr not in nono:
+                if hostname in seen_hosts:
+                    pass
+                else:
+                    seen_hosts.add(hostname)
+                    addr = leased.setdefault(hostname, next(it))
                     nono.add(addr)
                     spec = _mk_spec(hostname, fwd=fw, addr=addr)
                     yield spec
