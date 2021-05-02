@@ -2,6 +2,8 @@ from os import environ
 from pathlib import Path
 from socket import getfqdn
 
+SERVER_NAME = getfqdn()
+
 _TOP_LV = Path(__file__).resolve().parent
 J2 = _TOP_LV / "j2"
 
@@ -38,7 +40,9 @@ DNS_SERVERS = environ["DNS_SERVERS"]
 NTP_SERVERS = environ["NTP_SERVERS"]
 
 WG_PEERS = environ["WG_PEERS"]
-SERVER_NAME = environ["SERVER_NAME"] or getfqdn()
+
+WAN_DOMAIN = environ["WAN_DOMAIN"] or SERVER_NAME
+LAN_DOMAIN = environ["LAN_DOMAIN"]
 
 LOOPBACK_EXCLUSION = environ["LOOPBACK_EXCLUSION"]
 

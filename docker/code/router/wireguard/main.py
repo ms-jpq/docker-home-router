@@ -10,7 +10,7 @@ from std2.pickle import encode
 from std2.pickle.coders import BUILTIN_ENCODERS
 from std2.types import IPNetwork
 
-from ..consts import J2, SERVER_NAME, SRV, USER, WG_IF, WG_PEERS, WG_PEERS_JSON
+from ..consts import J2, SRV, USER, WAN_DOMAIN, WG_IF, WG_PEERS, WG_PEERS_JSON
 from ..ip import addr_show, link_show
 from ..render import j2_build, j2_render
 from ..subnets import load_networks
@@ -127,7 +127,7 @@ def _gen_qr(j2: Environment, networks: Networks) -> None:
         "LAN_NETWORK_V6": networks.lan.v6,
         "GUEST_NETWORK_V4": networks.guest.v4,
         "GUEST_NETWORK_V6": networks.guest.v6,
-        "SERVER_NAME": SERVER_NAME,
+        "WAN_DOMAIN": WAN_DOMAIN,
     }
     gen = tuple(zip(_client_keys(), hosts))
     data = {path.stem: WGPeer(v4=v4, v6=v6) for (path, _, _), (v4, v6) in gen}

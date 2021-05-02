@@ -1,13 +1,13 @@
 from ipaddress import IPv4Address
 from itertools import chain
-from typing import Any, Iterator, Mapping, MutableMapping, MutableSet, cast
+from typing import AbstractSet, Any, Iterator, Mapping, MutableMapping, MutableSet, cast
 
 from std2.pickle import decode
 from std2.tree import merge
 from std2.types import IPAddress
 from yaml import safe_load
 
-from .consts import PORT_FWD
+from .consts import PORT_FWD, SERVER_NAME
 from .leases import leases
 from .types import DualStack, Forwards, FWDs, IPver, Networks, PortFwd
 
@@ -25,6 +25,27 @@ def _mk_spec(hostname: str, fwd: PortFwd, addr: IPAddress) -> Mapping[str, Any]:
     return spec
 
 
+def _leased(networks: Networks) -> MutableMapping[str, MutableSet[IPAddress]]:
+    leased: MutableMapping[str, MutableSet[IPAddress]] = {}
+    for name, addr in leases(networks):
+        addrs = leased.setdefault(name, set())
+        addrs.add(addr)
+
+    addrs = leased.setdefault(SERVER_NAME)
+    for addr in (
+        next(networks.guest.v4.hosts()),
+        next(networks.guest.v6.hosts()),
+        next(networks.lan.v4.hosts()),
+        next(networks.lan.v6.hosts()),
+    ):
+        addrs.add(addr)
+    return leased
+
+
+def _seen(leased: Mapping[str, AbstractSet[IPAddress]], addr: IPAddress) -> bool:
+    return any(addr in addrs for addrs in leased.values())
+
+
 def forwarded_ports(
     networks: Networks,
 ) -> Iterator[Mapping[str, Any]]:
@@ -37,13 +58,7 @@ def forwarded_ports(
         acc = merge(acc, yaml)
 
     forwards: Forwards = decode(Forwards, acc, strict=False)
-    leased = {name: addr for name, addr in leases(networks)}
-    nono = {*leased.values()} | {
-        next(networks.guest.v4.hosts()),
-        next(networks.guest.v6.hosts()),
-        next(networks.lan.v4.hosts()),
-        next(networks.lan.v6.hosts()),
-    }
+    leased = _leased(networks)
     seen_hosts: MutableSet[str] = set()
 
     def cont(stack: DualStack, forwards: FWDs) -> Iterator[Mapping[str, Any]]:
@@ -59,14 +74,14 @@ def forwarded_ports(
                             else stack.v6.hosts()
                         ),
                     )
-                    if addr not in nono
+                    if not _seen(leased, addr=addr)
                 )
-                if hostname in seen_hosts:
-                    pass
-                else:
+                if hostname not in seen_hosts:
                     seen_hosts.add(hostname)
-                    addr = leased.setdefault(hostname, next(it))
-                    nono.add(addr)
+                    addrs = leased.setdefault(hostname, set())
+                    addr = next(iter(addrs), next(it))
+                    addrs.add(addr)
+
                     spec = _mk_spec(hostname, fwd=fw, addr=addr)
                     yield spec
 
