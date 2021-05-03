@@ -12,5 +12,4 @@ ARGS=(
   )
 
 
-mkdir -p /data/squid
 exec chown -R "$USER:$USER" "${ARGS[@]}"
