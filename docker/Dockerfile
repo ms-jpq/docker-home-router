@@ -39,7 +39,7 @@ COPY . /
 ENV USER=router
 RUN useradd --user-group --shell=/usr/sbin/nologin "$USER" && \
     pip3 install --upgrade /code && \
-    unbound-anchor -a /srv/run/unbound/root.key || exit 1
+    unbound-anchor -a /srv/run/unbound/root.key && exit 1 || exit 0
 
 
 # TODO -- Add everything
