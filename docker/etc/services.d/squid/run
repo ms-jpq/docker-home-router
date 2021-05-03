@@ -8,9 +8,9 @@ ARGS=(
   -f /srv/run/squid/0-main.conf
   --foreground
   -d 1
-  -z
   )
 
 
+s6-setuidgid "$USER" squid "${ARGS[@]}" -z
 exec s6-setuidgid "$USER" squid "${ARGS[@]}"
 
