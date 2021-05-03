@@ -1,6 +1,9 @@
+from ipaddress import IPv4Address, IPv4Network, IPv6Network, ip_interface
 from os import environ
 from pathlib import Path
 from socket import getfqdn
+
+from std2.lex import split
 
 SERVER_NAME = getfqdn()
 
@@ -36,17 +39,19 @@ WG_IF = environ["WG_IF"]
 IF_EXCLUSIONS = environ["IF_EXCLUSIONS"]
 
 IP6_ULA_GLOBAL = environ["IP6_ULA_GLOBAL"]
-IP6_ULA_SUBNET_EXCLUSION = environ["IP6_ULA_SUBNET_EXCLUSION"]
-IP4_EXCLUSION = environ["IP4_EXCLUSION"]
+IP6_ULA_SUBNET_EXCLUSION = tuple(split(environ["IP6_ULA_SUBNET_EXCLUSION"]))
+IP4_EXCLUSION = tuple(map(IPv4Network, split(environ["IP4_EXCLUSION"])))
+IP4_PREFIX = int(environ["IP4_PREFIX"])
+TOR_IP4_PREFIX = 16
 
-DNS_SERVERS = environ["DNS_SERVERS"]
-NTP_SERVERS = environ["NTP_SERVERS"]
+DNS_SERVERS = tuple(split(environ["DNS_SERVERS"]))
+NTP_SERVERS = tuple(split(environ["NTP_SERVERS"]))
 
 WG_PEERS = environ["WG_PEERS"]
 
 WAN_DOMAIN = environ["WAN_DOMAIN"] or SERVER_NAME
 LAN_DOMAIN = environ["LAN_DOMAIN"]
 
-LOOPBACK_EXCLUSION = environ["LOOPBACK_EXCLUSION"]
+LOOPBACK_EXCLUSION = tuple(map(IPv4Network, split(environ["LOOPBACK_EXCLUSION"])))
 
 TIMEOUT = 1

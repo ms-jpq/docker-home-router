@@ -3,7 +3,6 @@ from shutil import copystat
 from subprocess import CalledProcessError, check_call
 from typing import Any, Mapping
 
-from std2.lex import split
 from std2.pathlib import walk
 
 from .cake.main import main as cake_main
@@ -55,7 +54,7 @@ def _env(networks: Networks) -> Mapping[str, Any]:
     else:
         fwds = tuple(forwarded_ports(networks))
         loop_back = calculate_loopback()
-        dns = tuple(split(DNS_SERVERS)) or f"{loop_back}#53"
+        dns = tuple(DNS_SERVERS) or f"{loop_back}#53"
         env = {
             "USER": USER,
             "WAN_IF": WAN_IF,
@@ -72,7 +71,7 @@ def _env(networks: Networks) -> Mapping[str, Any]:
             "WG_NETWORK_V4": networks.wireguard.v4,
             "WG_NETWORK_V6": networks.wireguard.v6,
             "DNS_SERVERS": dns,
-            "NTP_SERVERS": split(NTP_SERVERS),
+            "NTP_SERVERS": NTP_SERVERS,
             "SQUID_PORT": SQUID_PORT,
             "TOR_PORT": TOR_PORT,
             "STATS_PORT": STATS_PORT,

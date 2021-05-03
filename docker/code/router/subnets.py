@@ -4,10 +4,9 @@ from hashlib import sha256
 from ipaddress import IPv4Address, IPv4Network, IPv6Network, ip_interface
 from itertools import chain, islice
 from json import loads
-from typing import Iterable, Iterator, Optional
+from typing import Iterable, Iterator, Optional, Sequence
 
 from std2.ipaddress import RFC_1918
-from std2.lex import split
 from std2.pickle import decode
 from std2.pickle.coders import BUILTIN_DECODERS
 from std2.types import IPInterface
@@ -15,10 +14,12 @@ from std2.types import IPInterface
 from .consts import (
     IF_EXCLUSIONS,
     IP4_EXCLUSION,
+    IP4_PREFIX,
     IP6_ULA_GLOBAL,
     IP6_ULA_SUBNET_EXCLUSION,
     LOOPBACK_EXCLUSION,
     NETWORKS_JSON,
+    TOR_IP4_PREFIX,
     WAN_IF,
 )
 from .ip import addr_show
@@ -55,8 +56,7 @@ def _private_subnets(prefix: int) -> Iterator[IPv4Network]:
             yield subnet
 
 
-def _existing(if_exclusions: str) -> Iterator[IPv4Network]:
-    patterns = tuple(split(if_exclusions))
+def _existing(patterns: str) -> Iterator[IPv4Network]:
     for addr in addr_show():
         if any(fnmatch(addr.ifname, pat=pattern) for pattern in patterns):
             for info in addr.addr_info:
@@ -81,9 +81,11 @@ def _pick_private(
                 break
 
 
-def _v4(if_exclusions: str, exclusions: str) -> _V4Stack:
-    nono = chain(map(IPv4Network, split(exclusions)), _existing(if_exclusions))
-    lan, wg, tor, guest = _pick_private(nono, prefixes=(24, 24, 16, 24))
+def _v4(if_exclusions: str, exclusions: Sequence[IPv4Network]) -> _V4Stack:
+    nono = chain(exclusions, _existing(if_exclusions))
+    lan, wg, tor, guest = _pick_private(
+        nono, prefixes=(IP4_PREFIX, IP4_PREFIX, TOR_IP4_PREFIX, IP4_PREFIX)
+    )
     stack = _V4Stack(lan=lan, wg=wg, tor=tor, guest=guest)
     return stack
 
@@ -101,12 +103,10 @@ def _gen_prefix() -> str:
         raise ValueError()
 
 
-def _v6(prefix: Optional[str], subnets: Optional[str]) -> _V6Stack:
+def _v6(prefix: Optional[str], subnets: Sequence[str]) -> _V6Stack:
     org_prefix = prefix or _gen_prefix()
     org = IPv6Network(f"{org_prefix}::/48")
-    seen = {
-        IPv6Network(f"{org_prefix}:{subnet}::/64") for subnet in split(subnets or "")
-    }
+    seen = {IPv6Network(f"{org_prefix}:{subnet}::/64") for subnet in subnets}
     lan, wg, tor, guest = islice(
         (subnet for subnet in org.subnets(new_prefix=64) if subnet not in seen), 4
     )
@@ -129,6 +129,8 @@ def calculate_networks() -> Networks:
 
 
 def calculate_loopback() -> IPv4Address:
-    exclusions = tuple(map(IPv4Network, split(LOOPBACK_EXCLUSION)))
-    it = (ip for ip in _LO.hosts() if all(ip not in network for network in exclusions))
-    return next(it)
+    for ip in _LO.hosts():
+        if all(ip not in network for network in LOOPBACK_EXCLUSION):
+            return ip
+    else:
+        raise ValueError()
