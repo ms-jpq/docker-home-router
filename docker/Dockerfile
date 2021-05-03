@@ -13,6 +13,8 @@ RUN apt-get update && \
     iproute2 \
     python3-pip \
     dnsmasq \
+    unbound \
+    unbound-anchor \
     avahi-daemon \
     chrony \
     tor \
@@ -20,7 +22,7 @@ RUN apt-get update && \
     squidclient \
     wireguard \
     qrencode && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* /tmp/*
 
 
 RUN wget "${S6}" --output-document /tmp/s6 && \
@@ -36,7 +38,8 @@ WORKDIR /srv/run
 COPY . /
 ENV USER=router
 RUN useradd --user-group --shell=/usr/sbin/nologin "$USER" && \
-    pip3 install --upgrade /code
+    pip3 install --upgrade /code && \
+    unbound-anchor -a /srv/run/unbound/root.key
 
 
 # TODO -- Add everything
@@ -77,7 +80,7 @@ ENV WAN_IF= \
     IP6_ULA_SUBNET_EXCLUSION= \
     IP4_EXCLUSION=10.0.0.0/20,192.168.0.0/20,172.16.0.0/20 \
     LOOPBACK_EXCLUSION=127.0.0.0/16 \
-    DNS_SERVERS=127.0.0.53#53 \
+    DNS_SERVERS= \
     NTP_SERVERS=0.ca.pool.ntp.org,1.ca.pool.ntp.org,2.ca.pool.ntp.org,3.ca.pool.ntp.org \
     WG_PEERS="me,my wife,my wife's boyfriend" \
     WAN_DOMAIN= \

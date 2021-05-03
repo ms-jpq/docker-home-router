@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+set -eu
+set -o pipefail
+
+
+ARGS=(
+  -a /srv/run/unbound/root.key
+  )
+
+
+while true
+do
+  s6-setuidgid "$USER" unbound-anchor "${ARGS[@]}"
+  sleep 3600
+done
