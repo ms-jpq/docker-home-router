@@ -81,8 +81,8 @@ ENV WAN_IF= \
     WG_PEERS="me,my wife,my wife's boyfriend" \
     WAN_DOMAIN= \
     LAN_DOMAIN=lan \
-    SQUID_PORT=3128 \
-    TOR_PORT=1080 \
+    SQUID_PORT=9080 \
+    TOR_PORT=9060 \
     STATS_PORT=8888
 
 
