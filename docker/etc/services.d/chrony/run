@@ -11,4 +11,4 @@ ARGS=(
   )
 
 
-exec chronyd "${ARGS[@]}"
+exec s6-setuidgid "$USER" chronyd "${ARGS[@]}"
