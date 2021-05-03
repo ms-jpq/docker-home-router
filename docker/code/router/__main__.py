@@ -54,6 +54,8 @@ def _env(networks: Networks) -> Mapping[str, Any]:
         raise ValueError("NTP_SERVERS - required")
     else:
         fwds = tuple(forwarded_ports(networks))
+        loop_back = calculate_loopback()
+        dns = tuple(split(DNS_SERVERS)) or f"{loop_back}#53"
         env = {
             "USER": USER,
             "WAN_IF": WAN_IF,
@@ -69,12 +71,12 @@ def _env(networks: Networks) -> Mapping[str, Any]:
             "TOR_NETWORK_V6": networks.tor.v6,
             "WG_NETWORK_V4": networks.wireguard.v4,
             "WG_NETWORK_V6": networks.wireguard.v6,
-            "DNS_SERVERS": split(DNS_SERVERS),
+            "DNS_SERVERS": dns,
             "NTP_SERVERS": split(NTP_SERVERS),
             "SQUID_PORT": SQUID_PORT,
             "TOR_PORT": TOR_PORT,
             "STATS_PORT": STATS_PORT,
-            "LOOPBACK_LOCAL": calculate_loopback(),
+            "LOOPBACK_LOCAL": loop_back,
             "LAN_DOMAIN": LAN_DOMAIN,
             "FORWARDED_PORTS": fwds,
             "DHCP_FIXED": dhcp_fixed(fwds),
