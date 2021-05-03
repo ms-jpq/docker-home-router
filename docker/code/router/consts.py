@@ -27,7 +27,7 @@ ADDN_HOSTS = _DNSMASQ / "hosts" / "addrs.conf"
 NETWORKS_JSON = SRV / "run" / "networks" / "networks.json"
 WG_PEERS_JSON = RUN / "wireguard" / "wg-peers.json"
 
-UNBOUND_CONF = Path("tmp" , "unbound.sock")
+UNBOUND_CONF = RUN / "unbound" / "0-include.conf"
 
 STATS_PORT = int(environ["STATS_PORT"])
 SQUID_PORT = int(environ["SQUID_PORT"])
