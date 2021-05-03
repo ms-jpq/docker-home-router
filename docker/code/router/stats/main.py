@@ -15,6 +15,7 @@ from ..wireguard.main import QR_DIR
 from .dhcp import feed as dhcp_feed
 from .fwds import feed as fwd_feed
 from .nft import feed as nft_feed
+from .squid import feed as squid_feed
 from .subnets import feed as subnets_feed
 from .tc import feed as tc_feed
 
@@ -31,6 +32,7 @@ class _Path(Enum):
     fwd = PurePosixPath("/", "fwd")
     nets = PurePosixPath("/", "nets")
     nft = PurePosixPath("/", "nft")
+    squid = PurePosixPath("/", "squid")
     tc = PurePosixPath("/", "tc")
     wg = PurePosixPath("/", "wg")
 
@@ -82,6 +84,11 @@ def main() -> None:
 
         elif path is _Path.nets:
             env = {"TITLE": path.name, "BODY": subnets_feed()}
+            page = j2_render(j2, path=_SHOW_TPL, env=env).encode()
+            _get(handler, page=page)
+
+        elif path is _Path.squid:
+            env = {"TITLE": path.name, "BODY": squid_feed()}
             page = j2_render(j2, path=_SHOW_TPL, env=env).encode()
             _get(handler, page=page)
 

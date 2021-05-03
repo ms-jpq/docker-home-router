@@ -17,6 +17,7 @@ RUN apt-get update && \
     chrony \
     tor \
     squid \
+    squidclient \
     wireguard \
     qrencode && \
     rm -rf /var/lib/apt/lists/*
