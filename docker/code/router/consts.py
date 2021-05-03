@@ -16,6 +16,7 @@ _CONFIG = Path("/", "config")
 
 TEMPLATES = SRV / Path("templates")
 RUN = SRV / Path("run")
+
 PORT_FWD = _CONFIG / "port_fwd"
 
 LEASES = DATA / "dnsmasq" / "leases"
@@ -25,6 +26,8 @@ ADDN_HOSTS = _DNSMASQ / "hosts" / "addrs.conf"
 
 NETWORKS_JSON = SRV / "run" / "networks" / "networks.json"
 WG_PEERS_JSON = RUN / "wireguard" / "wg-peers.json"
+
+UNBOUND_CONF = Path("tmp" , "unbound.sock")
 
 STATS_PORT = int(environ["STATS_PORT"])
 SQUID_PORT = int(environ["SQUID_PORT"])
