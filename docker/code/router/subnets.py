@@ -56,7 +56,7 @@ def _private_subnets(prefix: int) -> Iterator[IPv4Network]:
             yield subnet
 
 
-def _existing(patterns: str) -> Iterator[IPv4Network]:
+def _existing(patterns: Sequence[str]) -> Iterator[IPv4Network]:
     for addr in addr_show():
         if any(fnmatch(addr.ifname, pat=pattern) for pattern in patterns):
             for info in addr.addr_info:
@@ -81,7 +81,7 @@ def _pick_private(
                 break
 
 
-def _v4(if_exclusions: str, exclusions: Sequence[IPv4Network]) -> _V4Stack:
+def _v4(if_exclusions: Sequence[str], exclusions: Sequence[IPv4Network]) -> _V4Stack:
     nono = chain(exclusions, _existing(if_exclusions))
     lan, wg, tor, guest = _pick_private(
         nono, prefixes=(IP4_PREFIX, IP4_PREFIX, TOR_IP4_PREFIX, IP4_PREFIX)
@@ -116,7 +116,8 @@ def _v6(prefix: Optional[str], subnets: Sequence[str]) -> _V6Stack:
 
 
 def calculate_networks() -> Networks:
-    v4, v6 = _v4(IF_EXCLUSIONS, exclusions=IP4_EXCLUSION), _v6(
+    patterns = (WAN_IF, *IF_EXCLUSIONS)
+    v4, v6 = _v4(patterns, exclusions=IP4_EXCLUSION), _v6(
         IP6_ULA_GLOBAL, IP6_ULA_SUBNET_EXCLUSION
     )
     networks = Networks(
