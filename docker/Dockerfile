@@ -43,20 +43,25 @@ RUN useradd --user-group --shell=/usr/sbin/nologin "$USER" && \
     unbound-anchor -a /srv/run/unbound/root.key && exit 1 || exit 0
 
 
-# TODO -- Add everything
+### Well known
 # 53    TCP/UDP -> DNS
-# 67    UDP     -> DHCP
+# 67    UDP     -> DHCPv4
 # 123   UDP     -> NTP
-# 1080  TCP     -> TOR PROXY
+# 547   UDP     -> DHCPv6
 # 5353  UDP     -> Bonjour
-# 8888  TCP     -> HTTP ALT
-# 51820 UDP     -> WIREGUARD
+
+### Configurable
+# 8888  TCP     -> HTTP - Statistics
+# 9060  TCP     -> TOR
+# 9080  TCP     -> Squid
+# 51820 UDP     -> WireGuard
 EXPOSE 53/tcp 53/udp \
        67/udp \
        123/udp \
-       1080/tcp \
        5353/udp \
        8888/tcp \
+       9060/tcp \
+       9080/tcp \
        51820/udp
 
 
@@ -89,7 +94,8 @@ ENV WAN_IF= \
     LAN_DOMAIN=lan \
     SQUID_PORT=9080 \
     TOR_PORT=9060 \
-    STATS_PORT=8888
+    STATS_PORT=8888 \
+    WG_PORT=51820
 
 
 VOLUME /config \
