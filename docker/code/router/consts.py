@@ -29,6 +29,7 @@ WG_PEERS_JSON = RUN / "wireguard" / "wg-peers.json"
 
 UNBOUND_CONF = RUN / "unbound" / "0-include.conf"
 
+
 UNBOUND_PORT = 5335
 WG_PORT = int(environ["WG_PORT"])
 STATS_PORT = int(environ["STATS_PORT"])
@@ -49,6 +50,7 @@ IP4_EXCLUSION = tuple(map(IPv4Network, split(environ["IP4_EXCLUSION"])))
 IP4_PREFIX = int(environ["IP4_PREFIX"])
 TOR_IP4_PREFIX = 16
 
+LEASE_TIME = int(environ["LEASE_TIME"])
 DNS_SERVERS = tuple(split(environ["DNS_SERVERS"]))
 NTP_SERVERS = tuple(split(environ["NTP_SERVERS"]))
 
