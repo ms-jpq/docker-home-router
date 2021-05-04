@@ -17,6 +17,7 @@ from .consts import (
     STATS_PORT,
     TEMPLATES,
     TOR_PORT,
+    UNBOUND_PORT,
     USER,
     WAN_IF,
     WG_IF,
@@ -54,7 +55,7 @@ def _env(networks: Networks) -> Mapping[str, Any]:
     else:
         fwds = tuple(forwarded_ports(networks))
         loop_back = calculate_loopback()
-        dns = tuple(DNS_SERVERS) or f"{loop_back}#{6363}"
+        dns = tuple(DNS_SERVERS) or f"{loop_back}#{UNBOUND_PORT}"
         env = {
             "USER": USER,
             "WAN_IF": WAN_IF,
