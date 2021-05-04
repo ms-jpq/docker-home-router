@@ -51,6 +51,7 @@ RUN useradd --user-group --shell=/usr/sbin/nologin "$USER" && \
 # 5353  UDP     -> Bonjour
 
 ### Configurable
+# 5335  TCP/UDP -> DNS - recursive resolver
 # 8888  TCP     -> HTTP - Statistics
 # 9060  TCP     -> TOR
 # 9080  TCP     -> Squid
@@ -60,6 +61,7 @@ EXPOSE 53/tcp 53/udp \
        123/udp \
        5353/udp \
        8888/tcp \
+       5335/tcp 5335/udp \
        9060/tcp \
        9080/tcp \
        51820/udp
@@ -92,9 +94,10 @@ ENV WAN_IF= \
     WG_PEERS="me,my wife,my wife's boyfriend" \
     WAN_DOMAIN= \
     LAN_DOMAIN=lan \
-    SQUID_PORT=9080 \
-    TOR_PORT=9060 \
+    UNBOUND_PORT=5335 \
     STATS_PORT=8888 \
+    TOR_PORT=9060 \
+    SQUID_PORT=9080 \
     WG_PORT=51820
 
 
