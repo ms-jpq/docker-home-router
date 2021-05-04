@@ -29,7 +29,7 @@ WG_PEERS_JSON = RUN / "wireguard" / "wg-peers.json"
 
 UNBOUND_CONF = RUN / "unbound" / "0-include.conf"
 
-UNBOUND_PORT = int(environ["UNBOUND_PORT"])
+UNBOUND_PORT = 5335
 WG_PORT = int(environ["WG_PORT"])
 STATS_PORT = int(environ["STATS_PORT"])
 SQUID_PORT = int(environ["SQUID_PORT"])
