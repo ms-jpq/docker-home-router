@@ -73,6 +73,7 @@ def _env(networks: Networks) -> Mapping[str, Any]:
             "WG_NETWORK_V6": networks.wireguard.v6,
             "DNS_SERVERS": dns,
             "NTP_SERVERS": NTP_SERVERS,
+            "UNBOUND_PORT": UNBOUND_PORT,
             "SQUID_PORT": SQUID_PORT,
             "TOR_PORT": TOR_PORT,
             "STATS_PORT": STATS_PORT,
