@@ -19,7 +19,10 @@ def _if_up(addrs: Addrs, interface: str, networks: AbstractSet[IPNetwork]) -> No
         if addr.ifname == interface:
             for info in addr.addr_info:
                 local: IPInterface = ip_interface(f"{info.local}/{info.prefixlen}")
-                acc.discard(local)
+                if local in acc:
+                    acc.discard(local)
+                else:
+                    check_call(("ip", "addr", "del", str(local), "dev", interface))
             break
     else:
         raise ValueError(f"IF NOT FOUND - {interface}")
