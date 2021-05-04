@@ -53,7 +53,7 @@ def _env(networks: Networks) -> Mapping[str, Any]:
     else:
         fwds = tuple(forwarded_ports(networks))
         loop_back = calculate_loopback()
-        dns = DNS_SERVERS or f"{loop_back}#{UNBOUND_PORT}"
+        dns = DNS_SERVERS or (f"{loop_back}#{UNBOUND_PORT}",)
         env = {
             "USER": USER,
             "WAN_IF": WAN_IF,
