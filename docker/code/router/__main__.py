@@ -48,8 +48,6 @@ def _env(networks: Networks) -> Mapping[str, Any]:
         raise ValueError("LAN_IF - required")
     elif not WG_IF:
         raise ValueError("WG_IF - required")
-    elif not DNS_SERVERS:
-        raise ValueError("DNS_SERVERS - required")
     elif not NTP_SERVERS:
         raise ValueError("NTP_SERVERS - required")
     else:
