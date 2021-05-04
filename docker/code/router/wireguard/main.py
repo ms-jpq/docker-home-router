@@ -10,7 +10,17 @@ from std2.pickle import encode
 from std2.pickle.coders import BUILTIN_ENCODERS
 from std2.types import IPNetwork
 
-from ..consts import J2, SRV, USER, WAN_DOMAIN, WG_IF, WG_PEERS, WG_PEERS_JSON
+from ..consts import (
+    DATA,
+    J2,
+    RUN,
+    USER,
+    WAN_DOMAIN,
+    WG_IF,
+    WG_PEERS,
+    WG_PEERS_JSON,
+    WG_PORT,
+)
 from ..ip import addr_show, link_show
 from ..render import j2_build, j2_render
 from ..subnets import load_networks
@@ -20,10 +30,10 @@ _SRV_TPL = Path("wg", "server.conf")
 _CLIENT_TPL = Path("wg", "client.conf")
 
 
-_WG_DATA = SRV / "wireguard"
-_SRV_KEY = _WG_DATA / "keys" / "server" / "private.key"
-_CLIENT_KEYS = _WG_DATA / "keys" / "clients"
-QR_DIR = _WG_DATA / "pub"
+_WG_DATA = DATA / "wireguard"
+_SRV_KEY = _WG_DATA / "server" / "private.key"
+_CLIENT_KEYS = _WG_DATA / "clients"
+QR_DIR = RUN / "wireguard"
 
 
 def _add_link() -> None:
@@ -98,7 +108,7 @@ def _wg_conf(j2: Environment, stack: DualStack) -> str:
         }
         for (_, _, peer_public), (v4, v6) in zip(_client_keys(), hosts)
     )
-    env = {"SERVER_PRIVATE_KEY": server_private, "PEERS": peers}
+    env = {"SERVER_PRIVATE_KEY": server_private, "WG_PORT": WG_PORT, "PEERS": peers}
     text = j2_render(j2, path=_SRV_TPL, env=env)
     return text
 
@@ -129,6 +139,7 @@ def _gen_qr(j2: Environment, networks: Networks) -> None:
         "GUEST_NETWORK_V4": networks.guest.v4,
         "GUEST_NETWORK_V6": networks.guest.v6,
         "WAN_DOMAIN": WAN_DOMAIN,
+        "WG_PORT": WG_PORT,
     }
     gen = tuple(zip(_client_keys(), hosts))
     data = {path.stem: WGPeer(v4=v4, v6=v6) for (path, _, _), (v4, v6) in gen}

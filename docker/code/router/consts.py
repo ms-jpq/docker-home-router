@@ -10,12 +10,12 @@ SERVER_NAME = getfqdn()
 _TOP_LV = Path(__file__).resolve().parent
 J2 = _TOP_LV / "j2"
 
-SRV = Path("/", "srv")
+_SRV = Path("/", "srv")
 DATA = Path("/", "data")
 _CONFIG = Path("/", "config")
 
-TEMPLATES = SRV / Path("templates")
-RUN = SRV / Path("run")
+TEMPLATES = _SRV / Path("templates")
+RUN = _SRV / Path("run")
 
 PORT_FWD = _CONFIG / "port_fwd"
 
@@ -24,12 +24,13 @@ _DNSMASQ = RUN / "dnsmasq"
 DYN = _DNSMASQ / "lan" / "5-dyn.conf"
 ADDN_HOSTS = _DNSMASQ / "hosts" / "addrs.conf"
 
-NETWORKS_JSON = SRV / "run" / "networks" / "networks.json"
+NETWORKS_JSON = _SRV / "run" / "networks" / "networks.json"
 WG_PEERS_JSON = RUN / "wireguard" / "wg-peers.json"
 
 UNBOUND_CONF = RUN / "unbound" / "0-include.conf"
 
 UNBOUND_PORT = 5335
+WG_PORT = int(environ["WG_PORT"])
 STATS_PORT = int(environ["STATS_PORT"])
 SQUID_PORT = int(environ["SQUID_PORT"])
 TOR_PORT = int(environ["TOR_PORT"])
