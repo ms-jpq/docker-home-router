@@ -8,7 +8,6 @@ from jinja2 import Environment
 from std2.lex import split
 from std2.pickle import encode
 from std2.pickle.coders import BUILTIN_ENCODERS
-from std2.types import IPNetwork
 
 from ..consts import (
     DATA,
@@ -21,6 +20,7 @@ from ..consts import (
     WG_PEERS_JSON,
     WG_PORT,
 )
+from ..ifup.main import if_up
 from ..ip import addr_show, link_show
 from ..render import j2_build, j2_render
 from ..subnets import load_networks
@@ -42,20 +42,6 @@ def _add_link() -> None:
             break
     else:
         check_call(("ip", "link", "add", WG_IF, "type", "wireguard"))
-
-
-def _add_subnet(network: IPNetwork) -> None:
-    for addr in addr_show():
-        if addr.ifname == WG_IF:
-            for info in addr.addr_info:
-                if info.local in network and network.prefixlen == info.prefixlen:
-                    return
-            else:
-                address = f"{next(network.hosts())}/{network.prefixlen}"
-                check_call(("ip", "address", "add", address, "dev", WG_IF))
-                return
-    else:
-        assert False
 
 
 def _set_up() -> None:
@@ -178,13 +164,14 @@ def _wg_up(j2: Environment, stack: DualStack) -> None:
 def main() -> None:
     j2 = j2_build(J2)
     networks = load_networks()
+    addrs = addr_show()
     _gen_client_keys()
     _gen_qr(j2, networks=networks)
 
     _add_link()
-    _add_subnet(networks.wireguard.v4)
-    _add_subnet(networks.wireguard.v6)
-
+    if_up(
+        addrs, interface=WG_IF, networks={networks.wireguard.v4, networks.wireguard.v6}
+    )
     _wg_up(j2, stack=networks.wireguard)
     _set_up()
     check_call(("chown", "-R", f"{USER}:{USER}", "--", str(_WG_DATA)))

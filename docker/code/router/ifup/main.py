@@ -9,7 +9,7 @@ from ..ip import Addrs, addr_show
 from ..subnets import load_networks
 
 
-def _if_up(addrs: Addrs, interface: str, networks: AbstractSet[IPNetwork]) -> None:
+def if_up(addrs: Addrs, interface: str, networks: AbstractSet[IPNetwork]) -> None:
     acc: MutableSet[IPInterface] = {
         ip_interface(f"{next(network.hosts())}/{network.prefixlen}")
         for network in networks
@@ -34,14 +34,14 @@ def _if_up(addrs: Addrs, interface: str, networks: AbstractSet[IPNetwork]) -> No
 def main() -> None:
     networks = load_networks()
     addrs = addr_show()
-    _if_up(
+    if_up(
         addrs,
         interface=LAN_IF,
         networks={networks.lan.v4, networks.lan.v6},
     )
 
     if GUEST_IF:
-        _if_up(
+        if_up(
             addrs,
             interface=GUEST_IF,
             networks={networks.guest.v4, networks.guest.v6},
