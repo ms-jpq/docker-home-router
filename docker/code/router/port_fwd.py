@@ -69,7 +69,7 @@ def _pick(
             (addr for addr in lease_addrs if isinstance(addr, IPv4Address)),
             stack.v4.hosts(),
         )
-        if any(v4_addr in addrs for addrs in leased.values())
+        if v4_addr in stack.v4 and any(v4_addr in addrs for addrs in leased.values())
     )
     v6 = next(
         v6_addr
@@ -77,7 +77,7 @@ def _pick(
             (addr for addr in lease_addrs if isinstance(addr, IPv6Address)),
             stack.v6.hosts(),
         )
-        if any(v6_addr in addrs for addrs in leased.values())
+        if v6_addr in stack.v6 and any(v6_addr in addrs for addrs in leased.values())
     )
 
     lease_addrs.add(v4)
