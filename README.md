@@ -89,7 +89,7 @@ Need I say more?
 
 All the outbound DNS traffic is redirected to a single server, your server.
 
-Very cash money for running DNS based adblock, such as pihole, or adguardhome.
+Very cash money for running DNS based adblock, such as [pihole](https://pi-hole.net/), or [adguardhome](https://github.com/AdguardTeam/AdGuardHome).
 
 DOT is also blocked.
 
@@ -113,7 +113,7 @@ Very useful for reverse proxies.
     <b>Simple split tunneling</b>
   </summary>
 
-All you need to do is write down the IP ranges on the other side of your tunnel, the image will calculate to use non-overlapping local networks.
+All you need to do is write down the IP ranges on the other side of your tunnel, the image will automatically assign non-overlapping local networks.
 
 </details>
 
@@ -146,7 +146,7 @@ Visit `.onion` websites without having to setup TOR.
 
 Disclaimer: This is purely for convenience / fun, not privacy.
 
-Only works on non-🍎 devices because 🍎 locked this feature behind a VPN profile.
+Only works on non-🍎 devices because 🍎 [locked this feature behind a VPN profile](https://developer.apple.com/documentation/devicemanagement/vpn/dns).
 
 </details>
 
@@ -164,6 +164,34 @@ Force all your local devices to be in sync with your router's clock (and each ot
 ## INSTALL.md
 
 See [INSTALL.md](https://github.com/ms-jpq/docker-home-router/tree/whale/install)
+
+---
+
+## FAQ
+
+<details>
+  <summary>What is the easiest way to get extra ports for WAN/LAN/Guest?</summary>
+
+USB 3 ethernet adapters are very cheap and are more than enough for sub gigabit speeds.
+
+Gigabit PCIE adapters are also very cheap, but you need extra PCIE ports.
+
+You can also get a VLAN capable switch, but those are slightly more $$$.
+
+</details>
+
+
+<details>
+  <summary>Are ARM computers ok? Like Raspberry Pi?</summary>
+
+Non Raspberry Pi ARM computers often have horrible software compatibility, but alot of them are better bang for the buck, YMMV.
+
+At the current price point (in Canada), Raspberry Pis are just not competitive.
+
+I'd just get a random smol form x86 PC from Aliexpress / Amazon, they are a tad more expensive, but alot more powerful.
+
+</details>
+
 
 ---
 
