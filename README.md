@@ -36,7 +36,7 @@ There are the QR codes you can scan on your phone, to add VPN profiles. (Need th
 
 You can run this along other Docker images!
 
-Need I say more? :D :D :D
+Need I say more?
 
 #### DNS sinkhole
 
@@ -53,6 +53,16 @@ Suppose you have a computer called `<name>`. Most routers will let use `<name>.l
 I go one step further. Everything under `*.<name>.lan` also goes to `<name>`.
 
 Very useful for reverse proxies.
+
+#### Port forwarding based on hostname
+
+Yub, who cares about MAC addresses? Not us humans.
+
+#### Simple split tunneling
+
+All you need to do is write down the IP ranges on the other side of your tunnel, the image will calculate to use non-overlapping local networks.
+
+
 
 ### COOL, but not that useful
 
