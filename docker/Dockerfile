@@ -71,7 +71,6 @@ EXPOSE 53/tcp 53/udp \
 # IP6_ULA_SUBNET_EXCLUSION -> ',' delimited : Organizationally unique 16 bit prefix (in HEX)
 # IP4_EXCLUSION            -> ',' delimited : Networks to exclude from assignment in 'x.x.x.x/mask' form
 # DNS_SERVERS              -> Upstream DNS servers: default is systemd-resolve
-# NTP_SERVERS              -> Upstream NTP servers
 # WG_PEERS                 -> ',' delimited : List of peers to create for wireguard
 # STATS_PORT               -> Port for statistics
 # SERVER_NAME              -> Name of router
@@ -87,7 +86,6 @@ ENV WAN_IF= \
     IP4_PREFIX=22 \
     LEASE_TIME=2 \
     DNS_SERVERS= \
-    NTP_SERVERS=0.ca.pool.ntp.org,1.ca.pool.ntp.org,2.ca.pool.ntp.org,3.ca.pool.ntp.org \
     WG_PEERS="me,my wife,my wife's boyfriend" \
     WAN_DOMAIN= \
     LAN_DOMAIN=lan \

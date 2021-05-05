@@ -57,7 +57,6 @@ TOR_IP4_PREFIX = 16
 LEASE_TIME = clamp(2, int(environ["LEASE_TIME"]), 24 * 7)
 DNS_SERVERS = tuple(split(environ["DNS_SERVERS"]))
 LAN_DOMAIN = environ["LAN_DOMAIN"]
-NTP_SERVERS = tuple(split(environ["NTP_SERVERS"]))
 
 
 WAN_DOMAIN = environ["WAN_DOMAIN"] or SERVER_NAME

@@ -1,6 +1,5 @@
 from argparse import ArgumentParser, Namespace
 from shutil import copystat
-from subprocess import CalledProcessError, check_call
 from typing import Any, Mapping
 
 from std2.pathlib import walk
@@ -12,7 +11,6 @@ from .consts import (
     LAN_DOMAIN,
     LAN_IF,
     LEASE_TIME,
-    NTP_SERVERS,
     RUN,
     SQUID_PORT,
     STATS_PORT,
@@ -41,8 +39,6 @@ def _env(networks: Networks) -> Mapping[str, Any]:
         raise ValueError("LAN_IF - required")
     elif not WG_IF:
         raise ValueError("WG_IF - required")
-    elif not NTP_SERVERS:
-        raise ValueError("NTP_SERVERS - required")
     else:
         fwds = tuple(forwarded_ports(networks))
         loop_back = calculate_loopback()
@@ -64,7 +60,6 @@ def _env(networks: Networks) -> Mapping[str, Any]:
             "WG_NETWORK_V4": networks.wireguard.v4,
             "WG_NETWORK_V6": networks.wireguard.v6,
             "DNS_SERVERS": dns,
-            "NTP_SERVERS": NTP_SERVERS,
             "UNBOUND_PORT": UNBOUND_PORT,
             "SQUID_PORT": SQUID_PORT,
             "TOR_PORT": TOR_PORT,
