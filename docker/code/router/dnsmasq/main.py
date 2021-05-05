@@ -1,3 +1,4 @@
+from ipaddress import IPv4Address
 from itertools import chain
 from json import loads
 from locale import strxfrm
@@ -53,7 +54,10 @@ def _forever(j2: Environment) -> None:
         acc.add(addr)
 
     env = {
-        "MAPPINGS": {key: mappings[key] for key in sorted(mappings, key=strxfrm)},
+        "MAPPINGS": {
+            key: sorted(mappings[key], key=lambda i: isinstance(i, IPv4Address))
+            for key in sorted(mappings, key=strxfrm)
+        },
         "LAN_DOMAIN": LAN_DOMAIN,
     }
     t1 = j2_render(j2, path=_DYN, env=env)
