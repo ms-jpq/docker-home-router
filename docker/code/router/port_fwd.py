@@ -1,5 +1,6 @@
 from ipaddress import IPv4Address, IPv6Address
 from itertools import chain
+from locale import strxfrm
 from typing import (
     Any,
     Iterator,
@@ -91,7 +92,11 @@ def forwarded_ports(
     PORT_FWD.mkdir(parents=True, exist_ok=True)
 
     acc: MutableMapping[str, Any] = {"lan": {}, "guest": {}}
-    for path in chain(PORT_FWD.glob("*.yaml"), PORT_FWD.glob("*.yml")):
+    paths = sorted(
+        chain(PORT_FWD.glob("*.yaml"), PORT_FWD.glob("*.yml")),
+        key=lambda p: strxfrm(p.name),
+    )
+    for path in paths:
         raw = path.read_text()
         yaml = safe_load(raw)
         acc = merge(acc, yaml)

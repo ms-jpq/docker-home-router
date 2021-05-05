@@ -22,9 +22,14 @@ services:
       - data:/data
 
       # Optional
-      - ./nftables:/config/nftables # Your own firewall rules, if any
+      # Your own firewall rules, in *.conf files
+      # See https://github.com/ms-jpq/docker-home-router/tree/whale/install/nftables/0-example.conf
+      - ./nftables:/config/nftables
+
       # Optional
-      - ./port_fwd:/config/port_fwd # Your own port forward rules, if any
+      # Your own port forward rules, if any
+      # See https://github.com/ms-jpq/docker-home-router/tree/whale/install/port_fwd/0-example.yml
+      - ./port_fwd:/config/port_fwd
 
 volumes:
   # This stores DHCP leases and Wireguard keys

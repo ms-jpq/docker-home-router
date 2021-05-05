@@ -1,0 +1,31 @@
+---
+# Files in this directory will be merged into a single specification
+# All files need to look like the one below
+
+lan:
+  # Will forward these 3 ports from WAN -> some-machines-name.lan located on the lan network
+  some-machines-name:
+    - name: http # name is optional
+      from_port: 80
+      to_port: 80
+      proto: tcp
+
+    - from_port: 443
+      to_port: 443
+      proto: tcp
+
+    - from_port: 32400
+      to_port: 32400
+      proto: tcp
+
+guest:
+  # will forward these 2 ports from WAN -> some-other-name.lan located on the guest network
+  some-other-name:
+    - name: torrent
+      from_port: 6881
+      to_port: 6881
+      proto: tcp
+
+    - from_port: 6881
+      to_port: 6881
+      proto: udp

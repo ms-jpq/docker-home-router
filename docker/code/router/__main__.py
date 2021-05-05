@@ -7,11 +7,11 @@ from std2.pathlib import walk
 
 from .cake.main import main as cake_main
 from .consts import (
+    DHCP_LEASE_TIME,
     DNS_SERVERS,
     GUEST_IF,
     LAN_DOMAIN,
     LAN_IF,
-    DHCP_LEASE_TIME,
     RUN,
     SQUID_PORT,
     STATS_PORT,
@@ -34,8 +34,11 @@ from .wireguard.main import main as wg_main
 
 
 def _sysctl() -> None:
-    check_call(("sysctl", "net.ipv4.ip_forward=1"))
-    check_call(("sysctl", "net.ipv6.conf.all.forwarding=1"))
+    try:
+        check_call(("sysctl", "net.ipv4.ip_forward=1"))
+        check_call(("sysctl", "net.ipv6.conf.all.forwarding=1"))
+    except CalledProcessError:
+        pass
 
 
 def _env(networks: Networks) -> Mapping[str, Any]:
