@@ -63,9 +63,6 @@ def _forever(j2: Environment) -> None:
     t1 = j2_render(j2, path=_DYN, env=env)
     t2 = j2_render(j2, path=_ADDN_HOSTS, env=env)
 
-    if dyn != t1:
-        DYN.write_text(t1)
-
     if addn != t2:
         with TemporaryDirectory() as temp:
             tmp = Path(temp) / "tmp"
@@ -73,6 +70,7 @@ def _forever(j2: Environment) -> None:
             tmp.rename(ADDN_HOSTS)
 
     if pid and dyn != t1:
+        DYN.write_text(t1)
         check_call(("kill", str(pid)))
 
 
