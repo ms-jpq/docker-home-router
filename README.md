@@ -38,6 +38,10 @@ There are the QR codes you can scan on your phone, to add VPN profiles. (Need th
 
 You can add as many VPN profiles as you want!
 
+#### Port forwarding based on hostname
+
+Yub, who cares about MAC addresses? Not us humans.
+
 ### FOR NERDS
 
 #### Run it along side other Docker images
@@ -61,10 +65,6 @@ Suppose you have a computer called `<name>`. Most routers will let you use `<nam
 I go one step further. Everything under `*.<name>.lan` also goes to `<name>`.
 
 Very useful for reverse proxies.
-
-#### Port forwarding based on hostname
-
-Yub, who cares about MAC addresses? Not us humans.
 
 #### Simple split tunneling
 
