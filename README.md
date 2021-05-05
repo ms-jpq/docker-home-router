@@ -12,25 +12,36 @@ Yes, you can run it along side with other Docker images.
 
 ### FOR EVERYBODY
 
-#### Fairness & prioritization
+<details>
+<summary>**Fairness & prioritization**</summary>
 
 Bandwidth is balanced on a (per-computer -> per-stream) basis.
 
 Should help to alleviate any single computer from hogging the internet juice.
 
-#### Better ping!
+</details>
+
+<details>
+<summary>**Better ping!**</summary>
 
 As traffic approach maximum bandwidth, latency shoots up.
 
 Thats why we do traffic shaping. :)
 
-#### One way guest network
+</details>
+
+<details>
+<summary>**One way guest network**</summary>
 
 You can talk to guests, guests can reply. Guest cannot initiate talks with you.
 
 Pretty good to put all the untrusted stuff on the guest network.
 
-#### VPN (1 step set-up)
+</details>
+
+<details>
+
+<summary>**VPN (1 step set-up)**</summary>
 
 Just go to `http://<router-name>.lan:8888/` from (not your guest network) and BAM!
 
@@ -38,9 +49,14 @@ There are the QR codes you can scan on your phone, to add VPN profiles. (Need th
 
 You can add as many VPN profiles as you want!
 
-#### Port forwarding based on hostname
+</details>
+
+<details>
+<summary>**Port forwarding based on hostname**</summary>
 
 Yub, who cares about MAC addresses? Not us humans.
+
+</details>
 
 ### FOR NERDS
 
