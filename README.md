@@ -95,7 +95,7 @@ DOT is also blocked.
 
 <details>
   <summary>
-    <b>Wildcard LAN domains (`*.<hostname>.lan`)</b>
+    <b>Wildcard LAN domains (<pre>*.&lthostname&gt.lan</pre>)</b>
   </summary>
 
 Suppose you have a computer called `<name>`. Most routers will let you use `<name>.lan` to visit `<name>`.
