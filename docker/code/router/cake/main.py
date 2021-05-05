@@ -1,29 +1,26 @@
 from json import loads
 from subprocess import check_call, check_output
 
-from ..consts import WAN_IF
+from ..consts import TC_EGRESS, TC_INGRESS, WAN_IF
+
+_INGRESS_OPTS = (
+    "ingress",
+    "dual-dsthost",
+    *TC_INGRESS,
+)
 
 _EGRESS_OPTS = (
     "egress",
     "nat",
     "dual-srchost",
-    "diffserv8",
-    "wash",
-    "ethernet",
+    *TC_EGRESS,
 )
 
-_INGRESS_OPTS = (
-    "ingress",
-    "dual-dsthost",
-    "besteffort",
-    "wash",
-    "ethernet",
-)
 
 _QDISC_ID = "ffff:"
 
 
-def _egress(wan_if: str, rtt: str) -> None:
+def _egress(wan_if: str) -> None:
     check_call(
         (
             "tc",
@@ -34,13 +31,11 @@ def _egress(wan_if: str, rtt: str) -> None:
             "root",
             "cake",
             *_EGRESS_OPTS,
-            "rtt",
-            rtt,
         )
     )
 
 
-def _ingress(wan_if: str, rtt: str) -> None:
+def _ingress(wan_if: str) -> None:
     link_name = f"ifb4{wan_if}"
 
     raw_links = check_output(("ip", "--json", "link", "show"), text=True)
@@ -64,8 +59,6 @@ def _ingress(wan_if: str, rtt: str) -> None:
             "root",
             "cake",
             *_INGRESS_OPTS,
-            "rtt",
-            rtt,
         )
     )
     check_call(("ip", "link", "set", link_name, "up"))
@@ -90,5 +83,5 @@ def _ingress(wan_if: str, rtt: str) -> None:
 
 
 def main() -> None:
-    _egress(WAN_IF, rtt="100ms")
-    _ingress(WAN_IF, rtt="10ms")
+    _egress(WAN_IF)
+    _ingress(WAN_IF)

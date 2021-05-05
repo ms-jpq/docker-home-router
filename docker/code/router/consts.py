@@ -45,6 +45,9 @@ GUEST_IF = environ["GUEST_IF"]
 WG_IF = environ["WG_IF"]
 IF_EXCLUSIONS = frozenset(split(environ["IF_EXCLUSIONS"]))
 
+TC_INGRESS = tuple(split(environ["TC_INGRESS"]))
+TC_EGRESS = tuple(split(environ["TC_EGRESS"]))
+
 
 LOOPBACK_EXCLUSION = frozenset(map(IPv4Network, split(environ["LOOPBACK_EXCLUSION"])))
 IP6_ULA_GLOBAL = environ["IP6_ULA_GLOBAL"]
