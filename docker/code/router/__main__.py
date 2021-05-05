@@ -34,14 +34,6 @@ from .types import Networks
 from .wireguard.main import main as wg_main
 
 
-def _sysctl() -> None:
-    try:
-        check_call(("sysctl", "net.ipv4.ip_forward=1"))
-        check_call(("sysctl", "net.ipv6.conf.all.forwarding=1"))
-    except CalledProcessError:
-        pass
-
-
 def _env(networks: Networks) -> Mapping[str, Any]:
     if not WAN_IF:
         raise ValueError("WAN_IF - required")
@@ -134,7 +126,6 @@ def main() -> None:
     elif args.op == "stats":
         stats_main()
     elif args.op == "template":
-        _sysctl()
         _template()
     elif args.op == "wg":
         wg_main()
