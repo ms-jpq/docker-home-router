@@ -10,7 +10,7 @@ Yes, you can run it along side with other Docker images.
 
 ## Features
 
-### FOR EVERYBODY
+### Cool & for everybody
 
 <details>
   <summary>
@@ -67,7 +67,7 @@ Yub, who cares about MAC addresses? Not us humans.
 
 </details>
 
-### FOR NERDS
+### Cool & for nerds
 
 <details>
   <summary>
@@ -115,7 +115,7 @@ All you need to do is write down the IP ranges on the other side of your tunnel,
 
 </details>
 
-### COOL, but not that useful
+### Cool, but not that useful
 
 <details>
   <summary>
