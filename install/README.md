@@ -40,8 +40,46 @@ reboot
 
 Run `docker-compose up --detach` on the [`docker-compose.yml`](https://github.com/ms-jpq/docker-home-router/tree/whale/install/docker-compose.yml).
 
+You see most configs are in `docker-compose.yml` example.
+
 ---
 
-## Configurations
+## Pihole / Adguard Home
 
-Custom configs
+Pihole / Adguard must run on same machine as the router.
+
+```yaml
+pihole:
+  # Everything as usual
+  ...
+  # Bind DNS ports to LOOPBACK, ie 127.69.69.69
+  ports:
+    - 127.69.69.69:53:53/tcp
+    - 127.69.69.69:53:53/udp
+
+router:
+  environment:
+    # Set DNS to same LOOPBACK
+    - DNS_SERVERS=127.69.69.69#53
+```
+
+## Reverse Proxy
+
+You do not need to do this if you do not want to do both:
+
+1. Run reverse proxy on same machine as the router
+
+2. Have the reverse proxy access `*.<hostname>.lan` DNS records
+
+Note: [`guacd`](https://hub.docker.com/r/guacamole/guacd) is also a "reverse proxy".
+
+```yaml
+nginx/traefik/whatever:
+  # Everything as usual
+  ...
+  # You have to use the following 3 lines
+  network_mode: host
+  dns:
+    - 0:0:0:0:0:0:0:1
+    - 127.0.0.1
+```
