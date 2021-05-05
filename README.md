@@ -1,6 +1,6 @@
 # Docker Home Router
 
-Yes, its a router that runs off of a single Docker image.
+Yes, its a router that runs off of a single Docker image & 3 lines of script.
 
 Yes, its packed with tons of features.
 
