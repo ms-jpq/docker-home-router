@@ -4,6 +4,7 @@ from pathlib import Path
 from socket import getfqdn
 
 from std2.lex import split
+from std2.ordinal import clamp
 
 SERVER_NAME = getfqdn()
 
@@ -31,10 +32,10 @@ UNBOUND_CONF = RUN / "unbound" / "0-include.conf"
 
 
 UNBOUND_PORT = 5335
-WG_PORT = int(environ["WG_PORT"])
-STATS_PORT = int(environ["STATS_PORT"])
-SQUID_PORT = int(environ["SQUID_PORT"])
-TOR_PORT = int(environ["TOR_PORT"])
+WG_PORT = clamp(1, int(environ["WG_PORT"]), 2 ** 16 - 1)
+STATS_PORT = clamp(1025, int(environ["STATS_PORT"]), 2 ** 16 - 1)
+SQUID_PORT = clamp(1025, int(environ["SQUID_PORT"]), 2 ** 16 - 1)
+TOR_PORT = clamp(1025, int(environ["TOR_PORT"]), 2 ** 16 - 1)
 
 USER = environ["USER"]
 
@@ -50,7 +51,7 @@ IP4_EXCLUSION = tuple(map(IPv4Network, split(environ["IP4_EXCLUSION"])))
 IP4_PREFIX = int(environ["IP4_PREFIX"])
 TOR_IP4_PREFIX = 16
 
-LEASE_TIME = int(environ["LEASE_TIME"])
+LEASE_TIME = clamp(2, int(environ["LEASE_TIME"]), 24 * 7)
 DNS_SERVERS = tuple(split(environ["DNS_SERVERS"]))
 NTP_SERVERS = tuple(split(environ["NTP_SERVERS"]))
 
