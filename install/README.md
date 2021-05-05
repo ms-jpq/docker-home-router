@@ -39,3 +39,9 @@ reboot
 ## Step 2.
 
 Run `docker-compose up --detach` on the [`docker-compose.yml`](https://github.com/ms-jpq/docker-home-router/tree/whale/install/docker-compose.yml).
+
+---
+
+## Configurations
+
+Custom configs

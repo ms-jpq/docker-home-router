@@ -9,10 +9,23 @@ services:
       - NET_ADMIN
     environment:
       - TZ
-      - WAN_IF=# Required <WAN interface name>
-      - LAN_IF=# Required <LAN interface name>
+      ## Required
+      - WAN_IF=# <WAN interface name>
+      - LAN_IF=# <LAN interface name>
+
+      ## Recommended
+      - GUEST_IF=# <Guest interface name>
+      - DNS_SERVERS=# Set this to a pihole or something
+      - WG_DOMAIN=# Server name / IP from WAN side, used for VPN clients
     network_mode: host
     volumes:
-      - ./:/config
-      - ../../volumes/router:/data
+      - data:/data
 
+      # Optional
+      - ./nftables:/config/nftables # Your own firewall rules, if any
+      # Optional
+      - ./port_fwd:/config/port_fwd # Your own port forward rules, if any
+
+volumes:
+  # This stores DHCP leases and Wireguard keys
+  data: {}

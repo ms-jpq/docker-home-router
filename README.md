@@ -6,6 +6,8 @@ Yes, its packed with tons of features.
 
 Yes, you can run it along side with other Docker images.
 
+Yes, you only need to adjust 2 environmental variables to run
+
 ---
 
 ## Features
