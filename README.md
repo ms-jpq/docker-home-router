@@ -180,18 +180,16 @@ You can also get a VLAN capable switch, but those are slightly more $$$.
 
 </details>
 
-
 <details>
   <summary>Are ARM computers ok? Like Raspberry Pi?</summary>
 
-Non Raspberry Pi ARM computers often have horrible software compatibility, but alot of them are better bang for the buck, YMMV.
+Non-RPi ARM computers often have horrible software compatibility, but alot of them are better bang for the buck, YMMV.
 
-At the current price point (in Canada), Raspberry Pis are just not competitive.
+At the current price point (in Canada), RaspberryPis are just not competitive servers.
 
 I'd just get a random smol form x86 PC from Aliexpress / Amazon, they are a tad more expensive, but alot more powerful.
 
 </details>
-
 
 ---
 
@@ -207,8 +205,8 @@ Also works well with other Docker images, so I can justify spending $$$ on beefi
 
 ### NAT66
 
-Same reason as NAT44, because you only need 1 `::/128` address, even tho in theory we have almost unlimited addresses.
+Same reason as NAT44, because you only need 1 `::/128` address.
 
-There are many situations, such as shared living arrangements, bad ISPs, normie landlords, etc, where you do not get a nice stable block of addresses.
+Even tho in theory we have almost unlimited IP6 addresses, there are many situations, such as shared living arrangements, bad ISPs, normie landlords, etc, where you do not get a nice stable block of prefixes.
 
 Kinda sucks, but it be like that sometimes.
