@@ -30,7 +30,7 @@ WG_PEERS_JSON = RUN / "wireguard" / "wg-peers.json"
 
 UNBOUND_CONF = RUN / "unbound" / "0-include.conf"
 
-DNSMASQ_PID = Path("tmp", "dnsmasq-lan.pid")
+DNSMASQ_PID = Path("/", "tmp", "dnsmasq-lan.pid")
 
 
 UNBOUND_PORT = 5335
