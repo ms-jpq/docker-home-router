@@ -17,6 +17,10 @@ services:
       - GUEST_IF=# <Guest interface name>
       - DNS_SERVERS=# Set this to a pihole or something
       - WG_DOMAIN=# Server name / IP from WAN side, used for VPN clients
+
+      ## Niche
+      # -> Go read https://github.com/ms-jpq/docker-home-router/tree/whale/docker/Dockerfile
+      ## I made lots of comments at the bottom
     network_mode: host
     volumes:
       - data:/data
