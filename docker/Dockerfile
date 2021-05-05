@@ -64,7 +64,7 @@ EXPOSE 53/tcp 53/udp \
 
 
 # WAN_IF, LAN_IF           -> [REQUIRED] Interface names: assigned different IP address space
-# GUEST_IF                 -> see above
+# GUEST_IF                 -> see above, but not required
 # WG_IF                    -> Name for wireguard interface
 # IF_EXCLUSIONS            -> ',' delimited : For interfaces with these glob patterns, their IPv4 networks will be excluded from subnet calculations
 
