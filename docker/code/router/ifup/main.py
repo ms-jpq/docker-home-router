@@ -22,7 +22,8 @@ def if_up(addrs: Addrs, interface: str, networks: AbstractSet[IPNetwork]) -> Non
                 if local in acc:
                     acc.discard(local)
                 else:
-                    check_call(("ip", "addr", "del", str(local), "dev", interface))
+                    print("TODO -- MY ASS --", local, flush=True)
+                    # check_call(("ip", "addr", "del", str(local), "dev", interface))
             break
     else:
         raise ValueError(f"IF NOT FOUND - {interface}")
