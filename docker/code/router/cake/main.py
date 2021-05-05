@@ -7,7 +7,7 @@ _EGRESS_OPTS = (
     "egress",
     "nat",
     "dual-srchost",
-    "besteffort",
+    "diffserv8",
     "wash",
     "ethernet",
 )

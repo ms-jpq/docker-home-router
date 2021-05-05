@@ -4,9 +4,9 @@ from hashlib import sha256
 from ipaddress import IPv4Address, IPv4Network, IPv6Network, ip_interface
 from itertools import chain, islice
 from json import loads
-from typing import Iterable, Iterator, Optional, Sequence
+from typing import AbstractSet, Iterable, Iterator, Optional
 
-from std2.ipaddress import PRIVATE_V4, LOOPBACK_V4
+from std2.ipaddress import LOOPBACK_V4, PRIVATE_V4
 from std2.pickle import decode
 from std2.pickle.coders import BUILTIN_DECODERS
 from std2.types import IPInterface
@@ -24,7 +24,6 @@ from .consts import (
 )
 from .ip import addr_show
 from .types import DualStack, Networks
-
 
 
 @dataclass(frozen=True)
@@ -55,7 +54,7 @@ def _private_subnets(prefix: int) -> Iterator[IPv4Network]:
             yield subnet
 
 
-def _existing(patterns: Sequence[str]) -> Iterator[IPv4Network]:
+def _existing(patterns: AbstractSet[str]) -> Iterator[IPv4Network]:
     for addr in addr_show():
         if any(fnmatch(addr.ifname, pat=pattern) for pattern in patterns):
             for info in addr.addr_info:
@@ -80,7 +79,9 @@ def _pick_private(
                 break
 
 
-def _v4(if_exclusions: Sequence[str], exclusions: Sequence[IPv4Network]) -> _V4Stack:
+def _v4(
+    if_exclusions: AbstractSet[str], exclusions: AbstractSet[IPv4Network]
+) -> _V4Stack:
     nono = chain(exclusions, _existing(if_exclusions))
     lan, wg, tor, guest = _pick_private(
         nono, prefixes=(IP4_PREFIX, IP4_PREFIX, TOR_IP4_PREFIX, IP4_PREFIX)
@@ -102,7 +103,7 @@ def _gen_prefix() -> str:
         raise ValueError()
 
 
-def _v6(prefix: Optional[str], subnets: Sequence[str]) -> _V6Stack:
+def _v6(prefix: Optional[str], subnets: AbstractSet[str]) -> _V6Stack:
     org_prefix = prefix or _gen_prefix()
     org = IPv6Network(f"{org_prefix}::/48")
     seen = {IPv6Network(f"{org_prefix}:{subnet}::/64") for subnet in subnets}
@@ -115,7 +116,7 @@ def _v6(prefix: Optional[str], subnets: Sequence[str]) -> _V6Stack:
 
 
 def calculate_networks() -> Networks:
-    patterns = (WAN_IF, *IF_EXCLUSIONS)
+    patterns = {WAN_IF, *IF_EXCLUSIONS}
     v4, v6 = _v4(patterns, exclusions=IP4_EXCLUSION), _v6(
         IP6_ULA_GLOBAL, IP6_ULA_SUBNET_EXCLUSION
     )
