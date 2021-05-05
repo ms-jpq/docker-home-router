@@ -48,7 +48,7 @@ IF_EXCLUSIONS = tuple(split(environ["IF_EXCLUSIONS"]))
 IP6_ULA_GLOBAL = environ["IP6_ULA_GLOBAL"]
 IP6_ULA_SUBNET_EXCLUSION = tuple(split(environ["IP6_ULA_SUBNET_EXCLUSION"]))
 IP4_EXCLUSION = tuple(map(IPv4Network, split(environ["IP4_EXCLUSION"])))
-IP4_PREFIX = int(environ["IP4_PREFIX"])
+IP4_PREFIX = clamp(16, int(environ["IP4_PREFIX"]), 24)
 TOR_IP4_PREFIX = 16
 
 LEASE_TIME = clamp(2, int(environ["LEASE_TIME"]), 24 * 7)
