@@ -12,11 +12,17 @@ Yes, you can run it along side with other Docker images.
 
 ### FOR EVERYBODY
 
-#### Fairness!
+#### Fairness & prioritization
 
 Bandwidth is balanced on a (per-computer -> per-stream) basis.
 
 Should help to alleviate any single computer from hogging the internet juice.
+
+#### Better ping!
+
+As traffic approach maximum bandwidth, latency shoots up.
+
+Thats why we do traffic shaping. :)
 
 #### One way guest network
 
@@ -29,6 +35,8 @@ Pretty good to put all the untrusted stuff on the guest network.
 Just go to `http://<router-name>.lan:8888/` from (not your guest network) and BAM!
 
 There are the QR codes you can scan on your phone, to add VPN profiles. (Need the official wireguard app).
+
+You can add as many VPN profiles as you want!
 
 ### FOR NERDS
 
@@ -61,8 +69,6 @@ Yub, who cares about MAC addresses? Not us humans.
 #### Simple split tunneling
 
 All you need to do is write down the IP ranges on the other side of your tunnel, the image will calculate to use non-overlapping local networks.
-
-
 
 ### COOL, but not that useful
 
