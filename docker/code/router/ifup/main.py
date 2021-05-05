@@ -1,14 +1,13 @@
-from ipaddress import IPv6Network, ip_interface
+from ipaddress import ip_interface
 from subprocess import check_call
 from typing import AbstractSet, MutableSet
 
+from std2.ipaddress import LINK_LOCAL_V6
 from std2.types import IPInterface, IPNetwork
 
 from ..consts import GUEST_IF, LAN_IF
 from ..ip import Addrs, addr_show
 from ..subnets import load_networks
-
-_LINK_LOCAL = IPv6Network("fe80::/10")
 
 
 def if_up(addrs: Addrs, interface: str, networks: AbstractSet[IPNetwork]) -> None:
@@ -24,7 +23,7 @@ def if_up(addrs: Addrs, interface: str, networks: AbstractSet[IPNetwork]) -> Non
                 if local in acc:
                     acc.discard(local)
                 else:
-                    if local.ip not in _LINK_LOCAL:
+                    if local.ip not in LINK_LOCAL_V6:
                         check_call(("ip", "addr", "del", str(local), "dev", interface))
             break
     else:

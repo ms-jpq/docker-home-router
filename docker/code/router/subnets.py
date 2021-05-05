@@ -6,7 +6,7 @@ from itertools import chain, islice
 from json import loads
 from typing import Iterable, Iterator, Optional, Sequence
 
-from std2.ipaddress import RFC_1918
+from std2.ipaddress import PRIVATE_V4, LOOPBACK_V4
 from std2.pickle import decode
 from std2.pickle.coders import BUILTIN_DECODERS
 from std2.types import IPInterface
@@ -25,7 +25,6 @@ from .consts import (
 from .ip import addr_show
 from .types import DualStack, Networks
 
-_LO = IPv4Network("127.0.0.0/8")
 
 
 @dataclass(frozen=True)
@@ -51,7 +50,7 @@ def load_networks() -> Networks:
 
 
 def _private_subnets(prefix: int) -> Iterator[IPv4Network]:
-    for network in RFC_1918:
+    for network in PRIVATE_V4:
         for subnet in network.subnets(new_prefix=prefix):
             yield subnet
 
@@ -130,7 +129,7 @@ def calculate_networks() -> Networks:
 
 
 def calculate_loopback() -> IPv4Address:
-    for ip in _LO.hosts():
+    for ip in LOOPBACK_V4.hosts():
         if all(ip not in network for network in LOOPBACK_EXCLUSION):
             return ip
     else:
