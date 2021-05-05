@@ -31,16 +31,19 @@ This is only in effect until Docker is loaded in.
 
 The actual Docker image will load in a much more intricate firewall.
 
-```sh
-# To make sure everything is in effect
-reboot
-```
-
 ## Step 2.
 
 Run `docker-compose up --detach` on the [`docker-compose.yml`](https://github.com/ms-jpq/docker-home-router/tree/whale/install/docker-compose.yml).
 
 You see most configs are in `docker-compose.yml` example.
+
+## Step 3.
+
+Test everything works after rebooting, you are gucci.
+
+```sh
+reboot
+```
 
 ---
 
