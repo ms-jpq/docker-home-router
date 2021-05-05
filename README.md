@@ -34,9 +34,9 @@ DOT is also blocked.
 
 #### Wildcard LAN domains (`*.<hostname>.lan`)
 
-Suppose you have a computer called `ape`. Most routers will let use `ape.lan` to visit `ape`.
+Suppose you have a computer called `<name>`. Most routers will let use `<name>.lan` to visit `<name>`.
 
-I go one step further. Everything under `*.ape.lan` also goes to `ape`.
+I go one step further. Everything under `*.<name>.lan` also goes to `<name>`.
 
 Very useful for reverse proxies.
 
