@@ -56,7 +56,7 @@ DOT is also blocked.
 
 #### Wildcard LAN domains (`*.<hostname>.lan`)
 
-Suppose you have a computer called `<name>`. Most routers will let use `<name>.lan` to visit `<name>`.
+Suppose you have a computer called `<name>`. Most routers will let you use `<name>.lan` to visit `<name>`.
 
 I go one step further. Everything under `*.<name>.lan` also goes to `<name>`.
 
