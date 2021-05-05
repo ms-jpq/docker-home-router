@@ -86,7 +86,7 @@ Visit `.onion` websites without having to setup TOR.
 
 Disclaimer: This is purely for convenience / fun, not privacy.
 
-_Only works on non-fapple devices because 🍎 is very paternalistic_
+Only works on non-🍎 devices because 🍎 locked this feature behind a VPN profile.
 
 #### NTP sinkhole
 
