@@ -22,6 +22,7 @@ from .consts import (
     USER,
     WAN_IF,
     WG_IF,
+    WG_PORT,
 )
 from .dnsmasq.main import main as dnsmsq_main
 from .ifup.main import main as ifup_main
@@ -74,6 +75,7 @@ def _env(networks: Networks) -> Mapping[str, Any]:
             "UNBOUND_PORT": UNBOUND_PORT,
             "SQUID_PORT": SQUID_PORT,
             "TOR_PORT": TOR_PORT,
+            "WG_PORT": WG_PORT,
             "STATS_PORT": STATS_PORT,
             "LOOPBACK_LOCAL": loop_back,
             "LAN_DOMAIN": LAN_DOMAIN,
