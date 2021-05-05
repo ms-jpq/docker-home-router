@@ -52,7 +52,7 @@ Pretty good to put all the untrusted stuff on the guest network.
     <b>VPN (1 step set-up)</b>
   </summary>
 
-Just go to `http://<router-name>.lan:8888/` from (not your guest network) and BAM!
+Just go to `http://<router-name>.lan:8888/wg/` from (not your guest network) and BAM!
 
 There are the QR codes you can scan on your phone, to add VPN profiles. (Need the official wireguard app).
 
@@ -114,6 +114,15 @@ Very useful for reverse proxies.
   </summary>
 
 All you need to do is write down the IP ranges on the other side of your tunnel, the image will automatically assign non-overlapping local networks.
+
+</details>
+
+<details>
+  <summary>
+    <b>Indepth Dashboard</b>
+  </summary>
+
+  Go to `http://<router-name>.lan:8888/`, and you will see information on DHCP leases, forwarded ports, subnet assignment, firewall rules, HTTP cache performance, and packet scheduler statistics.
 
 </details>
 
