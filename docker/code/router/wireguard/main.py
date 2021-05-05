@@ -5,7 +5,6 @@ from subprocess import check_call, check_output, run
 from typing import Any, Iterator, Mapping, Tuple
 
 from jinja2 import Environment
-from std2.lex import split
 from std2.pickle import encode
 from std2.pickle.coders import BUILTIN_ENCODERS
 
@@ -75,7 +74,7 @@ def _client_keys() -> Iterator[Tuple[Path, str, str]]:
 def _gen_client_keys() -> None:
     _CLIENT_KEYS.mkdir(parents=True, exist_ok=True)
 
-    for peer in split(WG_PEERS):
+    for peer in WG_PEERS:
         path = _CLIENT_KEYS / f"{peer}.key"
         if not path.exists():
             pk = check_output(("wg", "genkey"), text=True)
