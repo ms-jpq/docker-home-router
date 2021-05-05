@@ -12,7 +12,7 @@ from std2.pickle import decode
 from std2.pickle.coders import BUILTIN_DECODERS
 from std2.types import IPAddress
 
-from ..consts import ADDN_HOSTS, DYN, J2, LAN_DOMAIN, WG_PEERS_JSON
+from ..consts import ADDN_HOSTS, DNSMASQ_PID, DYN, J2, LAN_DOMAIN, WG_PEERS_JSON
 from ..leases import leases
 from ..render import j2_build, j2_render
 from ..subnets import load_networks
@@ -20,12 +20,11 @@ from ..types import WGPeers
 
 _DYN = Path("dns", "5-dyn.conf")
 _ADDN_HOSTS = Path("dns", "addrs.conf")
-_PID_FILE = Path("/", "var", "run", "dnsmsaq-lan.pid")
 
 
 def _pid() -> Optional[int]:
     try:
-        pid = _PID_FILE.read_text().rstrip()
+        pid = DNSMASQ_PID.read_text().rstrip()
     except Exception:
         return None
     else:
