@@ -4,6 +4,8 @@ Yes, its a router that runs off of a single Docker image.
 
 Yes, its packed with tons of features.
 
+Yes, you can run it along side with other Docker images.
+
 ---
 
 ## Features
@@ -22,7 +24,19 @@ You can talk to guests, guests can reply. Guest cannot initiate talks with you.
 
 Pretty good to put all the untrusted stuff on the guest network.
 
+#### VPN (1 step set-up)
+
+Just go to `http://<router-name>.lan:8888/` from (not your guest network) and BAM!
+
+There are the QR codes you can scan on your phone, to add VPN profiles. (Need the official wireguard app).
+
 ### Cool, for nerds
+
+#### Run it along side other Docker images
+
+You can run this along other Docker images!
+
+Need I say more? :D :D :D
 
 #### DNS sinkhole
 
@@ -58,11 +72,26 @@ Disclaimer: This is purely for convenience / fun, not privacy.
 
 _Only works on non-fapple devices because 🍎 is very paternalistic_
 
+#### NTP sinkhole
+
+Force all your local devices to be in sync with your router's clock (and each other).
 
 ---
 
-## Why???
+## WTF, Why???
 
 ### Docker
 
+Because foremost, it's an amazing _immutable_ distribution format.
+
+Clean install, clean uninstall, well known sandbox & runtime, popular configuration format, the upsides far out weigh the downsides for me.
+
+Also works well with other Docker images, so I can justify spending $$$ on beefier hardware.
+
 ### NAT66
+
+Same reason as NAT44, because you only need 1 `::/128` address, even tho in theory we have almost unlimited addresses.
+
+There are many situations, such as shared living arrangements, bad ISPs, normie landlords, etc, where you do not get a nice stable block of addresses.
+
+Kinda sucks, but it be like that sometimes.
