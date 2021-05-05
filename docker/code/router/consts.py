@@ -45,21 +45,23 @@ GUEST_IF = environ["GUEST_IF"]
 WG_IF = environ["WG_IF"]
 IF_EXCLUSIONS = tuple(split(environ["IF_EXCLUSIONS"]))
 
+
+LOOPBACK_EXCLUSION = tuple(map(IPv4Network, split(environ["LOOPBACK_EXCLUSION"])))
 IP6_ULA_GLOBAL = environ["IP6_ULA_GLOBAL"]
 IP6_ULA_SUBNET_EXCLUSION = tuple(split(environ["IP6_ULA_SUBNET_EXCLUSION"]))
 IP4_EXCLUSION = tuple(map(IPv4Network, split(environ["IP4_EXCLUSION"])))
 IP4_PREFIX = clamp(16, int(environ["IP4_PREFIX"]), 24)
 TOR_IP4_PREFIX = 16
 
+
 LEASE_TIME = clamp(2, int(environ["LEASE_TIME"]), 24 * 7)
 DNS_SERVERS = tuple(split(environ["DNS_SERVERS"]))
+LAN_DOMAIN = environ["LAN_DOMAIN"]
 NTP_SERVERS = tuple(split(environ["NTP_SERVERS"]))
 
-WG_PEERS = environ["WG_PEERS"]
 
 WAN_DOMAIN = environ["WAN_DOMAIN"] or SERVER_NAME
-LAN_DOMAIN = environ["LAN_DOMAIN"]
+WG_PEERS = environ["WG_PEERS"]
 
-LOOPBACK_EXCLUSION = tuple(map(IPv4Network, split(environ["LOOPBACK_EXCLUSION"])))
 
 TIMEOUT = 1
