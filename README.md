@@ -159,6 +159,12 @@ Force all your local devices to be in sync with your router's clock (and each ot
 
 ---
 
+## INSTALL.md
+
+See [INSTALL.md](https://github.com/ms-jpq/docker-home-router/tree/whale/install)
+
+---
+
 ## WTF, Why???
 
 ### Docker

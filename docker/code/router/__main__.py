@@ -1,5 +1,6 @@
 from argparse import ArgumentParser, Namespace
 from shutil import copystat
+from subprocess import CalledProcessError, check_call
 from typing import Any, Mapping
 
 from std2.pathlib import walk
@@ -10,7 +11,7 @@ from .consts import (
     GUEST_IF,
     LAN_DOMAIN,
     LAN_IF,
-    LEASE_TIME,
+    DHCP_LEASE_TIME,
     RUN,
     SQUID_PORT,
     STATS_PORT,
@@ -32,6 +33,11 @@ from .types import Networks
 from .wireguard.main import main as wg_main
 
 
+def _sysctl() -> None:
+    check_call(("sysctl", "net.ipv4.ip_forward=1"))
+    check_call(("sysctl", "net.ipv6.conf.all.forwarding=1"))
+
+
 def _env(networks: Networks) -> Mapping[str, Any]:
     if not WAN_IF:
         raise ValueError("WAN_IF - required")
@@ -48,7 +54,7 @@ def _env(networks: Networks) -> Mapping[str, Any]:
             "WAN_IF": WAN_IF,
             "LAN_IF": LAN_IF,
             "GUEST_IF": GUEST_IF,
-            "LEASE_TIME": LEASE_TIME,
+            "DHCP_LEASE_TIME": DHCP_LEASE_TIME,
             "WG_IF": WG_IF,
             "IPV6_ENABLED": ipv6_enabled(),
             "GUEST_NETWORK_V4": networks.guest.v4,
@@ -121,6 +127,7 @@ def main() -> None:
     elif args.op == "stats":
         stats_main()
     elif args.op == "template":
+        _sysctl()
         _template()
     elif args.op == "wg":
         wg_main()

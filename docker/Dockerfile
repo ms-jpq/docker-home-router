@@ -63,17 +63,29 @@ EXPOSE 53/tcp 53/udp \
        51820/udp
 
 
-# WAN_IF, LAN_IF           -> Interface names: assigned different IP address space
-# GUEST_IF                 -> Optional: see above
+# WAN_IF, LAN_IF           -> [REQUIRED] Interface names: assigned different IP address space
+# GUEST_IF                 -> see above
 # WG_IF                    -> Name for wireguard interface
-# IF_EXCLUSIONS            -> ',' delimited : Interface IPv4 addrs with these GLOB patterns will be excluded
+# IF_EXCLUSIONS            -> ',' delimited : For interfaces with these glob patterns, their IPv4 networks will be excluded from subnet calculations
+
+# LOOPBACK_EXCLUSION       -> ',' delimited : IPv4 loopback addresses excluded from assignment
 # IP6_ULA_GLOBAL           -> Globally unique 40 bit prefix (in HEX)
 # IP6_ULA_SUBNET_EXCLUSION -> ',' delimited : Organizationally unique 16 bit prefix (in HEX)
 # IP4_EXCLUSION            -> ',' delimited : Networks to exclude from assignment in 'x.x.x.x/mask' form
-# DNS_SERVERS              -> Upstream DNS servers: default is systemd-resolve
+# IP4_PREFIX               -> ',' delimited : Prefix of IPv4 networks
+
+# DHCP_LEASE_TIME          -> DHCP lease duration in hours, min is 2
+# DNS_SERVERS              -> Upstream DNS servers: default is a recursive resolver @ loopback
+# LAN_DOMAIN               -> Domain name of local networks
+
+# WG_DOMAIN                -> IP / domain name of wireguard server location
 # WG_PEERS                 -> ',' delimited : List of peers to create for wireguard
+# WG_PORT                  -> Port for wireguard server
+
 # STATS_PORT               -> Port for statistics
-# SERVER_NAME              -> Name of router
+# TOR_PORT                 -> Port for TOR portal
+# SQUID_PORT               -> Port for Squid proxy
+
 ENV WAN_IF= \
     LAN_IF= \
     WG_IF=wg0 \
@@ -84,15 +96,15 @@ ENV WAN_IF= \
     IP6_ULA_SUBNET_EXCLUSION= \
     IP4_EXCLUSION=10.0.0.0/20,192.168.0.0/20,172.16.0.0/20 \
     IP4_PREFIX=24 \
-    LEASE_TIME=2 \
+    DHCP_LEASE_TIME=2 \
     DNS_SERVERS= \
-    WG_PEERS="me,my wife,my wife's boyfriend" \
-    WAN_DOMAIN= \
     LAN_DOMAIN=lan \
+    WG_DOMAIN= \
+    WG_PEERS="me,my wife,my wife's boyfriend" \
+    WG_PORT=51820 \
     STATS_PORT=8888 \
     TOR_PORT=9060 \
-    SQUID_PORT=9080 \
-    WG_PORT=51820
+    SQUID_PORT=9080
 
 
 VOLUME /config \

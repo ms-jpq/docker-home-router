@@ -54,12 +54,12 @@ IP4_PREFIX = clamp(16, int(environ["IP4_PREFIX"]), 24)
 TOR_IP4_PREFIX = 16
 
 
-LEASE_TIME = clamp(2, int(environ["LEASE_TIME"]), 24 * 7)
+DHCP_LEASE_TIME = clamp(2, int(environ["DHCP_LEASE_TIME"]), 24 * 7)
 DNS_SERVERS = tuple(split(environ["DNS_SERVERS"]))
 LAN_DOMAIN = environ["LAN_DOMAIN"]
 
 
-WAN_DOMAIN = environ["WAN_DOMAIN"] or SERVER_NAME
+WG_DOMAIN = environ["WG_DOMAIN"] or SERVER_NAME
 WG_PEERS = environ["WG_PEERS"]
 
 

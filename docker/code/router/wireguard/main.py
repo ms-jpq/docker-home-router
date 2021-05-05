@@ -14,7 +14,7 @@ from ..consts import (
     J2,
     RUN,
     USER,
-    WAN_DOMAIN,
+    WG_DOMAIN,
     WG_IF,
     WG_PEERS,
     WG_PEERS_JSON,
@@ -124,7 +124,7 @@ def _gen_qr(j2: Environment, networks: Networks) -> None:
         "LAN_NETWORK_V6": networks.lan.v6,
         "GUEST_NETWORK_V4": networks.guest.v4,
         "GUEST_NETWORK_V6": networks.guest.v6,
-        "WAN_DOMAIN": WAN_DOMAIN,
+        "WG_DOMAIN": WG_DOMAIN,
         "WG_PORT": WG_PORT,
     }
     gen = tuple(zip(_client_keys(), hosts))

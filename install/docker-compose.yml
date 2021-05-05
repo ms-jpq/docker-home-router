@@ -1,0 +1,21 @@
+---
+version: "3.8"
+
+services:
+  router:
+    restart: always
+    image: msjpq/router:latest
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - TZ
+      - WAN_IF=# Required <WAN interface name>
+      - LAN_IF=# Required <LAN interface name>
+
+      - GUEST_IF=# Optional <GUEST interface name>
+      - WG_DOMAIN=# Optional, used for wireguard clients <IP or hostname of server>
+    network_mode: host
+    volumes:
+      - ./:/config
+      - ../../volumes/router:/data
+
