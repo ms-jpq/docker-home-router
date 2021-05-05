@@ -1,71 +1,68 @@
 # Docker Home Router
 
-You can talk to guest devices, not vice versa.
+Yes, its a router that runs off of a single Docker image.
+
+Yes, its packed with tons of features.
 
 ---
 
-## What does it do?
+## Features
 
-### For Everybody
+### Cool, for everybody
 
-#### Per host / stream Fairness
+#### Fairness!
 
-Are you mad that your roommate is hogging the internet?
+Bandwidth is balanced on a (per-computer -> per-stream) basis.
 
-What if we just **distribute bandwidth** on a per-computer basis?
+Should help to alleviate any single computer from hogging the internet juice.
 
-Much better!
+#### One way guest network
 
-#### Lowered ping under load
+You can talk to guests, guests can reply. Guest cannot initiate talks with you.
 
-Latency goes up dramatically when traffic exceeds bandwidth, making everything laggy.
+Pretty good to put all the untrusted stuff on the guest network.
 
-What if we just shape traffic to **avoid congestion**?
+### Cool, for nerds
 
-**Good for torrenting**
+#### DNS sinkhole
 
-#### Zero Conf :: Forget abot IP / MAC
+All the outbound DNS traffic is redirected to a single server, your server.
 
-Port forwarding is wack, you need to shuffle MAC & IP addresses around, hard for humans.
+Very cash money for running DNS based adblock, such as pihole, or adguardhome.
 
-Especially for many machines.
+DOT is also blocked.
 
-Why not just **use the names of your computers**?
+#### Wildcard LAN domains (`*.<hostname>.lan`)
 
-\*See the section on forwarding ports
+Suppose you have a computer called `ape`. Most routers will let use `ape.lan` to visit `ape`.
 
-#### Guest zones with one way traffic
+I go one step further. Everything under `*.ape.lan` also goes to `ape`.
 
-The Internet of Things is convenient! The Internet of Things is insecure!
+Very useful for reverse proxies.
 
-Why not just **put untrusted devices in a jail**?
+### Cool, but not that useful
 
-### For VPN Users
+#### Recursive DNS resolver (by default)
 
-#### Built-in Wireguard VPN
+If you are worried about your ISP fiddling with your DNS or something.
 
-#### Conflict free IP addresses
+#### Network wide HTTP cache
 
-Automagically calculates non-overlapping IPv4 addresses
+Not very useful these days, tbh, but kinda cool.
 
-#### DNS records for VPN clients
+#### Visit TOR dark-web with regular browsers
 
-### For Developers
+Visit `.onion` websites without having to setup TOR.
 
-#### Wildcard subdomains for connected machines
+Disclaimer: This is purely for convenience / fun, not privacy.
 
-`abc.<hostname>.lan` or `edf.<hostname>.lan` works the same as `<hostname>.lan`
+_Only works on non-fapple devices because 🍎 is very paternalistic_
 
----
-
-## Limitations
-
-You will have to run the same release of ubuntu as the image,
-
-because I
 
 ---
 
-## Why?
+## Why???
 
-I am tired of
+### Docker
+
+### NAT66
