@@ -6,7 +6,7 @@ Yes, its packed with tons of features.
 
 Yes, you can run it along side with other Docker images.
 
-Yes, you only need to adjust 2 environmental variables to run
+Yes, you only need to adjust [2 environmental variables to run](https://github.com/ms-jpq/docker-home-router/blob/whale/install/docker-compose.yml)
 
 ---
 
