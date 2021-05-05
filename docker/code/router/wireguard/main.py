@@ -31,7 +31,7 @@ _CLIENT_TPL = Path("wg", "client.conf")
 
 
 _WG_DATA = DATA / "wireguard"
-_SRV_KEY = _WG_DATA / "server" / "private.key"
+_SRV_KEY = _WG_DATA / "server.key"
 _CLIENT_KEYS = _WG_DATA / "clients"
 QR_DIR = RUN / "wireguard"
 
