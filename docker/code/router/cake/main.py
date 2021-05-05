@@ -5,6 +5,7 @@ from ..consts import TC_EGRESS, TC_INGRESS, WAN_IF
 
 _INGRESS_OPTS = (
     "ingress",
+    "nat",
     "dual-dsthost",
     *TC_INGRESS,
 )
