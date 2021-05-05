@@ -88,7 +88,7 @@ def _pick(
 def forwarded_ports(
     networks: Networks,
 ) -> Iterator[Mapping[str, Any]]:
-    PORT_FWD.parent.mkdir(parents=True, exist_ok=True)
+    PORT_FWD.mkdir(parents=True, exist_ok=True)
 
     acc: MutableMapping[str, Any] = {"lan": {}, "guest": {}}
     for path in chain(PORT_FWD.glob("*.yaml"), PORT_FWD.glob("*.yml")):
