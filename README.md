@@ -10,7 +10,7 @@ Yes, you can run it along side with other Docker images.
 
 ## Features
 
-### Cool, for everybody
+### FOR EVERYBODY
 
 #### Fairness!
 
@@ -30,7 +30,7 @@ Just go to `http://<router-name>.lan:8888/` from (not your guest network) and BA
 
 There are the QR codes you can scan on your phone, to add VPN profiles. (Need the official wireguard app).
 
-### Cool, for nerds
+### FOR NERDS
 
 #### Run it along side other Docker images
 
@@ -54,7 +54,7 @@ I go one step further. Everything under `*.<name>.lan` also goes to `<name>`.
 
 Very useful for reverse proxies.
 
-### Cool, but not that useful
+### COOL, but not that useful
 
 #### Recursive DNS resolver (by default)
 
