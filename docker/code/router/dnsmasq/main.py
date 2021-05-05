@@ -72,7 +72,7 @@ def _forever(j2: Environment) -> None:
             tmp.write_text(t2)
             tmp.rename(ADDN_HOSTS)
 
-    if pid:
+    if pid and dyn != t1:
         check_call(("kill", str(pid)))
 
 
