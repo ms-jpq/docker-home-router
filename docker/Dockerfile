@@ -36,7 +36,7 @@ COPY . /
 ENV USER=router
 RUN useradd --user-group --shell=/usr/sbin/nologin "$USER" && \
     pip3 install --upgrade /code && \
-    rm -rf /code && \
+    rm -rf /etc/dnsmasq* /code && \
     unbound-anchor -a /srv/run/unbound/root.key && exit 1 || exit 0
 
 
