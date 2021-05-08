@@ -1,26 +1,24 @@
-FROM ubuntu:focal
+FROM fedora:latest
 
 
 ARG S6="https://github.com/just-containers/s6-overlay/releases/download/v2.2.0.3/s6-overlay-amd64-installer"
 
 
-RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+RUN dnf install -y \
     nftables \
     wget \
-    iproute2 \
+    iproute \
     python3-pip \
     dnsmasq \
     unbound \
-    unbound-anchor \
-    avahi-daemon \
+    avahi \
     chrony \
     tor \
     squid \
-    squidclient \
-    wireguard \
+    wireguard-tools \
     qrencode && \
-    rm -rf /var/lib/apt/lists/* /tmp/*
+    dnf clean all && \
+    rm -rf /tmp/*
 
 
 RUN wget "${S6}" --output-document /tmp/s6 && \
