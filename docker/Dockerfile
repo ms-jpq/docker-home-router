@@ -5,6 +5,7 @@ ARG S6="https://github.com/just-containers/s6-overlay/releases/download/v2.2.0.3
 
 
 RUN dnf install -y \
+    procps-ng \
     nftables \
     wget \
     iproute \
