@@ -16,7 +16,6 @@ from .consts import (
     IP4_EXCLUSION,
     IP4_PREFIX,
     IP6_ULA_GLOBAL,
-    IP6_ULA_SUBNET_EXCLUSION,
     LOOPBACK_EXCLUSION,
     NETWORKS_JSON,
     TOR_IP4_PREFIX,
@@ -103,13 +102,10 @@ def _gen_prefix() -> str:
         raise ValueError()
 
 
-def _v6(prefix: Optional[str], subnets: AbstractSet[str]) -> _V6Stack:
+def _v6(prefix: Optional[str]) -> _V6Stack:
     org_prefix = prefix or _gen_prefix()
     org = IPv6Network(f"{org_prefix}::/48")
-    seen = {IPv6Network(f"{org_prefix}:{subnet}::/64") for subnet in subnets}
-    lan, wg, tor, guest = islice(
-        (subnet for subnet in org.subnets(new_prefix=64) if subnet not in seen), 4
-    )
+    lan, wg, tor, guest = islice(org.subnets(new_prefix=64), 4)
 
     stack = _V6Stack(lan=lan, wg=wg, tor=tor, guest=guest)
     return stack
@@ -117,9 +113,7 @@ def _v6(prefix: Optional[str], subnets: AbstractSet[str]) -> _V6Stack:
 
 def calculate_networks() -> Networks:
     patterns = {WAN_IF, *IF_EXCLUSIONS}
-    v4, v6 = _v4(patterns, exclusions=IP4_EXCLUSION), _v6(
-        IP6_ULA_GLOBAL, IP6_ULA_SUBNET_EXCLUSION
-    )
+    v4, v6 = _v4(patterns, exclusions=IP4_EXCLUSION), _v6(IP6_ULA_GLOBAL)
     networks = Networks(
         lan=DualStack(v4=v4.lan, v6=v6.lan),
         wireguard=DualStack(v4=v4.wg, v6=v6.wg),

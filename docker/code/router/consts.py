@@ -53,7 +53,6 @@ TC_EGRESS = tuple(split(environ["TC_EGRESS"]))
 
 LOOPBACK_EXCLUSION = frozenset(map(IPv4Network, split(environ["LOOPBACK_EXCLUSION"])))
 IP6_ULA_GLOBAL = environ["IP6_ULA_GLOBAL"]
-IP6_ULA_SUBNET_EXCLUSION = frozenset(split(environ["IP6_ULA_SUBNET_EXCLUSION"]))
 IP4_EXCLUSION = frozenset(map(IPv4Network, split(environ["IP4_EXCLUSION"])))
 IP4_PREFIX = clamp(16, int(environ["IP4_PREFIX"]), 24)
 TOR_IP4_PREFIX = 16
