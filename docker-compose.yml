@@ -6,7 +6,6 @@ services:
     build: ./docker
     cap_add:
       - NET_ADMIN
-      - SYS_TIME
     environment:
       - TZ
       - WAN_IF=eth0
