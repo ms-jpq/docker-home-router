@@ -87,14 +87,18 @@ def _wg_conf(j2: Environment, stack: DualStack) -> str:
     next(hosts)
     peers = (
         {
-            "IPV6_ENABLED": ipv6_enabled(),
             "PUBLIC_KEY": peer_public,
             "V4_ADDR": f"{v4}/{stack.v4.max_prefixlen}",
             "V6_ADDR": f"{v6}/{stack.v6.max_prefixlen}",
         }
         for (_, _, peer_public), (v4, v6) in zip(_client_keys(), hosts)
     )
-    env = {"SERVER_PRIVATE_KEY": server_private, "WG_PORT": WG_PORT, "PEERS": peers}
+    env = {
+        "IPV6_ENABLED": ipv6_enabled(),
+        "SERVER_PRIVATE_KEY": server_private,
+        "WG_PORT": WG_PORT,
+        "PEERS": peers,
+    }
     text = j2_render(j2, path=_SRV_TPL, env=env)
     return text
 
