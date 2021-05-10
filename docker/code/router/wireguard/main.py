@@ -20,7 +20,7 @@ from ..consts import (
     WG_PORT,
 )
 from ..ifup.main import if_up
-from ..ip import addr_show, link_show
+from ..ip import addr_show, ipv6_enabled, link_show
 from ..render import j2_build, j2_render
 from ..subnets import load_networks
 from ..types import DualStack, Networks, WGPeer
@@ -87,6 +87,7 @@ def _wg_conf(j2: Environment, stack: DualStack) -> str:
     next(hosts)
     peers = (
         {
+            "IPV6_ENABLED": ipv6_enabled(),
             "PUBLIC_KEY": peer_public,
             "V4_ADDR": f"{v4}/{stack.v4.max_prefixlen}",
             "V6_ADDR": f"{v6}/{stack.v6.max_prefixlen}",
@@ -112,6 +113,7 @@ def _gen_qr(j2: Environment, networks: Networks) -> None:
     dns_v4, dns_v6 = next(hosts)
 
     g_env = {
+        "IPV6_ENABLED": ipv6_enabled(),
         "SERVER_PUBLIC_KEY": server_public,
         "DNS_ADDR_V4": dns_v4,
         "DNS_ADDR_V6": dns_v6,
