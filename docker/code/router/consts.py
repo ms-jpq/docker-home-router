@@ -12,8 +12,9 @@ _TOP_LV = Path(__file__).resolve().parent
 J2 = _TOP_LV / "j2"
 
 _SRV = Path("/", "srv")
-DATA = Path("/", "data")
 _CONFIG = Path("/", "config")
+_TMP = Path("/", "tmp")
+DATA = Path("/", "data")
 
 TEMPLATES = _SRV / Path("templates")
 RUN = _SRV / Path("run")
@@ -30,8 +31,9 @@ WG_PEERS_JSON = RUN / "wireguard" / "wg-peers.json"
 
 UNBOUND_CONF = RUN / "unbound" / "0-include.conf"
 
-DNSMASQ_PID = Path("/", "tmp", "dnsmasq-lan.pid")
+DNSMASQ_PID = _TMP / "dnsmasq-lan.pid"
 
+IPV6_STAT = _TMP / "ipv6.json"
 
 UNBOUND_PORT = 5335
 WG_PORT = clamp(1, int(environ["WG_PORT"]), 2 ** 16 - 1)
