@@ -1,17 +1,15 @@
 from dataclasses import dataclass
+from ipaddress import IPv6Address
 from json import loads
 from subprocess import check_output
 from typing import Optional, Sequence
 
+from std2.ipaddress import LINK_LOCAL_V6
 from std2.pickle import decode
 from std2.pickle.coders import BUILTIN_DECODERS
 from std2.types import IPAddress
 
-
-def ipv6_enabled() -> bool:
-    raw = check_output(("sysctl", "net.ipv6.conf.all.disable_ipv6"), text=True).rstrip()
-    _, _, val = raw.partition(" = ")
-    return not int(val)
+from .consts import WAN_IF
 
 
 @dataclass(frozen=True)
@@ -50,3 +48,16 @@ def link_show() -> Links:
     json = loads(raw)
     links: Links = decode(Links, json, strict=False)
     return links
+
+
+def ipv6_enabled() -> bool:
+    for addr in addr_show():
+        if addr.ifname == WAN_IF:
+            for info in addr.addr_info:
+                if (
+                    isinstance(info.local, IPv6Address)
+                    and info.local not in LINK_LOCAL_V6
+                ):
+                    return True
+    else:
+        return False
