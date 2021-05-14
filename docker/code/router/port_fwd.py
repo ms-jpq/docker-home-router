@@ -63,22 +63,19 @@ def _pick(
     leased: MutableMapping[str, MutableSet[IPAddress]], stack: DualStack, hostname: str
 ) -> Tuple[IPv4Address, IPv6Address]:
     lease_addrs = leased.setdefault(hostname, set())
+    others = {addr for hn, addrs in leased.items() if hn != hostname for addr in addrs}
 
     v4 = next(
-        v4_addr
-        for v4_addr in chain(
+        chain(
             (addr for addr in lease_addrs if isinstance(addr, IPv4Address)),
-            stack.v4.hosts(),
+            (addr for addr in stack.v4.hosts() if addr not in others),
         )
-        if v4_addr in stack.v4 and any(v4_addr in addrs for addrs in leased.values())
     )
     v6 = next(
-        v6_addr
-        for v6_addr in chain(
+        chain(
             (addr for addr in lease_addrs if isinstance(addr, IPv6Address)),
-            stack.v6.hosts(),
+            (addr for addr in stack.v6.hosts() if addr not in others),
         )
-        if v6_addr in stack.v6 and any(v6_addr in addrs for addrs in leased.values())
     )
 
     lease_addrs.add(v4)
