@@ -1,5 +1,5 @@
 from ipaddress import IPv4Network
-from os import environ
+from os import environ, sep
 from pathlib import Path
 from socket import getfqdn
 
@@ -11,10 +11,10 @@ SERVER_NAME = getfqdn()
 _TOP_LV = Path(__file__).resolve().parent
 J2 = _TOP_LV / "j2"
 
-_SRV = Path("/", "srv")
-_CONFIG = Path("/", "config")
-_TMP = Path("/", "tmp")
-DATA = Path("/", "data")
+_SRV = Path(sep, "srv")
+_CONFIG = Path(sep, "config")
+_TMP = Path(sep, "tmp")
+DATA = Path(sep, "data")
 
 TEMPLATES = _SRV / Path("templates")
 RUN = _SRV / Path("run")

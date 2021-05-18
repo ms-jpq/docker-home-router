@@ -1,6 +1,7 @@
 from enum import Enum
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from os import sep
 from pathlib import Path, PurePosixPath
 from typing import AbstractSet, Any, Callable, Mapping
 from urllib.parse import urlsplit
@@ -28,15 +29,15 @@ _SHOW_TPL = Path("show", "stats.html")
 
 
 class _Path(Enum):
-    index = PurePosixPath("/")
-    dhcp = PurePosixPath("/", "dhcp")
-    dns = PurePosixPath("/", "dns")
-    fwd = PurePosixPath("/", "fwd")
-    nets = PurePosixPath("/", "nets")
-    nft = PurePosixPath("/", "nft")
-    squid = PurePosixPath("/", "squid")
-    tc = PurePosixPath("/", "tc")
-    wg = PurePosixPath("/", "wg")
+    index = PurePosixPath(sep)
+    dhcp = PurePosixPath(sep, "dhcp")
+    dns = PurePosixPath(sep, "dns")
+    fwd = PurePosixPath(sep, "fwd")
+    nets = PurePosixPath(sep, "nets")
+    nft = PurePosixPath(sep, "nft")
+    squid = PurePosixPath(sep, "squid")
+    tc = PurePosixPath(sep, "tc")
+    wg = PurePosixPath(sep, "wg")
 
 
 def _route(handler: BaseHTTPRequestHandler) -> _Path:
