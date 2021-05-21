@@ -17,7 +17,7 @@ RUN dnf install -y \
     tor \
     squid \
     wireguard-tools \
-    qrencode && \
+    qrencode \
     neovim iftop && \
     dnf clean all && \
     rm -rf /tmp/*
