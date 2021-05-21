@@ -18,6 +18,7 @@ RUN dnf install -y \
     squid \
     wireguard-tools \
     qrencode && \
+    iftop && \
     dnf clean all && \
     rm -rf /tmp/*
 
