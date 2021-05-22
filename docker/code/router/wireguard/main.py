@@ -44,6 +44,7 @@ def _add_link() -> None:
 
 
 def _set_up() -> None:
+    check_call(("ip", "link", "set", "multicast", "on", "dev", WG_IF))
     check_call(("ip", "link", "set", "up", "dev", WG_IF))
 
 
