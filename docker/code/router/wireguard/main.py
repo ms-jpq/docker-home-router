@@ -85,7 +85,7 @@ def _gen_client_keys() -> None:
             key.write_text(pk)
 
         if not psk.exists():
-            pk = check_output(("wg", " genpsk"), text=True)
+            pk = check_output(("wg", "genpsk"), text=True)
             psk.write_text(pk)
 
 
