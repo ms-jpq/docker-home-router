@@ -58,27 +58,35 @@ def _srv_keys() -> Tuple[str, str]:
     return private_key, public_key
 
 
-def _client_keys() -> Iterator[Tuple[Path, str, str]]:
+def _client_keys() -> Iterator[Tuple[Path, str, str, str]]:
     _CLIENT_KEYS.mkdir(parents=True, exist_ok=True)
+    keys = sorted(_CLIENT_KEYS.glob("*.key"))
+    psks = sorted(_CLIENT_KEYS.glob("*.psk"))
 
-    for client in sorted(_CLIENT_KEYS.iterdir()):
-        path = client.relative_to(_CLIENT_KEYS)
+    for key, psk in zip(keys, psks):
+        path = key.relative_to(_CLIENT_KEYS)
 
-        private_key = client.read_text().rstrip()
+        private_key = key.read_text().rstrip()
+        shared_key = psk.read_text().rstrip()
         public_key = check_output(
             ("wg", "pubkey"), input=private_key, text=True
         ).rstrip()
-        yield path, private_key, public_key
+        yield path, private_key, public_key, shared_key
 
 
 def _gen_client_keys() -> None:
     _CLIENT_KEYS.mkdir(parents=True, exist_ok=True)
 
     for peer in WG_PEERS:
-        path = _CLIENT_KEYS / f"{peer}.key"
-        if not path.exists():
+        key, psk = _CLIENT_KEYS / f"{peer}.key", _CLIENT_KEYS / f"{peer}.psk"
+
+        if not key.exists():
             pk = check_output(("wg", "genkey"), text=True)
-            path.write_text(pk)
+            key.write_text(pk)
+
+        if not psk.exists():
+            pk = check_output(("wg", " genpsk"), text=True)
+            psk.write_text(pk)
 
 
 def _wg_conf(j2: Environment, stack: DualStack) -> str:
@@ -88,10 +96,11 @@ def _wg_conf(j2: Environment, stack: DualStack) -> str:
     peers = (
         {
             "PUBLIC_KEY": peer_public,
+            "SHARED_KEY": peer_shared,
             "V4_ADDR": f"{v4}/{stack.v4.max_prefixlen}",
             "V6_ADDR": f"{v6}/{stack.v6.max_prefixlen}",
         }
-        for (_, _, peer_public), (v4, v6) in zip(_client_keys(), hosts)
+        for (_, _, peer_public, peer_shared), (v4, v6) in zip(_client_keys(), hosts)
     )
     env = {
         "IPV6_ENABLED": ipv6_enabled(),
@@ -133,12 +142,12 @@ def _gen_qr(j2: Environment, networks: Networks) -> None:
         "WG_PORT": WG_PORT,
     }
     gen = tuple(zip(_client_keys(), hosts))
-    data = {path.stem: WGPeer(v4=v4, v6=v6) for (path, _, _), (v4, v6) in gen}
+    data = {path.stem: WGPeer(v4=v4, v6=v6) for (path, _, _, _), (v4, v6) in gen}
     encoded = encode(data, encoders=BUILTIN_ENCODERS)
     json = dumps(encoded)
     WG_PEERS_JSON.write_text(json)
 
-    for (path, client_private, _), (v4, v6) in gen:
+    for (path, client_private, _, client_shared), (v4, v6) in gen:
         v4_addr = f"{v4}/{stack.v4.max_prefixlen}"
         v6_addr = f"{v6}/{stack.v6.max_prefixlen}"
 
@@ -147,6 +156,7 @@ def _gen_qr(j2: Environment, networks: Networks) -> None:
 
         l_env: Mapping[str, Any] = {
             "CLIENT_PRIVATE_KEY": client_private,
+            "SHARED_KEY": client_shared,
             "CLIENT_ADDR_V4": v4_addr,
             "CLIENT_ADDR_V6": v6_addr,
         }
