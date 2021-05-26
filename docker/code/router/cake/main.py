@@ -1,7 +1,7 @@
 from json import loads
 from subprocess import check_call, check_output
 
-from ..consts import TC_EGRESS, TC_INGRESS, WAN_IF
+from ..consts import TC_EGRESS, TC_IFB, TC_INGRESS, WAN_IF
 
 _INGRESS_OPTS = (
     "ingress",
@@ -37,15 +37,14 @@ def _egress(wan_if: str) -> None:
 
 
 def _ingress(wan_if: str) -> None:
-    link_name = f"ifb4{wan_if}"
 
     raw_links = check_output(("ip", "--json", "link", "show"), text=True)
     links = loads(raw_links)
     for link in links:
-        if link["ifname"] == link_name:
+        if link["ifname"] == TC_IFB:
             break
     else:
-        check_call(("ip", "link", "add", link_name, "type", "ifb"))
+        check_call(("ip", "link", "add", TC_IFB, "type", "ifb"))
 
     check_call(
         ("tc", "qdisc", "replace", "dev", wan_if, "handle", _QDISC_ID, "ingress")
@@ -56,13 +55,13 @@ def _ingress(wan_if: str) -> None:
             "qdisc",
             "replace",
             "dev",
-            link_name,
+            TC_IFB,
             "root",
             "cake",
             *_INGRESS_OPTS,
         )
     )
-    check_call(("ip", "link", "set", link_name, "up"))
+    check_call(("ip", "link", "set", TC_IFB, "up"))
     check_call(
         (
             "tc",
@@ -78,7 +77,7 @@ def _ingress(wan_if: str) -> None:
             "egress",
             "redirect",
             "dev",
-            link_name,
+            TC_IFB,
         )
     )
 

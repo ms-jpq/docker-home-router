@@ -1,10 +1,18 @@
+from os import linesep
 from subprocess import check_output
 
-from ..consts import TIMEOUT
+from ..consts import TC_IFB, TIMEOUT, WAN_IF
+
+
+def _feed(if_name: str) -> str:
+    raw = check_output(
+        ("tc", "-statistics", "qdisc", "show", "dev", if_name),
+        text=True,
+        timeout=TIMEOUT,
+    )
+    return raw.strip()
 
 
 def feed() -> str:
-    raw = check_output(
-        ("tc", "-statistics", "qdisc", "show"), text=True, timeout=TIMEOUT
-    )
-    return raw.strip()
+    raw1, raw2 = _feed(WAN_IF), _feed(TC_IFB)
+    return raw1 + linesep * 3 + raw2
