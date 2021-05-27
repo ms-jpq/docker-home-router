@@ -4,9 +4,15 @@ set -eu
 set -o pipefail
 
 
+UNBOUND_ARGS=(
+  -c /srv/run/unbound/lan/0-main.conf
+  status
+  )
+
 ARGS=(
   --conf-dir /srv/run/dnsmasq/conf.d
   )
 
 
+unbound-control "${UNBOUND_ARGS[@]}"
 exec dnsmasq "${ARGS[@]}"

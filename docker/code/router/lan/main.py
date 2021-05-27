@@ -1,41 +1,69 @@
-from os import sep
-from pathlib import Path, PurePath
+from argparse import ArgumentParser, Namespace
+from ipaddress import IPv4Address, ip_address
+from string import Template
 from subprocess import check_call
-from time import sleep
+from typing import Tuple
+from urllib.parse import quote_plus
 
-from jinja2 import Environment
+from std2.types import IPAddress
 
 from ..consts import LAN_DOMAIN, LOCAL_TTL, RUN, SHORT_DURATION
-from ..records import dns_records
-from ..render import j2_build, j2_render
-from ..subnets import load_networks
 
-_BASE = RUN / "unbound" / "lan"
-_J2 = Path(sep, "srv", "templates", "unbound", "lan", "conf.d")
-_DYN = PurePath("2-records.conf")
-_CONF = _BASE / "1-main.conf"
-_RECORDS = _BASE / "conf.d" / "2-records.conf"
+_CONF = RUN / "unbound" / "lan" / "1-main.conf"
+
+_ZONE_TYPE = "redirect"
+_LOCAL_ZONE = Template(f"$HOSTNAME.{LAN_DOMAIN}.")
+_LOCAL_DATA_PTR = Template(f"$RDDA. {LOCAL_TTL} IN PTR $HOSTNAME.{LAN_DOMAIN}.")
+_LOCAL_DATA_A = Template(f"$HOSTNAME.{LAN_DOMAIN}. {LOCAL_TTL} IN A $ADDR")
+_LOCAL_DATA_AAAA = Template(f"$HOSTNAME.{LAN_DOMAIN}. {LOCAL_TTL} IN AAAA $ADDR")
 
 
-def _poll(j2: Environment) -> None:
-    existing = _RECORDS.read_text()
-    networks = load_networks()
+def _parse(hostname: str, addr: IPAddress) -> Tuple[str, str, str]:
+    hostname = quote_plus(hostname)
+    zone = _LOCAL_ZONE.substitute(HOSTNAME=hostname)
+    ptr = _LOCAL_DATA_PTR.substitute(HOSTNAME=hostname, RDDA=addr.reverse_pointer)
+    na = (
+        _LOCAL_DATA_A.substitute(HOSTNAME=hostname, ADDR=addr)
+        if isinstance(addr, IPv4Address)
+        else _LOCAL_DATA_AAAA.substitute(HOSTNAME=hostname, ADDR=addr)
+    )
+    return zone, ptr, na
 
-    env = {
-        "LAN_DOMAIN": LAN_DOMAIN,
-        "LOCAL_TTL": LOCAL_TTL,
-        "DNS_RECORDS": dns_records(networks),
-    }
-    new = j2_render(j2, path=_DYN, env=env)
-    if new != existing:
-        _RECORDS.write_text(new)
-        check_call(
-            ("unbound-control", "-c", str(_CONF), "reload"), timeout=SHORT_DURATION
-        )
+
+def _mod(op: str, *args: str) -> None:
+    check_call(("unbound-control", "-c", str(_CONF), op, *args), timeout=SHORT_DURATION)
+
+
+def _add(hostname: str, addr: IPAddress) -> None:
+    zone, ptr, na = _parse(hostname, addr=addr)
+    _mod("local_zone", zone, _ZONE_TYPE)
+    _mod("local_data", ptr)
+    _mod("local_data", na)
+
+
+def _rm(hostname: str, addr: IPAddress) -> None:
+    zone, ptr, na = _parse(hostname, addr=addr)
+    _mod("local_zone_remove", zone)
+    _mod("local_zones_remove", ptr)
+    _mod("local_zones_remove", na)
+
+
+def _parse_args() -> Namespace:
+    parser = ArgumentParser()
+    parser.add_argument("op", choices=("old", "add", "del"))
+    parser.add_argument("mac")
+    parser.add_argument("ip")
+    parser.add_argument("hostname")
+    return parser.parse_args()
 
 
 def main() -> None:
-    j2 = j2_build(_J2)
-    while True:
-        _poll(j2)
-        sleep(SHORT_DURATION)
+    args = _parse_args()
+    addr: IPAddress = ip_address(args.ip)
+    if args.hostname:
+        if args.op in {"old", "add"}:
+            _add(args.hostname, addr=addr)
+        elif args.op in {"del"}:
+            _rm(args.hostname, addr=addr)
+        else:
+            assert False

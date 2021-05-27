@@ -75,7 +75,7 @@ def _env(networks: Networks) -> Mapping[str, Any]:
             "LOCAL_TTL": LOCAL_TTL,
             "DNSSEC": DNSSEC,
             "DNS_SERVERS": DNS_SERVERS,
-            "DNS_RECORDS": dns_records(networks),
+            "DNS_RECORDS": dns_records(),
             "SQUID_PORT": SQUID_PORT,
             "TOR_PORT": TOR_PORT,
             "WG_PORT": WG_PORT,
