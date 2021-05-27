@@ -1,5 +1,5 @@
 from os import sep
-from pathlib import Path
+from pathlib import Path, PurePath
 from subprocess import check_call
 from time import sleep
 
@@ -12,7 +12,7 @@ from ..subnets import load_networks
 
 _BASE = Path(sep, "srv", "run", "unbound", "lan")
 _J2 = Path(sep, "srv", "templates", "unbound", "lan", "conf.d")
-_DYN = Path("2-records.conf")
+_DYN = PurePath("2-records.conf")
 _CONF = _BASE / "1-main.conf"
 _RECORDS = _BASE / "conf.d" / "2-records.conf"
 

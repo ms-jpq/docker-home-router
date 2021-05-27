@@ -1,5 +1,5 @@
 from json import dumps
-from pathlib import Path
+from pathlib import Path, PurePath
 from shutil import chown, rmtree
 from subprocess import check_call, check_output, run
 from typing import Any, Iterator, Mapping, Tuple
@@ -26,8 +26,8 @@ from ..render import j2_build, j2_render
 from ..subnets import load_networks
 from ..types import DualStack, Networks, WGPeer
 
-_SRV_TPL = Path("wg", "server.conf")
-_CLIENT_TPL = Path("wg", "client.conf")
+_SRV_TPL = PurePath("wg", "server.conf")
+_CLIENT_TPL = PurePath("wg", "client.conf")
 
 
 _WG_DATA = DATA / "wireguard"
