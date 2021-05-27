@@ -54,7 +54,6 @@ def _env(networks: Networks) -> Mapping[str, Any]:
     else:
         fwds = tuple(forwarded_ports(networks))
         loop_back = calculate_loopback()
-        dns = DNS_SERVERS
         env = {
             "PRIVATE_ADDRS": PRIVATE_ADDRS,
             "USER": USER,
@@ -73,7 +72,7 @@ def _env(networks: Networks) -> Mapping[str, Any]:
             "WG_NETWORK_V4": networks.wireguard.v4,
             "WG_NETWORK_V6": networks.wireguard.v6,
             "LOCAL_TTL": LOCAL_TTL,
-            "DNS_SERVERS": dns,
+            "DNS_SERVERS": DNS_SERVERS,
             "DNS_RECORDS": dns_records(networks),
             "SQUID_PORT": SQUID_PORT,
             "TOR_PORT": TOR_PORT,
