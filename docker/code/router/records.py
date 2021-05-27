@@ -3,6 +3,7 @@ from itertools import chain
 from json import loads
 from locale import strxfrm
 from typing import Iterator, Mapping, MutableMapping, MutableSet, Sequence, Tuple
+from urllib.parse import quote_plus
 
 from std2.pickle import decode
 from std2.pickle.coders import BUILTIN_DECODERS
@@ -32,7 +33,7 @@ def dns_records(
         acc.add(addr)
 
     records = {
-        key: (
+        quote_plus(key): (
             sorted(i for i in mappings[key] if isinstance(i, IPv4Address)),
             sorted(i for i in mappings[key] if isinstance(i, IPv6Address)),
         )
