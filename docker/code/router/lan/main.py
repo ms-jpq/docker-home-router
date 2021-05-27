@@ -22,7 +22,7 @@ from ..render import j2_build, j2_render
 from ..subnets import load_networks
 from ..types import WGPeers
 
-_DYN = Path("dns", "5-dyn.conf")
+_DYN = Path("dns", "5-cnames.conf")
 _ADDN_HOSTS = Path("dns", "addrs.conf")
 
 
