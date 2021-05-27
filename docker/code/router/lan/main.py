@@ -1,19 +1,22 @@
+from concurrent.futures import ThreadPoolExecutor
 from ipaddress import IPv4Address
 from itertools import chain
 from json import loads
 from locale import strxfrm
 from pathlib import Path
-from subprocess import check_call
+from subprocess import Popen
 from tempfile import TemporaryDirectory
+from threading import Lock
 from time import sleep
-from typing import Iterator, MutableMapping, MutableSet, Optional, Tuple
+from typing import Iterator, MutableMapping, MutableSet, Tuple
 
 from jinja2 import Environment
+from std2.concurrent.futures import gather
 from std2.pickle import decode
 from std2.pickle.coders import BUILTIN_DECODERS
 from std2.types import IPAddress
 
-from ..consts import ADDN_HOSTS, DNSMASQ_PID, DYN, J2, LAN_DOMAIN, WG_PEERS_JSON
+from ..consts import ADDN_HOSTS, DYN, J2, LAN_DOMAIN, WG_PEERS_JSON
 from ..leases import leases
 from ..render import j2_build, j2_render
 from ..subnets import load_networks
@@ -23,13 +26,8 @@ _DYN = Path("dns", "5-dyn.conf")
 _ADDN_HOSTS = Path("dns", "addrs.conf")
 
 
-def _pid() -> Optional[int]:
-    try:
-        pid = DNSMASQ_PID.read_text().rstrip()
-    except Exception:
-        return None
-    else:
-        return int(pid)
+def _proc() -> Popen:
+    return Popen(("dnsmasq", "--conf-dir", "/srv/run/dnsmasq/lan"))
 
 
 def _p_peers() -> Iterator[Tuple[str, IPAddress]]:
@@ -42,10 +40,9 @@ def _p_peers() -> Iterator[Tuple[str, IPAddress]]:
         yield name, addrs.v6
 
 
-def _forever(j2: Environment) -> None:
+def _poll(j2: Environment) -> bool:
     dyn = DYN.read_text()
     addn = ADDN_HOSTS.read_text()
-    pid = _pid()
 
     networks = load_networks()
     mappings: MutableMapping[str, MutableSet[IPAddress]] = {}
@@ -62,6 +59,7 @@ def _forever(j2: Environment) -> None:
     }
     t1 = j2_render(j2, path=_DYN, env=env)
     t2 = j2_render(j2, path=_ADDN_HOSTS, env=env)
+    needs_restart = dyn != t1
 
     if addn != t2:
         with TemporaryDirectory() as temp:
@@ -69,13 +67,34 @@ def _forever(j2: Environment) -> None:
             tmp.write_text(t2)
             tmp.rename(ADDN_HOSTS)
 
-    if pid and dyn != t1:
+    if needs_restart:
         DYN.write_text(t1)
-        check_call(("kill", str(pid)))
+
+    return needs_restart
 
 
 def main() -> None:
     j2 = j2_build(J2)
-    while True:
-        _forever(j2)
-        sleep(2)
+    lock = Lock()
+    proc = _proc()
+
+    def l1() -> None:
+        nonlocal proc
+        while True:
+            needs_restart = _poll(j2)
+            if needs_restart:
+                with lock:
+                    proc.terminate()
+            sleep(2)
+
+    def l2() -> None:
+        nonlocal proc
+        while True:
+            proc.wait()
+            with lock:
+                proc = _proc()
+
+    with ThreadPoolExecutor() as pool:
+        f1 = pool.submit(l1)
+        f2 = pool.submit(l2)
+        gather(f1, f2)

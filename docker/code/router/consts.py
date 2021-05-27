@@ -31,7 +31,6 @@ WG_PEERS_JSON = RUN / "wireguard" / "wg-peers.json"
 
 UNBOUND_CONF = RUN / "unbound" / "0-include.conf"
 
-DNSMASQ_PID = _TMP / "dnsmasq-lan.pid"
 
 IPV6_STAT = _TMP / "ipv6.json"
 
