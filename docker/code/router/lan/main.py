@@ -11,6 +11,7 @@ from ..render import j2_build, j2_render
 from ..subnets import load_networks
 
 _BASE = Path(sep, "srv", "run", "unbound", "lan")
+_J2 = Path(sep, "srv", "templates", "unbound", "lan")
 _DYN = Path("2-records.conf")
 _CONF = _BASE / "1-main.conf"
 _RECORDS = _BASE / "2-records.conf"
@@ -32,7 +33,7 @@ def _poll(j2: Environment) -> None:
 
 
 def main() -> None:
-    j2 = j2_build(_BASE)
+    j2 = j2_build(_J2)
     while True:
         _poll(j2)
         sleep(SHORT_DURATION)
