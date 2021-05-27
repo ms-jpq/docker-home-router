@@ -12,6 +12,7 @@ from .consts import (
     GUEST_IF,
     LAN_DOMAIN,
     LAN_IF,
+    PRIVATE_ADDRS,
     RUN,
     SQUID_PORT,
     STATS_PORT,
@@ -54,6 +55,7 @@ def _env(networks: Networks) -> Mapping[str, Any]:
         loop_back = calculate_loopback()
         dns = DNS_SERVERS or (f"{loop_back}#{UNBOUND_PORT}",)
         env = {
+            "PRIVATE_ADDRS": PRIVATE_ADDRS,
             "USER": USER,
             "WAN_IF": WAN_IF,
             "LAN_IF": LAN_IF,

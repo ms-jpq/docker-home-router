@@ -3,10 +3,27 @@ from os import environ, sep
 from pathlib import Path
 from socket import getfqdn
 
+from std2.ipaddress import (
+    LINK_LOCAL_V4,
+    LINK_LOCAL_V6,
+    LOOPBACK_V4,
+    LOOPBACK_V6,
+    PRIVATE_V4,
+    PRIVATE_V6,
+)
 from std2.lex import split
 from std2.ordinal import clamp
 
 SERVER_NAME = getfqdn()
+
+PRIVATE_ADDRS = (
+    LOOPBACK_V4,
+    LOOPBACK_V6,
+    LINK_LOCAL_V4,
+    LINK_LOCAL_V6,
+    *PRIVATE_V4,
+    PRIVATE_V6,
+)
 
 _TOP_LV = Path(__file__).resolve().parent
 J2 = _TOP_LV / "j2"
