@@ -24,9 +24,9 @@ from .consts import (
     WG_IF,
     WG_PORT,
 )
-from .dnsmasq.main import main as dnsmsq_main
 from .ifup.main import main as ifup_main
 from .ip import ipv6_enabled
+from .lan.main import main as lan_main
 from .port_fwd import dhcp_fixed, forwarded_ports
 from .render import j2_build, j2_render
 from .stats.main import main as stats_main
@@ -113,7 +113,7 @@ def _parse_args() -> Namespace:
         choices=(
             "ifup",
             "cake",
-            "dnsmasq",
+            "lan",
             "stats",
             "template",
             "wg",
@@ -129,8 +129,8 @@ def main() -> None:
         ifup_main()
     elif args.op == "cake":
         cake_main()
-    elif args.op == "dnsmasq":
-        dnsmsq_main()
+    elif args.op == "lan":
+        lan_main()
     elif args.op == "stats":
         stats_main()
     elif args.op == "template":
