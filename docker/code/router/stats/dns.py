@@ -4,7 +4,9 @@ from typing import Any, Tuple, Union
 
 from std2.configparser import hydrate
 
-from ..consts import SHORT_DURATION, UNBOUND_CONF
+from ..consts import RUN, SHORT_DURATION
+
+_CONF = RUN / "unbound" / "main" / "1-main.conf"
 
 
 def _parse_stat(line: str) -> Tuple[str, Union[int, float]]:
@@ -26,7 +28,7 @@ def _parse_stats(raw: str) -> Any:
 
 def feed() -> str:
     raw = check_output(
-        ("unbound-control", "-c", str(UNBOUND_CONF), "stats_noreset"),
+        ("unbound-control", "-c", str(_CONF), "stats_noreset"),
         text=True,
         timeout=SHORT_DURATION,
     )

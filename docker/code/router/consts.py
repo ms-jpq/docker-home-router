@@ -44,8 +44,6 @@ LEASES = DATA / "dnsmasq" / "leases"
 NETWORKS_JSON = _SRV / "run" / "networks" / "networks.json"
 WG_PEERS_JSON = RUN / "wireguard" / "wg-peers.json"
 
-UNBOUND_CONF = RUN / "unbound" / "0-include.conf"
-
 
 IPV6_STAT = _TMP / "ipv6.json"
 

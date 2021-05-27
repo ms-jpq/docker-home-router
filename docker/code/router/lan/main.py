@@ -5,12 +5,12 @@ from time import sleep
 
 from jinja2 import Environment
 
-from ..consts import LAN_DOMAIN, LOCAL_TTL, SHORT_DURATION
+from ..consts import LAN_DOMAIN, LOCAL_TTL, RUN, SHORT_DURATION
 from ..records import dns_records
 from ..render import j2_build, j2_render
 from ..subnets import load_networks
 
-_BASE = Path(sep, "srv", "run", "unbound", "lan")
+_BASE = RUN / "unbound" / "lan"
 _J2 = Path(sep, "srv", "templates", "unbound", "lan", "conf.d")
 _DYN = PurePath("2-records.conf")
 _CONF = _BASE / "1-main.conf"
