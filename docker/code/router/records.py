@@ -1,4 +1,5 @@
 from ipaddress import IPv4Address, IPv6Address
+from itertools import chain
 from json import loads
 from locale import strxfrm
 from typing import Iterator, Mapping, MutableMapping, MutableSet, Sequence, Tuple
@@ -9,7 +10,8 @@ from std2.pickle.coders import BUILTIN_DECODERS
 from std2.types import IPAddress
 
 from .consts import WG_PEERS_JSON
-from .types import WGPeers
+from .leases import srv_addrs
+from .types import Networks, WGPeers
 
 
 def _p_peers() -> Iterator[Tuple[str, IPAddress]]:
@@ -22,9 +24,11 @@ def _p_peers() -> Iterator[Tuple[str, IPAddress]]:
         yield name, addrs.v6
 
 
-def dns_records() -> Mapping[str, Tuple[Sequence[IPv4Address], Sequence[IPv6Address]]]:
+def dns_records(
+    networks: Networks,
+) -> Mapping[str, Tuple[Sequence[IPv4Address], Sequence[IPv6Address]]]:
     mappings: MutableMapping[str, MutableSet[IPAddress]] = {}
-    for name, addr in _p_peers():
+    for name, addr in chain(srv_addrs(networks), _p_peers()):
         acc = mappings.setdefault(name, set())
         acc.add(addr)
 
