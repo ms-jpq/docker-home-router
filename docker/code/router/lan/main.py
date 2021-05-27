@@ -79,10 +79,8 @@ def main() -> None:
     proc = _proc()
 
     def l1() -> None:
-        nonlocal proc
         while True:
-            needs_restart = _poll(j2)
-            if needs_restart:
+            if _poll(j2):
                 with lock:
                     proc.terminate()
             sleep(2)
