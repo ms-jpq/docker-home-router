@@ -53,7 +53,7 @@ def _parse_args(args: Sequence[str]) -> Namespace:
     parser.add_argument("op", choices=("old", "add", "del"))
     parser.add_argument("mac")
     parser.add_argument("ip")
-    parser.add_argument("hostname")
+    parser.add_argument("hostname", nargs="?")
     return parser.parse_args(args)
 
 
