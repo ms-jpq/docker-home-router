@@ -27,6 +27,7 @@ def _poll(j2: Environment) -> None:
     }
     new = j2_render(j2, path=_DYN, env=env)
     if new != existing:
+        _RECORDS.write_text(new)
         check_call(
             ("unbound-control", "-c", str(_CONF), "reload"), timeout=SHORT_DURATION
         )
