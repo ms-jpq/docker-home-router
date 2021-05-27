@@ -27,6 +27,7 @@ from .ifup.main import main as ifup_main
 from .ip import ipv6_enabled
 from .lan.main import main as lan_main
 from .port_fwd import dhcp_fixed, forwarded_ports
+from .records import dns_records
 from .render import j2_build, j2_render
 from .stats.main import main as stats_main
 from .subnets import calculate_loopback, calculate_networks, load_networks
@@ -71,6 +72,7 @@ def _env(networks: Networks) -> Mapping[str, Any]:
             "WG_NETWORK_V4": networks.wireguard.v4,
             "WG_NETWORK_V6": networks.wireguard.v6,
             "DNS_SERVERS": dns,
+            "DNS_RECORDS": dns_records(),
             "SQUID_PORT": SQUID_PORT,
             "TOR_PORT": TOR_PORT,
             "WG_PORT": WG_PORT,
