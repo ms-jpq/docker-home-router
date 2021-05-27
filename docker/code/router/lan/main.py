@@ -5,7 +5,7 @@ from time import sleep
 
 from jinja2 import Environment
 
-from ..consts import LAN_DOMAIN, SHORT_DURATION
+from ..consts import LAN_DOMAIN, LOCAL_TTL, SHORT_DURATION
 from ..records import dns_records
 from ..render import j2_build, j2_render
 from ..subnets import load_networks
@@ -22,8 +22,9 @@ def _poll(j2: Environment) -> None:
     networks = load_networks()
 
     env = {
-        "DNS_RECORDS": dns_records(networks),
         "LAN_DOMAIN": LAN_DOMAIN,
+        "LOCAL_TTL": LOCAL_TTL,
+        "DNS_RECORDS": dns_records(networks),
     }
     new = j2_render(j2, path=_DYN, env=env)
     if new != existing:
