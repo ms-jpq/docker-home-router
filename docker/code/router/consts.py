@@ -68,4 +68,4 @@ WG_DOMAIN = environ["WG_DOMAIN"] or SERVER_NAME
 WG_PEERS = frozenset(split(environ["WG_PEERS"]))
 
 
-TIMEOUT = 1
+SHORT_DURATION = 1

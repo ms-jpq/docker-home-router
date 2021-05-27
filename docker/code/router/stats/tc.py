@@ -1,14 +1,14 @@
 from os import linesep
 from subprocess import check_output
 
-from ..consts import TC_IFB, TIMEOUT, WAN_IF
+from ..consts import TC_IFB, SHORT_DURATION, WAN_IF
 
 
 def _feed(if_name: str) -> str:
     raw = check_output(
         ("tc", "-statistics", "qdisc", "show", "dev", if_name),
         text=True,
-        timeout=TIMEOUT,
+        timeout=SHORT_DURATION,
     )
     return raw.strip()
 

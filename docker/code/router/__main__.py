@@ -9,7 +9,6 @@ from .cake.main import main as cake_main
 from .consts import (
     DHCP_LEASE_TIME,
     DNS_SERVERS,
-    DNSMASQ_PID,
     GUEST_IF,
     LAN_DOMAIN,
     LAN_IF,
@@ -71,7 +70,6 @@ def _env(networks: Networks) -> Mapping[str, Any]:
             "WG_NETWORK_V4": networks.wireguard.v4,
             "WG_NETWORK_V6": networks.wireguard.v6,
             "DNS_SERVERS": dns,
-            "DNSMASQ_PID": DNSMASQ_PID,
             "UNBOUND_PORT": UNBOUND_PORT,
             "SQUID_PORT": SQUID_PORT,
             "TOR_PORT": TOR_PORT,

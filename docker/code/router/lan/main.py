@@ -16,7 +16,7 @@ from std2.pickle import decode
 from std2.pickle.coders import BUILTIN_DECODERS
 from std2.types import IPAddress
 
-from ..consts import ADDN_HOSTS, DYN, J2, LAN_DOMAIN, TIMEOUT, WG_PEERS_JSON
+from ..consts import ADDN_HOSTS, DYN, J2, LAN_DOMAIN, SHORT_DURATION, WG_PEERS_JSON
 from ..leases import leases
 from ..render import j2_build, j2_render
 from ..subnets import load_networks
@@ -83,7 +83,7 @@ def main() -> None:
             if _poll(j2):
                 with lock:
                     proc.terminate()
-            sleep(TIMEOUT)
+            sleep(SHORT_DURATION)
 
     def l2() -> None:
         nonlocal proc

@@ -1,6 +1,6 @@
 from subprocess import check_output
 
-from ..consts import TIMEOUT
+from ..consts import SHORT_DURATION
 from ..subnets import calculate_loopback
 
 
@@ -9,6 +9,6 @@ def feed() -> str:
     raw = check_output(
         ("squidclient", "--host", str(loopback), "mgr:utilization"),
         text=True,
-        timeout=TIMEOUT,
+        timeout=SHORT_DURATION,
     )
     return raw.strip()
