@@ -9,4 +9,4 @@ ARGS=(
   )
 
 
-exec s6-setuidgid "$USER" unbound "${ARGS[@]}"
+exec unbound "${ARGS[@]}"
