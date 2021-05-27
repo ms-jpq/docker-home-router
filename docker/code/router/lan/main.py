@@ -10,11 +10,11 @@ from ..records import dns_records
 from ..render import j2_build, j2_render
 from ..subnets import load_networks
 
-_BASE = Path(sep, "srv", "run", "unbound", "lan", "conf.d")
+_BASE = Path(sep, "srv", "run", "unbound", "lan")
 _J2 = Path(sep, "srv", "templates", "unbound", "lan", "conf.d")
 _DYN = Path("2-records.conf")
 _CONF = _BASE / "1-main.conf"
-_RECORDS = _BASE / "2-records.conf"
+_RECORDS = _BASE / "conf.d" / "2-records.conf"
 
 
 def _poll(j2: Environment) -> None:
