@@ -5,13 +5,13 @@ from time import sleep
 
 from jinja2 import Environment
 
-from ..consts import J2, LAN_DOMAIN, SHORT_DURATION
+from ..consts import LAN_DOMAIN, SHORT_DURATION
 from ..records import dns_records
 from ..render import j2_build, j2_render
 from ..subnets import load_networks
 
 _BASE = Path(sep, "srv", "run", "unbound", "lan")
-_DYN = Path("dns", "2-records.conf")
+_DYN = Path("2-records.conf")
 _CONF = _BASE / "1-main.conf"
 _RECORDS = _BASE / "2-records.conf"
 
@@ -32,7 +32,7 @@ def _poll(j2: Environment) -> None:
 
 
 def main() -> None:
-    j2 = j2_build(J2)
+    j2 = j2_build(_BASE)
     while True:
         _poll(j2)
         sleep(SHORT_DURATION)
