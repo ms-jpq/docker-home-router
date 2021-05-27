@@ -4,4 +4,9 @@ set -eu
 set -o pipefail
 
 
-exec python3 -m router lan
+ARGS=(
+  -c /srv/run/unbound/lan/1-main.conf
+  )
+
+
+exec s6-setuidgid "$USER" unbound "${ARGS[@]}"
