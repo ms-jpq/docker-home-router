@@ -8,7 +8,7 @@ from .consts import GUEST_IF, LEASES, SERVER_NAME
 from .types import Networks
 
 
-def srv_addrs(networks) -> Iterator[Tuple[str, IPAddress]]:
+def srv_addrs(networks: Networks) -> Iterator[Tuple[str, IPAddress]]:
     if GUEST_IF:
         yield SERVER_NAME, next(networks.guest.v4.hosts())
         yield SERVER_NAME, next(networks.guest.v6.hosts())

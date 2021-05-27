@@ -2,7 +2,7 @@ from argparse import ArgumentParser, Namespace
 from ipaddress import IPv4Address, ip_address
 from string import Template
 from subprocess import check_call
-from typing import Tuple
+from typing import Sequence, Tuple
 from urllib.parse import quote_plus
 
 from std2.types import IPAddress
@@ -48,17 +48,17 @@ def _rm(hostname: str, addr: IPAddress) -> None:
     _mod("local_zones_remove", na)
 
 
-def _parse_args() -> Namespace:
+def _parse_args(args: Sequence[str]) -> Namespace:
     parser = ArgumentParser()
     parser.add_argument("op", choices=("old", "add", "del"))
     parser.add_argument("mac")
     parser.add_argument("ip")
     parser.add_argument("hostname")
-    return parser.parse_args()
+    return parser.parse_args(args)
 
 
-def main() -> None:
-    args = _parse_args()
+def main(argv: Sequence[str]) -> None:
+    args = _parse_args(argv)
     addr: IPAddress = ip_address(args.ip)
     if args.hostname:
         if args.op in {"old", "add"}:

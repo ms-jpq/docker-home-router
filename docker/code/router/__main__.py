@@ -1,7 +1,7 @@
 from argparse import ArgumentParser, Namespace
 from shutil import copystat
 from subprocess import CalledProcessError, check_call
-from typing import Any, Mapping
+from typing import Any, Mapping, Sequence, Tuple
 
 from std2.pathlib import walk
 
@@ -109,7 +109,7 @@ def _template() -> None:
             copystat(path, dest)
 
 
-def _parse_args() -> Namespace:
+def _parse_args() -> Tuple[Namespace, Sequence[str]]:
     parser = ArgumentParser()
     parser.add_argument(
         "op",
@@ -122,18 +122,18 @@ def _parse_args() -> Namespace:
             "wg",
         ),
     )
-    return parser.parse_args()
+    return parser.parse_known_args()
 
 
 def main() -> None:
-    args = _parse_args()
+    args, argv = _parse_args()
 
     if args.op == "ifup":
         ifup_main()
     elif args.op == "cake":
         cake_main()
     elif args.op == "lan":
-        lan_main()
+        lan_main(argv)
     elif args.op == "stats":
         stats_main()
     elif args.op == "template":
