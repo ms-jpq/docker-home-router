@@ -8,6 +8,7 @@ from jinja2 import Environment
 from ..consts import J2, LAN_DOMAIN, SHORT_DURATION
 from ..records import dns_records
 from ..render import j2_build, j2_render
+from ..subnets import load_networks
 
 _BASE = Path(sep, "srv", "run", "unbound", "lan")
 _DYN = Path("dns", "2-records.conf")
@@ -17,9 +18,10 @@ _RECORDS = _BASE / "2-records.conf"
 
 def _poll(j2: Environment) -> None:
     existing = _RECORDS.read_text()
+    networks = load_networks()
 
     env = {
-        "DNS_RECORDS": dns_records(),
+        "DNS_RECORDS": dns_records(networks),
         "LAN_DOMAIN": LAN_DOMAIN,
     }
     new = j2_render(j2, path=_DYN, env=env)

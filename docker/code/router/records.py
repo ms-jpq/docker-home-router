@@ -10,8 +10,7 @@ from std2.types import IPAddress
 
 from .consts import WG_PEERS_JSON
 from .leases import leases
-from .subnets import load_networks
-from .types import WGPeers
+from .types import Networks, WGPeers
 
 
 def _p_peers() -> Iterator[Tuple[str, IPAddress]]:
@@ -24,8 +23,9 @@ def _p_peers() -> Iterator[Tuple[str, IPAddress]]:
         yield name, addrs.v6
 
 
-def dns_records() -> Mapping[str, Tuple[Sequence[IPv4Address], Sequence[IPv6Address]]]:
-    networks = load_networks()
+def dns_records(
+    networks: Networks,
+) -> Mapping[str, Tuple[Sequence[IPv4Address], Sequence[IPv6Address]]]:
     mappings: MutableMapping[str, MutableSet[IPAddress]] = {}
     for name, addr in chain(leases(networks), _p_peers()):
         acc = mappings.setdefault(name, set())
