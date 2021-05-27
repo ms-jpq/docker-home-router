@@ -18,7 +18,6 @@ from .consts import (
     STATS_PORT,
     TEMPLATES,
     TOR_PORT,
-    UNBOUND_PORT,
     USER,
     WAN_IF,
     WG_IF,
@@ -53,7 +52,7 @@ def _env(networks: Networks) -> Mapping[str, Any]:
     else:
         fwds = tuple(forwarded_ports(networks))
         loop_back = calculate_loopback()
-        dns = DNS_SERVERS or (f"{loop_back}#{UNBOUND_PORT}",)
+        dns = DNS_SERVERS
         env = {
             "PRIVATE_ADDRS": PRIVATE_ADDRS,
             "USER": USER,
@@ -72,7 +71,6 @@ def _env(networks: Networks) -> Mapping[str, Any]:
             "WG_NETWORK_V4": networks.wireguard.v4,
             "WG_NETWORK_V6": networks.wireguard.v6,
             "DNS_SERVERS": dns,
-            "UNBOUND_PORT": UNBOUND_PORT,
             "SQUID_PORT": SQUID_PORT,
             "TOR_PORT": TOR_PORT,
             "WG_PORT": WG_PORT,

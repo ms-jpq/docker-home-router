@@ -51,7 +51,6 @@ UNBOUND_CONF = RUN / "unbound" / "0-include.conf"
 
 IPV6_STAT = _TMP / "ipv6.json"
 
-UNBOUND_PORT = 5335
 WG_PORT = clamp(1, int(environ["WG_PORT"]), 2 ** 16 - 1)
 STATS_PORT = clamp(1025, int(environ["STATS_PORT"]), 2 ** 16 - 1)
 SQUID_PORT = clamp(1025, int(environ["SQUID_PORT"]), 2 ** 16 - 1)
