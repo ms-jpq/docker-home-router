@@ -39,9 +39,7 @@ RUN = _SRV / Path("run")
 PORT_FWD = _CONFIG / "port_fwd"
 
 LEASES = DATA / "dnsmasq" / "leases"
-_DNSMASQ = RUN / "dnsmasq"
-DYN = _DNSMASQ / "lan" / "5-cnames.conf"
-ADDN_HOSTS = _DNSMASQ / "hosts" / "addrs.conf"
+
 
 NETWORKS_JSON = _SRV / "run" / "networks" / "networks.json"
 WG_PEERS_JSON = RUN / "wireguard" / "wg-peers.json"

@@ -1,33 +1,28 @@
-from concurrent.futures import ThreadPoolExecutor
-from ipaddress import IPv4Address
+from ipaddress import IPv4Address, IPv6Address
 from itertools import chain
 from json import loads
 from locale import strxfrm
+from os import sep
 from pathlib import Path
-from subprocess import Popen
-from tempfile import TemporaryDirectory
-from threading import Lock
+from subprocess import check_call
 from time import sleep
-from typing import Iterator, MutableMapping, MutableSet, Tuple
+from typing import Iterator, Mapping, MutableMapping, MutableSet, Sequence, Tuple
 
 from jinja2 import Environment
-from std2.concurrent.futures import gather
 from std2.pickle import decode
 from std2.pickle.coders import BUILTIN_DECODERS
 from std2.types import IPAddress
 
-from ..consts import ADDN_HOSTS, DYN, J2, LAN_DOMAIN, SHORT_DURATION, WG_PEERS_JSON
+from ..consts import J2, LAN_DOMAIN, SHORT_DURATION, WG_PEERS_JSON
 from ..leases import leases
 from ..render import j2_build, j2_render
 from ..subnets import load_networks
 from ..types import WGPeers
 
-_DYN = Path("dns", "5-cnames.conf")
-_ADDN_HOSTS = Path("dns", "addrs.conf")
-
-
-def _proc() -> Popen:
-    return Popen(("dnsmasq", "--conf-dir", "/srv/run/dnsmasq/lan"))
+_BASE = Path(sep, "srv", "run", "unbound", "lan")
+_DYN = Path("dns", "2-records.conf")
+_CONF = _BASE / "1-main.conf"
+_RECORDS = _BASE / "2-records.conf"
 
 
 def _p_peers() -> Iterator[Tuple[str, IPAddress]]:
@@ -40,59 +35,39 @@ def _p_peers() -> Iterator[Tuple[str, IPAddress]]:
         yield name, addrs.v6
 
 
-def _poll(j2: Environment) -> bool:
-    dyn = DYN.read_text()
-    addn = ADDN_HOSTS.read_text()
-
+def dns_records() -> Mapping[str, Tuple[Sequence[IPv4Address], Sequence[IPv6Address]]]:
     networks = load_networks()
     mappings: MutableMapping[str, MutableSet[IPAddress]] = {}
     for name, addr in chain(leases(networks), _p_peers()):
         acc = mappings.setdefault(name, set())
         acc.add(addr)
 
+    records = {
+        key: (
+            sorted(i for i in mappings[key] if isinstance(i, IPv4Address)),
+            sorted(i for i in mappings[key] if isinstance(i, IPv6Address)),
+        )
+        for key in sorted(mappings, key=strxfrm)
+    }
+    return records
+
+
+def _poll(j2: Environment) -> None:
+    existing = _RECORDS.read_text()
+
     env = {
-        "MAPPINGS": {
-            key: sorted(mappings[key], key=lambda i: isinstance(i, IPv4Address))
-            for key in sorted(mappings, key=strxfrm)
-        },
+        "DNS_RECORDS": dns_records(),
         "LAN_DOMAIN": LAN_DOMAIN,
     }
-    t1 = j2_render(j2, path=_DYN, env=env)
-    t2 = j2_render(j2, path=_ADDN_HOSTS, env=env)
-    needs_restart = dyn != t1
-
-    if addn != t2:
-        with TemporaryDirectory() as temp:
-            tmp = Path(temp) / "tmp"
-            tmp.write_text(t2)
-            tmp.rename(ADDN_HOSTS)
-
-    if needs_restart:
-        DYN.write_text(t1)
-
-    return needs_restart
+    new = j2_render(j2, path=_DYN, env=env)
+    if new != existing:
+        check_call(
+            ("unbound-control", "-c", str(_CONF), "reload"), timeout=SHORT_DURATION
+        )
 
 
 def main() -> None:
     j2 = j2_build(J2)
-    lock = Lock()
-    proc = _proc()
-
-    def l1() -> None:
-        while True:
-            if _poll(j2):
-                with lock:
-                    proc.terminate()
-            sleep(SHORT_DURATION)
-
-    def l2() -> None:
-        nonlocal proc
-        while True:
-            proc.wait()
-            with lock:
-                proc = _proc()
-
-    with ThreadPoolExecutor() as pool:
-        f1 = pool.submit(l1)
-        f2 = pool.submit(l2)
-        gather(f1, f2)
+    while True:
+        _poll(j2)
+        sleep(SHORT_DURATION)
