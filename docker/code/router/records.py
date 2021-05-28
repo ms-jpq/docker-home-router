@@ -15,9 +15,7 @@ from .types import Networks, WGPeers
 
 
 def _p_peers() -> Iterator[Tuple[str, IPAddress]]:
-    WG_PEERS_JSON.parent.mkdir(parents=True, exist_ok=True)
-    WG_PEERS_JSON.touch()
-    json = loads(WG_PEERS_JSON.read_text() or "{}")
+    json = loads(WG_PEERS_JSON.read_text())
     peers: WGPeers = decode(WGPeers, json, decoders=BUILTIN_DECODERS)
     for name, addrs in peers.items():
         yield name, addrs.v4
