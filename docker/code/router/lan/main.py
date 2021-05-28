@@ -3,11 +3,11 @@ from ipaddress import IPv4Address, ip_address
 from string import Template
 from subprocess import check_call
 from typing import Sequence, Tuple
-from urllib.parse import quote_plus
 
 from std2.types import IPAddress
 
 from ..consts import LAN_DOMAIN, LOCAL_TTL, RUN, SHORT_DURATION
+from ..records import encode_dns
 
 _CONF = RUN / "unbound" / "lan" / "1-main.conf"
 
@@ -19,7 +19,7 @@ _LOCAL_DATA_AAAA = Template(f"$HOSTNAME.{LAN_DOMAIN}. {LOCAL_TTL} IN AAAA $ADDR"
 
 
 def _parse(hostname: str, addr: IPAddress) -> Tuple[str, str, str]:
-    hostname = quote_plus(hostname)
+    hostname = encode_dns(hostname)
     zone = _LOCAL_ZONE.substitute(HOSTNAME=hostname)
     ptr = _LOCAL_DATA_PTR.substitute(HOSTNAME=hostname, RDDA=addr.reverse_pointer)
     na = (
