@@ -80,7 +80,7 @@ LAN_DOMAIN = environ["LAN_DOMAIN"]
 
 
 WG_DOMAIN = environ["WG_DOMAIN"] or SERVER_NAME
-WG_PEERS = frozenset(split(environ["WG_PEERS"]))
+WG_PEERS = tuple(split(environ["WG_PEERS"]))
 
 
 SHORT_DURATION = 1

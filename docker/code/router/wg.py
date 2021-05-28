@@ -101,6 +101,7 @@ def gen_qr(networks: Networks) -> None:
         qr_path = (QR_DIR / peer).with_suffix(".png")
 
         l_env: Mapping[str, Any] = {
+            "NAME": peer,
             "CLIENT_PRIVATE_KEY": client_private,
             "SHARED_KEY": client_shared,
             "CLIENT_ADDR_V4": v4_addr,
@@ -121,12 +122,13 @@ def wg_env(stack: DualStack) -> Mapping[str, Any]:
     next(hosts)
     peers = (
         {
+            "NAME": peer,
             "PUBLIC_KEY": peer_public,
             "SHARED_KEY": peer_shared,
             "V4_ADDR": f"{v4}/{stack.v4.max_prefixlen}",
             "V6_ADDR": f"{v6}/{stack.v6.max_prefixlen}",
         }
-        for (_, _, peer_public, peer_shared), (v4, v6) in zip(_client_keys(), hosts)
+        for (peer, _, peer_public, peer_shared), (v4, v6) in zip(_client_keys(), hosts)
     )
     env = {
         "SERVER_PRIVATE_KEY": server_private,
