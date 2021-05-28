@@ -80,12 +80,13 @@ def _ip_gen(
         srv.v6,
     }
 
-    def end(v4: IPv4Interface, v6: IPv6Interface) -> None:
+    def end(v4: IPv4Interface, v6: IPv6Interface, write: bool) -> None:
         seen.add(v4)
         seen.add(v6)
-        data = encode((v4, v6), encoders=BUILTIN_ENCODERS)
-        json = dumps(data, check_circular=False, ensure_ascii=False, indent=2)
-        json_p.write_text(json)
+        if write:
+            data = encode((v4, v6), encoders=BUILTIN_ENCODERS)
+            json = dumps(data, check_circular=False, ensure_ascii=False, indent=2)
+            json_p.write_text(json)
 
     for peer in peers:
 
@@ -111,15 +112,15 @@ def _ip_gen(
             addrs: _IFS = decode(_IFS, json, decoders=BUILTIN_DECODERS)
             v4, v6 = addrs
             if v4 not in seen and v6 not in seen and v4 in wg_v4 and v6 in wg_v6:
-                end(v4, v6)
+                end(v4, v6, write=False)
                 yield v4, v6
             else:
                 v4, v6 = cont()
-                end(v4, v6)
+                end(v4, v6, write=True)
                 yield v4, v6
         else:
             v4, v6 = cont()
-            end(v4, v6)
+            end(v4, v6, write=True)
             yield v4, v6
 
 
