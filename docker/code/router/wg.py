@@ -9,7 +9,7 @@ from typing import Any, Iterable, Iterator, Mapping, MutableSet, Tuple
 
 from std2.pickle import decode, encode
 from std2.pickle.coders import BUILTIN_DECODERS, BUILTIN_ENCODERS
-from std2.types import IPAddress
+from std2.types import IPInterface
 
 from .consts import DATA, J2, QR_DIR, WG_DOMAIN, WG_PEERS, WG_PORT
 from .ip import ipv6_enabled
@@ -73,12 +73,16 @@ def _ip_gen(
 ) -> Iterator[Tuple[IPv4Interface, IPv6Interface]]:
     srv = _srv(networks)
     wg_v4, wg_v6 = networks.wireguard.v4, networks.wireguard.v6
-    seen: MutableSet[IPAddress] = {wg_v4[0], wg_v6[0], srv.v4, srv.v6}
+    seen: MutableSet[IPInterface] = {
+        ip_interface(f"{wg_v4[0]}/{wg_v4.max_prefixlen}"),
+        ip_interface(f"{wg_v6[0]}/{wg_v6.max_prefixlen}"),
+        srv.v4,
+        srv.v6,
+    }
 
     def end(v4: IPv4Interface, v6: IPv6Interface) -> None:
         seen.add(v4)
         seen.add(v6)
-        print(seen, flush=True)
         data = encode((v4, v6), encoders=BUILTIN_ENCODERS)
         json = dumps(data, check_circular=False, ensure_ascii=False, indent=2)
         json_p.write_text(json)
