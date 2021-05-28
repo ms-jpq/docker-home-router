@@ -9,5 +9,5 @@ ARGS=(
   )
 
 
-/srv/run/unbound/ctl.sh status
+s6-setuidgid "$USER" /srv/run/unbound/ctl.sh status
 exec dnsmasq "${ARGS[@]}"
