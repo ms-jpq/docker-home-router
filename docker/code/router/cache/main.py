@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 from os import sep
 from pathlib import Path
 from subprocess import CalledProcessError, check_call, check_output, run
