@@ -74,6 +74,12 @@ def _ip_gen(
     wg_v4, wg_v6 = networks.wireguard.v4, networks.wireguard.v6
     seen = {wg_v4[0], wg_v6[0], srv.v4, srv.v6}
 
+    def end(v4: IPv4Interface, v6: IPv6Interface) -> None:
+        seen.update((v4, v6))
+        data = encode((v4, v6), encoders=BUILTIN_ENCODERS)
+        json = dumps(data, check_circular=False, ensure_ascii=False, indent=2)
+        json_p.write_text(json)
+
     for peer in peers:
 
         def cont() -> _IFS:
@@ -98,19 +104,16 @@ def _ip_gen(
             addrs: _IFS = decode(_IFS, json, decoders=BUILTIN_DECODERS)
             v4, v6 = addrs
             if v4 not in seen and v6 not in seen and v4 in wg_v4 and v6 in wg_v6:
+                end(v4, v6)
                 yield v4, v6
             else:
                 v4, v6 = cont()
+                end(v4, v6)
                 yield v4, v6
         else:
             v4, v6 = cont()
+            end(v4, v6)
             yield v4, v6
-
-        seen.update((v4, v6))
-        data = encode((v4, v6), encoders=BUILTIN_ENCODERS)
-        json = dumps(data, check_circular=False, ensure_ascii=False, indent=2)
-        json_p.write_text(json)
-        print(json_p, json, flush=True)
 
 
 def clients(networks: Networks) -> Iterator[_Client]:
