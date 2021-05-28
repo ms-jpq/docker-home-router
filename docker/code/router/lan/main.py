@@ -33,7 +33,6 @@ def _mod(op: str, *args: str) -> None:
     check_call(
         ("unbound-control", "-c", str(UNBOUND_CONF), op, *args), timeout=SHORT_DURATION
     )
-    print(op, *args, file=stderr)
 
 
 def _add(hostname: str, addr: IPAddress) -> None:
@@ -42,12 +41,16 @@ def _add(hostname: str, addr: IPAddress) -> None:
     _mod("local_data", ptr)
     _mod("local_data", na)
 
+    print("ADD", hostname, addr, file=stderr)
+
 
 def _rm(hostname: str, addr: IPAddress) -> None:
     zone, ptr, na = _parse(hostname, addr=addr)
     _mod("local_zone_remove", zone)
     _mod("local_zones_remove", ptr)
     _mod("local_zones_remove", na)
+
+    print("RM ", hostname, addr, file=stderr)
 
 
 def _parse_args(args: Sequence[str]) -> Namespace:
