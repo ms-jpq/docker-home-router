@@ -48,8 +48,8 @@ def _srv(networks: Networks) -> _Server:
     _SRV_KEY.parent.mkdir(parents=True, exist_ok=True)
 
     wg = networks.wireguard
-    v4 = ip_interface(f"{next(iter(wg.v4))}/{wg.v4.max_prefixlen}")
-    v6 = ip_interface(f"{next(iter(wg.v6))}/{wg.v6.max_prefixlen}")
+    v4 = ip_interface(f"{next(wg.v4.hosts())}/{wg.v4.max_prefixlen}")
+    v6 = ip_interface(f"{next(wg.v6.hosts())}/{wg.v6.max_prefixlen}")
 
     if not _SRV_KEY.exists():
         pk = check_output(("wg", "genkey"), text=True).rstrip()
@@ -72,7 +72,7 @@ def _ip_gen(
 ) -> Iterator[Tuple[IPv4Interface, IPv6Interface]]:
     srv = _srv(networks)
     wg_v4, wg_v6 = networks.wireguard.v4, networks.wireguard.v6
-    seen = {srv.v4, srv.v6}
+    seen = {wg_v4[0], wg_v6[0], srv.v4, srv.v6}
 
     for peer in peers:
 
