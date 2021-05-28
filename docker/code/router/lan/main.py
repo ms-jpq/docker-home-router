@@ -1,7 +1,8 @@
 from argparse import ArgumentParser, Namespace
 from ipaddress import IPv4Address, ip_address
+from os import linesep
 from string import Template
-from subprocess import check_call
+from subprocess import run
 from sys import stderr
 from typing import Sequence, Tuple
 
@@ -30,23 +31,22 @@ def _parse(hostname: str, addr: IPAddress) -> Tuple[str, str, str]:
 
 
 def _ctl(op: str, *args: str) -> None:
-    check_call((str(UNBOUND_CTL), op, *args), timeout=SHORT_DURATION)
+    stdin = linesep.join(args)
+    run((str(UNBOUND_CTL), op), input=stdin, timeout=SHORT_DURATION).check_returncode()
 
 
 def _add(hostname: str, addr: IPAddress) -> None:
     zone, ptr, na = _parse(hostname, addr=addr)
-    _ctl("local_zone", zone, _ZONE_TYPE)
-    _ctl("local_data", ptr)
-    _ctl("local_data", na)
+    _ctl("local_zones", zone, _ZONE_TYPE)
+    _ctl("local_datas", ptr, na)
 
     print("ADD", hostname, addr, file=stderr)
 
 
 def _rm(hostname: str, addr: IPAddress) -> None:
     zone, ptr, na = _parse(hostname, addr=addr)
-    _ctl("local_zone_remove", zone)
-    _ctl("local_zones_remove", ptr)
-    _ctl("local_zones_remove", na)
+    _ctl("local_zones_remove", zone)
+    _ctl("local_datas_remove", ptr, na)
 
     print("RM ", hostname, addr, file=stderr)
 
