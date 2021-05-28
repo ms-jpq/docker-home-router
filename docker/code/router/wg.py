@@ -1,12 +1,14 @@
+from dataclasses import dataclass
+from ipaddress import IPv4Interface, IPv6Interface, ip_interface
 from pathlib import PurePath
 from shutil import rmtree
 from subprocess import check_output, run
-from typing import Any, Iterator, Mapping, Tuple
+from typing import Any, Iterator, Mapping, MutableSet
 
 from .consts import DATA, J2, QR_DIR, WG_DOMAIN, WG_PEERS, WG_PORT
 from .ip import ipv6_enabled
 from .render import j2_build, j2_render
-from .types import DualStack, Networks, WGPeer
+from .types import Networks
 
 _CLIENT_TPL = PurePath("wg", "client.conf")
 
@@ -16,8 +18,30 @@ _SRV_KEY = _WG_DATA / "server.key"
 _CLIENT_KEYS = _WG_DATA / "clients"
 
 
-def _srv_keys() -> Tuple[str, str]:
+@dataclass(frozen=True)
+class _Server:
+    private_key: str
+    public_key: str
+    v4: IPv4Interface
+    v6: IPv6Interface
+
+
+@dataclass(frozen=True)
+class _Client:
+    name: str
+    private_key: str
+    public_key: str
+    shared_key: str
+    v4: IPv4Interface
+    v6: IPv6Interface
+
+
+def _srv(networks: Networks) -> _Server:
     _SRV_KEY.parent.mkdir(parents=True, exist_ok=True)
+
+    wg = networks.wireguard
+    v4 = ip_interface(f"{next(iter(wg.v4))}/{wg.v4.max_prefixlen}")
+    v6 = ip_interface(f"{next(iter(wg.v6))}/{wg.v6.max_prefixlen}")
 
     if not _SRV_KEY.exists():
         pk = check_output(("wg", "genkey"), text=True).rstrip()
@@ -25,14 +49,28 @@ def _srv_keys() -> Tuple[str, str]:
 
     private_key = _SRV_KEY.read_text()
     public_key = check_output(("wg", "pubkey"), input=private_key, text=True).rstrip()
-    return private_key, public_key
+
+    srv = _Server(
+        private_key=private_key,
+        public_key=public_key,
+        v4=v4,
+        v6=v6,
+    )
+    return srv
 
 
-def _client_keys() -> Iterator[Tuple[str, str, str, str]]:
+def clients(networks: Networks) -> Iterator[_Client]:
     _CLIENT_KEYS.mkdir(parents=True, exist_ok=True)
+
+    srv = _srv(networks)
+    wg_v4, wg_v6 = networks.wireguard.v4, networks.wireguard.v6
+    seen = {srv.v4, srv.v6}
 
     for peer in WG_PEERS:
         key_p, psk_p = _CLIENT_KEYS / f"{peer}.key", _CLIENT_KEYS / f"{peer}.psk"
+
+        v4 = wg_v4[1]
+        v6 = wg_v6[1]
 
         if key_p.exists():
             private_key = key_p.read_text()
@@ -49,15 +87,16 @@ def _client_keys() -> Iterator[Tuple[str, str, str, str]]:
         public_key = check_output(
             ("wg", "pubkey"), input=private_key, text=True
         ).rstrip()
-        yield peer, private_key, public_key, shared_key
 
-
-def wg_peers(networks: Networks) -> Mapping[str, WGPeer]:
-    stack = networks.wireguard
-    hosts = zip(stack.v4.hosts(), stack.v6.hosts())
-    next(hosts)
-    peers = {peer: WGPeer(v4=v4, v6=v6) for peer, (v4, v6) in zip(WG_PEERS, hosts)}
-    return peers
+        client = _Client(
+            name=peer,
+            private_key=private_key,
+            public_key=public_key,
+            shared_key=shared_key,
+            v4=v4,
+            v6=v6,
+        )
+        yield client
 
 
 def gen_qr(networks: Networks) -> None:
@@ -69,16 +108,14 @@ def gen_qr(networks: Networks) -> None:
         pass
     QR_DIR.mkdir(parents=True, exist_ok=True)
 
-    _, server_public = _srv_keys()
+    srv = _srv(networks)
     stack = networks.wireguard
-    hosts = zip(stack.v4.hosts(), stack.v6.hosts())
-    dns_v4, dns_v6 = next(hosts)
 
     g_env = {
         "IPV6_ENABLED": ipv6_enabled(),
-        "SERVER_PUBLIC_KEY": server_public,
-        "DNS_ADDR_V4": dns_v4,
-        "DNS_ADDR_V6": dns_v6,
+        "SERVER_PUBLIC_KEY": srv.public_key,
+        "DNS_ADDR_V4": srv.v4,
+        "DNS_ADDR_V6": srv.v6,
         "WG_NETWORK_V4": stack.v4,
         "WG_NETWORK_V6": stack.v6,
         "TOR_NETWORK_V4": networks.tor.v4,
@@ -91,21 +128,16 @@ def gen_qr(networks: Networks) -> None:
         "WG_PORT": WG_PORT,
     }
 
-    for (peer, client_private, _, client_shared), (v4, v6) in zip(
-        _client_keys(), hosts
-    ):
-        v4_addr = f"{v4}/{stack.v4.max_prefixlen}"
-        v6_addr = f"{v6}/{stack.v6.max_prefixlen}"
-
-        conf_path = (QR_DIR / peer).with_suffix(".conf")
-        qr_path = (QR_DIR / peer).with_suffix(".png")
+    for client in clients(networks):
+        conf_path = (QR_DIR / client.name).with_suffix(".conf")
+        qr_path = (QR_DIR / client.name).with_suffix(".png")
 
         l_env: Mapping[str, Any] = {
-            "NAME": peer,
-            "CLIENT_PRIVATE_KEY": client_private,
-            "SHARED_KEY": client_shared,
-            "CLIENT_ADDR_V4": v4_addr,
-            "CLIENT_ADDR_V6": v6_addr,
+            "NAME": client.name,
+            "CLIENT_PRIVATE_KEY": client.private_key,
+            "SHARED_KEY": client.shared_key,
+            "CLIENT_ADDR_V4": client.v4,
+            "CLIENT_ADDR_V6": client.v6,
         }
         env = {**l_env, **g_env}
         text = j2_render(j2, path=_CLIENT_TPL, env=env)
@@ -116,22 +148,20 @@ def gen_qr(networks: Networks) -> None:
         ).check_returncode()
 
 
-def wg_env(stack: DualStack) -> Mapping[str, Any]:
-    server_private, _ = _srv_keys()
-    hosts = zip(stack.v4.hosts(), stack.v6.hosts())
-    next(hosts)
+def wg_env(networks: Networks) -> Mapping[str, Any]:
+    srv = _srv(networks)
     peers = (
         {
-            "NAME": peer,
-            "PUBLIC_KEY": peer_public,
-            "SHARED_KEY": peer_shared,
-            "V4_ADDR": f"{v4}/{stack.v4.max_prefixlen}",
-            "V6_ADDR": f"{v6}/{stack.v6.max_prefixlen}",
+            "NAME": client.name,
+            "PUBLIC_KEY": client.public_key,
+            "SHARED_KEY": client.shared_key,
+            "V4_ADDR": client.v4,
+            "V6_ADDR": client.v6,
         }
-        for (peer, _, peer_public, peer_shared), (v4, v6) in zip(_client_keys(), hosts)
+        for client in clients(networks)
     )
     env = {
-        "SERVER_PRIVATE_KEY": server_private,
+        "SERVER_PRIVATE_KEY": srv.private_key,
         "PORT": WG_PORT,
         "PEERS": peers,
     }
