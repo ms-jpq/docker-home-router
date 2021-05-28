@@ -34,6 +34,7 @@ from .render import j2_build, j2_render
 from .stats.main import main as stats_main
 from .subnets import calculate_loopback, calculate_networks, load_networks
 from .types import Networks
+from .wg import gen_qr, wg_env
 from .wireguard.main import main as wg_main
 
 
@@ -84,6 +85,7 @@ def _env(networks: Networks) -> Mapping[str, Any]:
             "LAN_DOMAIN": LAN_DOMAIN,
             "FORWARDED_PORTS": fwds,
             "DHCP_FIXED": dhcp_fixed(fwds),
+            "WG": wg_env(networks.wireguard),
         }
         return env
 
@@ -107,6 +109,8 @@ def _template() -> None:
             text = j2_render(j2, path=tpl, env=env)
             dest.write_text(text)
             copystat(path, dest)
+
+    gen_qr(networks)
 
 
 def _parse_args() -> Tuple[Namespace, Sequence[str]]:

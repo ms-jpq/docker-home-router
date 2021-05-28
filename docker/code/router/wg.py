@@ -1,5 +1,5 @@
 from json import dumps
-from pathlib import Path, PurePath
+from pathlib import PurePath
 from shutil import rmtree
 from subprocess import check_output, run
 from typing import Any, Iterator, Mapping, Tuple
