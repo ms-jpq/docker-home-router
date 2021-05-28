@@ -68,13 +68,17 @@ def _ip_gen(
     seen = {srv.v4, srv.v6}
 
     for peer in peers:
+        hashed = int(sha256(peer.encode()).hexdigest(), 16)
+        n4, n6 = hashed % wg_v4.num_addresses, hashed % wg_v6.num_addresses
         while True:
-            hashed = int(sha256(peer.encode()).hexdigest(), 16)
-            n4, n6 = hashed % wg_v4.num_addresses, hashed % wg_v6.num_addresses
             c4, c6 = wg_v4[n4], wg_v6[n6]
-
             v4 = ip_interface(f"{c4}/{wg_v4.max_prefixlen}")
             v6 = ip_interface(f"{c6}/{wg_v6.max_prefixlen}")
+
+            if v4 in seen:
+                c4 += 1
+            if v6 in seen:
+                c6 += 1
             if v4 not in seen and v6 not in seen:
                 break
 
