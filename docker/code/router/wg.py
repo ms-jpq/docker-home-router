@@ -1,10 +1,14 @@
 from dataclasses import dataclass
 from hashlib import sha256
 from ipaddress import IPv4Interface, IPv6Interface, ip_interface
+from json import dumps, loads
 from pathlib import PurePath
 from shutil import rmtree
 from subprocess import check_output, run
-from typing import Any, Iterable, Iterator, Mapping, MutableSet, Tuple
+from typing import Any, Iterable, Iterator, Mapping, Tuple
+
+from std2.pickle import decode, encode
+from std2.pickle.coders import BUILTIN_DECODERS, BUILTIN_ENCODERS
 
 from .consts import DATA, J2, QR_DIR, WG_DOMAIN, WG_PEERS, WG_PORT
 from .ip import ipv6_enabled
@@ -35,6 +39,9 @@ class _Client:
     shared_key: str
     v4: IPv4Interface
     v6: IPv6Interface
+
+
+_IFS = Tuple[IPv4Interface, IPv6Interface]
 
 
 def _srv(networks: Networks) -> _Server:
@@ -68,21 +75,41 @@ def _ip_gen(
     seen = {srv.v4, srv.v6}
 
     for peer in peers:
-        hashed = int(sha256(peer.encode()).hexdigest(), 16)
-        n4, n6 = hashed % wg_v4.num_addresses, hashed % wg_v6.num_addresses
-        while True:
-            c4, c6 = wg_v4[n4], wg_v6[n6]
-            v4 = ip_interface(f"{c4}/{wg_v4.max_prefixlen}")
-            v6 = ip_interface(f"{c6}/{wg_v6.max_prefixlen}")
 
-            if v4 in seen:
-                c4 += 1
-            if v6 in seen:
-                c6 += 1
-            if v4 not in seen and v6 not in seen:
-                break
+        def cont() -> _IFS:
+            hashed = int(sha256(peer.encode()).hexdigest(), 16)
+            n4, n6 = hashed % wg_v4.num_addresses, hashed % wg_v6.num_addresses
+            while True:
+                c4, c6 = wg_v4[n4], wg_v6[n6]
+                v4 = ip_interface(f"{c4}/{wg_v4.max_prefixlen}")
+                v6 = ip_interface(f"{c6}/{wg_v6.max_prefixlen}")
 
-        yield v4, v6
+                if v4 in seen:
+                    c4 += 1
+                if v6 in seen:
+                    c6 += 1
+                if v4 not in seen and v6 not in seen:
+                    return v4, v6
+
+        json_p = _CLIENT_KEYS / f"{peer}.json"
+
+        if json_p.exists():
+            raw = json_p.read_text()
+            json = loads(raw)
+            addrs: _IFS = decode(_IFS, json, decoders=BUILTIN_DECODERS)
+            v4, v6 = addrs
+            if v4 not in seen and v6 not in seen and v4 in wg_v4 and v6 in wg_v6:
+                yield v4, v6
+            else:
+                v4, v6 = cont()
+                yield v4, v6
+        else:
+            v4, v6 = cont()
+            yield v4, v6
+
+        data = encode((v4, v6), encoders=BUILTIN_ENCODERS)
+        json = dumps(data, check_circular=False, ensure_ascii=False, indent=2)
+        json_p.write_text(json)
 
 
 def clients(networks: Networks) -> Iterator[_Client]:
