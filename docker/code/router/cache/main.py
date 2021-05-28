@@ -18,14 +18,17 @@ def _wait() -> None:
 
 
 def main() -> None:
+    _CACHE.parent.mkdir(parents=True, exist_ok=True)
+
     _CACHE.touch()
     cached = _CACHE.read_bytes()
     _CACHE.unlink(missing_ok=True)
 
     _wait()
-    run(
-        (str(UNBOUND_CTL), "load_cache"), input=cached, timeout=SHORT_DURATION
-    ).check_returncode()
+    if cached:
+        run(
+            (str(UNBOUND_CTL), "load_cache"), input=cached, timeout=SHORT_DURATION
+        ).check_returncode()
 
     while True:
         raw = check_output((str(UNBOUND_CTL), "dump_cache"), timeout=SHORT_DURATION)
