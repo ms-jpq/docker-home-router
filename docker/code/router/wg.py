@@ -110,6 +110,7 @@ def _ip_gen(
         data = encode((v4, v6), encoders=BUILTIN_ENCODERS)
         json = dumps(data, check_circular=False, ensure_ascii=False, indent=2)
         json_p.write_text(json)
+        print(json_p, json, flush=True)
 
 
 def clients(networks: Networks) -> Iterator[_Client]:
