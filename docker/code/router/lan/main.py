@@ -30,7 +30,7 @@ def _parse(hostname: str, addr: IPAddress) -> Tuple[str, str, str]:
 
 
 def _ctl(op: str, *args: str) -> None:
-    stdin = linesep.join(args)
+    stdin = linesep.join(args).encode()
     run((str(UNBOUND_CTL), op), input=stdin, timeout=SHORT_DURATION).check_returncode()
 
 
