@@ -7,9 +7,8 @@ from typing import Sequence, Tuple
 
 from std2.types import IPAddress
 
-from ..consts import LAN_DOMAIN, LOCAL_TTL,  SHORT_DURATION, UNBOUND_CONF
+from ..consts import LAN_DOMAIN, LOCAL_TTL, SHORT_DURATION, UNBOUND_CONF
 from ..records import encode_dns
-
 
 _ZONE_TYPE = "redirect"
 _LOCAL_ZONE = Template(f"$HOSTNAME.{LAN_DOMAIN}.")
@@ -31,7 +30,9 @@ def _parse(hostname: str, addr: IPAddress) -> Tuple[str, str, str]:
 
 
 def _mod(op: str, *args: str) -> None:
-    check_call(("unbound-control", "-c", str(_CONF), op, *args), timeout=SHORT_DURATION)
+    check_call(
+        ("unbound-control", "-c", str(UNBOUND_CONF), op, *args), timeout=SHORT_DURATION
+    )
     print(op, *args, file=stderr)
 
 
