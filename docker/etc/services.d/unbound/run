@@ -4,9 +4,11 @@ set -eu
 set -o pipefail
 
 
+CONF='/srv/run/unbound/0-include.conf'
 ARGS=(
-  -c /srv/run/unbound/0-include.conf
+  -c "$CONF"
   )
 
 
+unbound-checkconf "$CONF"
 exec unbound "${ARGS[@]}"
