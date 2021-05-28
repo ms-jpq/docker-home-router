@@ -69,8 +69,11 @@ def _ip_gen(
 
     for peer in peers:
         hashed = int(sha256(peer.encode()).hexdigest(), 16)
-        v4 = wg_v4[1]
-        v6 = wg_v6[1]
+        n4, n6 = hashed % wg_v4.num_addresses, hashed % wg_v6.num_addresses
+        c4, c6 = wg_v4[n4], wg_v6[n6]
+
+        v4 = ip_interface(f"{c4}/{wg_v4.max_prefixlen}")
+        v6 = ip_interface(f"{c6}/{wg_v6.max_prefixlen}")
         yield v4, v6
 
 
