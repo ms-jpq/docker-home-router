@@ -16,6 +16,7 @@ from .consts import (
     LOCAL_TTL,
     PRIVATE_ADDRS,
     RUN,
+    SERVER_NAME,
     SQUID_PORT,
     STATS_PORT,
     TEMPLATES,
@@ -57,6 +58,7 @@ def _env(networks: Networks) -> Mapping[str, Any]:
         fwds = tuple(forwarded_ports(networks))
         loop_back = calculate_loopback()
         env = {
+            "SERVER_NAME": SERVER_NAME,
             "PRIVATE_ADDRS": PRIVATE_ADDRS,
             "USER": USER,
             "WAN_IF": WAN_IF,
