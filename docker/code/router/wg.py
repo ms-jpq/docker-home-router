@@ -1,9 +1,10 @@
 from dataclasses import dataclass
+from hashlib import sha256
 from ipaddress import IPv4Interface, IPv6Interface, ip_interface
 from pathlib import PurePath
 from shutil import rmtree
 from subprocess import check_output, run
-from typing import Any, Iterator, Mapping, MutableSet
+from typing import Any, Iterable, Iterator, Mapping, MutableSet, Tuple
 
 from .consts import DATA, J2, QR_DIR, WG_DOMAIN, WG_PEERS, WG_PORT
 from .ip import ipv6_enabled
@@ -59,18 +60,25 @@ def _srv(networks: Networks) -> _Server:
     return srv
 
 
-def clients(networks: Networks) -> Iterator[_Client]:
-    _CLIENT_KEYS.mkdir(parents=True, exist_ok=True)
-
+def _ip_gen(
+    peers: Iterable[str], networks: Networks
+) -> Iterator[Tuple[IPv4Interface, IPv6Interface]]:
     srv = _srv(networks)
     wg_v4, wg_v6 = networks.wireguard.v4, networks.wireguard.v6
     seen = {srv.v4, srv.v6}
 
-    for peer in WG_PEERS:
-        key_p, psk_p = _CLIENT_KEYS / f"{peer}.key", _CLIENT_KEYS / f"{peer}.psk"
-
+    for peer in peers:
+        hashed = int(sha256(peer.encode()).hexdigest(), 16)
         v4 = wg_v4[1]
         v6 = wg_v6[1]
+        yield v4, v6
+
+
+def clients(networks: Networks) -> Iterator[_Client]:
+    _CLIENT_KEYS.mkdir(parents=True, exist_ok=True)
+
+    for peer, (v4, v6) in zip(WG_PEERS, _ip_gen(WG_PEERS, networks=networks)):
+        key_p, psk_p = _CLIENT_KEYS / f"{peer}.key", _CLIENT_KEYS / f"{peer}.psk"
 
         if key_p.exists():
             private_key = key_p.read_text()
