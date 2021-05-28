@@ -7,6 +7,14 @@ _CACHE = DATA / "unbound" / "cache.txt"
 _TMP = RUN / "unbound" / "cache.txt"
 
 
+def _cached() -> bytes:
+    _CACHE.parent.mkdir(parents=True, exist_ok=True)
+    _CACHE.touch()
+    cached = _CACHE.read_bytes()
+    _CACHE.unlink(missing_ok=True)
+    return cached
+
+
 def _wait() -> None:
     while True:
         try:
@@ -18,11 +26,7 @@ def _wait() -> None:
 
 
 def main() -> None:
-    _CACHE.parent.mkdir(parents=True, exist_ok=True)
-
-    _CACHE.touch()
-    cached = _CACHE.read_bytes()
-    _CACHE.unlink(missing_ok=True)
+    cached = _cached()
 
     _wait()
     if cached:
