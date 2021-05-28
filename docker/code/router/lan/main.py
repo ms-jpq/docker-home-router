@@ -9,7 +9,7 @@ from std2.types import IPAddress
 from ..consts import LAN_DOMAIN, LOCAL_TTL, RUN, SHORT_DURATION
 from ..records import encode_dns
 
-_CONF = RUN / "unbound" / "lan" / "1-main.conf"
+_CONF = RUN / "unbound" / "0-include.conf"
 
 _ZONE_TYPE = "redirect"
 _LOCAL_ZONE = Template(f"$HOSTNAME.{LAN_DOMAIN}.")
