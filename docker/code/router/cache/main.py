@@ -1,10 +1,10 @@
 from subprocess import CalledProcessError, check_call, check_output, run
 from time import sleep
 
-from ..consts import DATA, RUN, SHORT_DURATION, UNBOUND_CTL
+from ..consts import DATA, SHORT_DURATION, UNBOUND_CTL
 
 _CACHE = DATA / "unbound" / "cache.txt"
-_TMP = RUN / "unbound" / "cache.txt"
+_TMP = DATA / "unbound" / ".cache.txt"
 
 
 def _cached() -> bytes:
