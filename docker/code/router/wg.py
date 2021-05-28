@@ -106,6 +106,7 @@ def _ip_gen(
             v4, v6 = cont()
             yield v4, v6
 
+        seen.update((v4, v6))
         data = encode((v4, v6), encoders=BUILTIN_ENCODERS)
         json = dumps(data, check_circular=False, ensure_ascii=False, indent=2)
         json_p.write_text(json)
