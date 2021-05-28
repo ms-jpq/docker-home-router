@@ -11,7 +11,8 @@ from std2.types import IPAddress
 from ..consts import LAN_DOMAIN, LOCAL_TTL, SHORT_DURATION, UNBOUND_CTL
 from ..records import encode_dns
 
-_LOCAL_ZONE = Template(f"$HOSTNAME.{LAN_DOMAIN}. redirect")
+_ZONE_TYPE = "redirect"
+_LOCAL_ZONE = Template(f"$HOSTNAME.{LAN_DOMAIN}.")
 _LOCAL_DATA_PTR = Template(f"$RDDA. {LOCAL_TTL} IN PTR $HOSTNAME.{LAN_DOMAIN}.")
 _LOCAL_DATA_A = Template(f"$HOSTNAME.{LAN_DOMAIN}. {LOCAL_TTL} IN A $ADDR")
 _LOCAL_DATA_AAAA = Template(f"$HOSTNAME.{LAN_DOMAIN}. {LOCAL_TTL} IN AAAA $ADDR")
@@ -36,7 +37,7 @@ def _ctl(op: str, *args: str) -> None:
 
 def _add(hostname: str, addr: IPAddress) -> None:
     zone, ptr, na = _parse(hostname, addr=addr)
-    _ctl("local_zones", zone)
+    _ctl("local_zones", f"{zone} {_ZONE_TYPE}")
     _ctl("local_datas", ptr, na)
 
     print("ADD", "--", hostname, addr, file=stderr)
