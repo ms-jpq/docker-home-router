@@ -10,9 +10,8 @@ from py_dev.srv.static import build_j2, get
 from std2.pathlib import is_relative_to
 from std2.types import never
 
-from ..consts import J2, STATS_PORT
+from ..consts import J2, QR_DIR, STATS_PORT
 from ..render import j2_build, j2_render
-from ..wireguard.main import QR_DIR
 from .dhcp import feed as dhcp_feed
 from .dns import feed as dns_feed
 from .fwds import feed as fwd_feed
