@@ -3,8 +3,9 @@ from time import sleep
 
 from ..consts import DATA, SHORT_DURATION, UNBOUND_CTL
 
-_CACHE = DATA / "unbound" / "cache.txt"
-_TMP = DATA / "unbound" / ".cache.txt"
+_UNBOUND = DATA / "unbound"
+_CACHE = _UNBOUND / "cache.txt"
+_TMP = _UNBOUND / ".cache.txt"
 
 
 def _cached() -> bytes:
