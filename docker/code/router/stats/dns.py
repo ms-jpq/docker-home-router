@@ -4,7 +4,7 @@ from typing import Any, Tuple, Union
 
 from std2.configparser import hydrate
 
-from ..consts import SHORT_DURATION, UNBOUND_CONF
+from ..consts import SHORT_DURATION, UNBOUND_CTL
 
 
 def _parse_stat(line: str) -> Tuple[str, Union[int, float]]:
@@ -26,9 +26,7 @@ def _parse_stats(raw: str) -> Any:
 
 def feed() -> str:
     raw = check_output(
-        ("unbound-control", "-c", str(UNBOUND_CONF), "stats_noreset"),
-        text=True,
-        timeout=SHORT_DURATION,
+        (str(UNBOUND_CTL), "stats_noreset"), text=True, timeout=SHORT_DURATION
     )
     data = _parse_stats(raw)
     json = dumps(data, check_circular=False, ensure_ascii=False)

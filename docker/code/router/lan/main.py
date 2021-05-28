@@ -7,7 +7,7 @@ from typing import Sequence, Tuple
 
 from std2.types import IPAddress
 
-from ..consts import LAN_DOMAIN, LOCAL_TTL, SHORT_DURATION, UNBOUND_CONF
+from ..consts import LAN_DOMAIN, LOCAL_TTL, SHORT_DURATION, UNBOUND_CTL
 from ..records import encode_dns
 
 _ZONE_TYPE = "redirect"
@@ -30,9 +30,7 @@ def _parse(hostname: str, addr: IPAddress) -> Tuple[str, str, str]:
 
 
 def _ctl(op: str, *args: str) -> None:
-    check_call(
-        ("unbound-control", "-c", str(UNBOUND_CONF), op, *args), timeout=SHORT_DURATION
-    )
+    check_call((str(UNBOUND_CTL), op, *args), timeout=SHORT_DURATION)
 
 
 def _add(hostname: str, addr: IPAddress) -> None:

@@ -40,7 +40,7 @@ RUN = _SRV / Path("run")
 PORT_FWD = _CONFIG / "port_fwd"
 
 LEASES = DATA / "dnsmasq" / "leases"
-UNBOUND_CONF = RUN / "unbound" / "0-include.conf"
+UNBOUND_CTL = RUN / "unbound" / "ctl.sh"
 
 
 NETWORKS_JSON = _SRV / "run" / "networks" / "networks.json"
