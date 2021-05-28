@@ -1,4 +1,5 @@
 from argparse import ArgumentParser, Namespace
+from multiprocessing import cpu_count
 from shutil import copystat
 from typing import Any, Mapping, Sequence, Tuple
 
@@ -50,6 +51,7 @@ def _env(networks: Networks) -> Mapping[str, Any]:
         fwds = tuple(forwarded_ports(networks))
         loop_back = calculate_loopback()
         env = {
+            "CPU_COUNT": cpu_count(),
             "SERVER_NAME": SERVER_NAME,
             "PRIVATE_ADDRS": PRIVATE_ADDRS,
             "USER": USER,
