@@ -8,5 +8,6 @@ ARGS=(
   )
 
 
-exec s6-setuidgid "$USER" unbound-anchor "${ARGS[@]}"
+s6-setuidgid "$USER" unbound-anchor "${ARGS[@]}"
+true
 
