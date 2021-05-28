@@ -42,7 +42,6 @@ LEASES = DATA / "dnsmasq" / "leases"
 
 
 NETWORKS_JSON = _SRV / "run" / "networks" / "networks.json"
-WG_PEERS_JSON = RUN / "wireguard" / "peers.json"
 QR_DIR = RUN / "qr"
 
 

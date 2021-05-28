@@ -1,13 +1,9 @@
-from json import dumps
 from pathlib import PurePath
 from shutil import rmtree
 from subprocess import check_output, run
 from typing import Any, Iterator, Mapping, Tuple
 
-from std2.pickle import encode
-from std2.pickle.coders import BUILTIN_ENCODERS
-
-from .consts import DATA, J2, QR_DIR, WG_DOMAIN, WG_PEERS, WG_PEERS_JSON, WG_PORT
+from .consts import DATA, J2, QR_DIR, WG_DOMAIN, WG_PEERS, WG_PORT
 from .ip import ipv6_enabled
 from .render import j2_build, j2_render
 from .types import DualStack, Networks, WGPeer
@@ -18,6 +14,8 @@ _CLIENT_TPL = PurePath("wg", "client.conf")
 _WG_DATA = DATA / "wireguard"
 _SRV_KEY = _WG_DATA / "server.key"
 _CLIENT_KEYS = _WG_DATA / "clients"
+
+_PEER_KEYS = Tuple[str, str, str, str]
 
 
 def _srv_keys() -> Tuple[str, str]:
@@ -32,7 +30,7 @@ def _srv_keys() -> Tuple[str, str]:
     return private_key, public_key
 
 
-def _client_keys() -> Iterator[Tuple[str, str, str, str]]:
+def _client_keys() -> Iterator[_PEER_KEYS]:
     _CLIENT_KEYS.mkdir(parents=True, exist_ok=True)
 
     for peer in WG_PEERS:
@@ -56,25 +54,12 @@ def _client_keys() -> Iterator[Tuple[str, str, str, str]]:
         yield peer, private_key, public_key, shared_key
 
 
-def wg_env(stack: DualStack) -> Mapping[str, Any]:
-    server_private, _ = _srv_keys()
+def wg_peers(networks: Networks) -> Mapping[str, WGPeer]:
+    stack = networks.wireguard
     hosts = zip(stack.v4.hosts(), stack.v6.hosts())
-    next(hosts)
-    peers = (
-        {
-            "PUBLIC_KEY": peer_public,
-            "SHARED_KEY": peer_shared,
-            "V4_ADDR": f"{v4}/{stack.v4.max_prefixlen}",
-            "V6_ADDR": f"{v6}/{stack.v6.max_prefixlen}",
-        }
-        for (_, _, peer_public, peer_shared), (v4, v6) in zip(_client_keys(), hosts)
-    )
-    env = {
-        "SERVER_PRIVATE_KEY": server_private,
-        "PORT": WG_PORT,
-        "PEERS": peers,
-    }
-    return env
+    gen = tuple(zip(_client_keys(), hosts))
+    peers = {peer: WGPeer(v4=v4, v6=v6) for (peer, _, _, _), (v4, v6) in gen}
+    return peers
 
 
 def gen_qr(networks: Networks) -> None:
@@ -85,12 +70,12 @@ def gen_qr(networks: Networks) -> None:
     except FileNotFoundError:
         pass
     QR_DIR.mkdir(parents=True, exist_ok=True)
-    WG_PEERS_JSON.parent.mkdir(parents=True, exist_ok=True)
 
     _, server_public = _srv_keys()
     stack = networks.wireguard
     hosts = zip(stack.v4.hosts(), stack.v6.hosts())
     dns_v4, dns_v6 = next(hosts)
+    gen = tuple(zip(_client_keys(), hosts))
 
     g_env = {
         "IPV6_ENABLED": ipv6_enabled(),
@@ -108,12 +93,6 @@ def gen_qr(networks: Networks) -> None:
         "WG_DOMAIN": WG_DOMAIN,
         "WG_PORT": WG_PORT,
     }
-    gen = tuple(zip(_client_keys(), hosts))
-
-    data = {peer: WGPeer(v4=v4, v6=v6) for (peer, _, _, _), (v4, v6) in gen}
-    encoded = encode(data, encoders=BUILTIN_ENCODERS)
-    json = dumps(encoded)
-    WG_PEERS_JSON.write_text(json)
 
     for (peer, client_private, _, client_shared), (v4, v6) in gen:
         v4_addr = f"{v4}/{stack.v4.max_prefixlen}"
@@ -135,3 +114,24 @@ def gen_qr(networks: Networks) -> None:
         run(
             ("qrencode", "--output", str(qr_path)), input=text.encode()
         ).check_returncode()
+
+
+def wg_env(stack: DualStack) -> Mapping[str, Any]:
+    server_private, _ = _srv_keys()
+    hosts = zip(stack.v4.hosts(), stack.v6.hosts())
+    next(hosts)
+    peers = (
+        {
+            "PUBLIC_KEY": peer_public,
+            "SHARED_KEY": peer_shared,
+            "V4_ADDR": f"{v4}/{stack.v4.max_prefixlen}",
+            "V6_ADDR": f"{v6}/{stack.v6.max_prefixlen}",
+        }
+        for (_, _, peer_public, peer_shared), (v4, v6) in zip(_client_keys(), hosts)
+    )
+    env = {
+        "SERVER_PRIVATE_KEY": server_private,
+        "PORT": WG_PORT,
+        "PEERS": peers,
+    }
+    return env
