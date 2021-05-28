@@ -29,7 +29,7 @@ def _parse(hostname: str, addr: IPAddress) -> Tuple[str, str, str]:
     return zone, ptr, na
 
 
-def _mod(op: str, *args: str) -> None:
+def _ctl(op: str, *args: str) -> None:
     check_call(
         ("unbound-control", "-c", str(UNBOUND_CONF), op, *args), timeout=SHORT_DURATION
     )
@@ -37,18 +37,18 @@ def _mod(op: str, *args: str) -> None:
 
 def _add(hostname: str, addr: IPAddress) -> None:
     zone, ptr, na = _parse(hostname, addr=addr)
-    _mod("local_zone", zone, _ZONE_TYPE)
-    _mod("local_data", ptr)
-    _mod("local_data", na)
+    _ctl("local_zone", zone, _ZONE_TYPE)
+    _ctl("local_data", ptr)
+    _ctl("local_data", na)
 
     print("ADD", hostname, addr, file=stderr)
 
 
 def _rm(hostname: str, addr: IPAddress) -> None:
     zone, ptr, na = _parse(hostname, addr=addr)
-    _mod("local_zone_remove", zone)
-    _mod("local_zones_remove", ptr)
-    _mod("local_zones_remove", na)
+    _ctl("local_zone_remove", zone)
+    _ctl("local_zones_remove", ptr)
+    _ctl("local_zones_remove", na)
 
     print("RM ", hostname, addr, file=stderr)
 
