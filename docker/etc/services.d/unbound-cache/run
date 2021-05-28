@@ -4,17 +4,4 @@ set -eu
 set -o pipefail
 
 
-s6-setuidgid "$USER" /srv/run/unbound/ctl.sh status
-
-
-CACHE='/data/unbound-cache.txt'
-TMP="$(s6-setuidgid "$USER" mktemp)"
-
-
-
-while true
-do
-  s6-setuidgid "$USER" /srv/run/unbound/ctl.sh dump_cache > "$TMP"
-  s6-setuidgid "$USER" mv -- "$TMP" "$CACHE"
-  sleep 60
-done
+exec s6-setuidgid "$USER" python3 -m router cache

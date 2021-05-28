@@ -4,6 +4,7 @@ from typing import Any, Mapping, Sequence, Tuple
 
 from std2.pathlib import walk
 
+from .cache.main import main as cache_main
 from .cake.main import main as cake_main
 from .consts import (
     DHCP_LEASE_TIME,
@@ -111,8 +112,9 @@ def _parse_args() -> Tuple[Namespace, Sequence[str]]:
     parser.add_argument(
         "op",
         choices=(
-            "ifup",
+            "cache",
             "cake",
+            "ifup",
             "lan",
             "stats",
             "template",
@@ -127,6 +129,8 @@ def main() -> None:
 
     if args.op == "ifup":
         ifup_main()
+    elif args.op == "cache":
+        cache_main()
     elif args.op == "cake":
         cake_main()
     elif args.op == "lan":
