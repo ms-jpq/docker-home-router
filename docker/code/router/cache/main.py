@@ -1,19 +1,16 @@
-from os import sep
-from pathlib import Path
 from subprocess import CalledProcessError, check_call, check_output, run
-from tempfile import gettempdir
 from time import sleep
 
-from ..consts import UNBOUND_CTL
+from ..consts import DATA, RUN, SHORT_DURATION, UNBOUND_CTL
 
-_CACHE = Path(sep, "data", "unbound-cache.txt")
-_TMP = Path(gettempdir()) / "unbound-cache.txt"
+_CACHE = DATA / "unbound" / "cache.txt"
+_TMP = RUN / "unbound" / "cache.txt"
 
 
 def _wait() -> None:
     while True:
         try:
-            check_call((str(UNBOUND_CTL), "status"))
+            check_call((str(UNBOUND_CTL), "status"), timeout=SHORT_DURATION)
         except CalledProcessError:
             pass
         else:
@@ -26,10 +23,12 @@ def main() -> None:
     _CACHE.unlink(missing_ok=True)
 
     _wait()
-    run((str(UNBOUND_CTL), "load_cache"), input=cached).check_returncode()
+    run(
+        (str(UNBOUND_CTL), "load_cache"), input=cached, timeout=SHORT_DURATION
+    ).check_returncode()
 
     while True:
-        raw = check_output((str(UNBOUND_CTL), "dump_cache"))
+        raw = check_output((str(UNBOUND_CTL), "dump_cache"), timeout=SHORT_DURATION)
         _TMP.write_bytes(raw)
         _TMP.replace(_CACHE)
         sleep(60)
