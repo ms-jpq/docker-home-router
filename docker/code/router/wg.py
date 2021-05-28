@@ -15,8 +15,6 @@ _WG_DATA = DATA / "wireguard"
 _SRV_KEY = _WG_DATA / "server.key"
 _CLIENT_KEYS = _WG_DATA / "clients"
 
-_PEER_KEYS = Tuple[str, str, str, str]
-
 
 def _srv_keys() -> Tuple[str, str]:
     _SRV_KEY.parent.mkdir(parents=True, exist_ok=True)
@@ -30,7 +28,7 @@ def _srv_keys() -> Tuple[str, str]:
     return private_key, public_key
 
 
-def _client_keys() -> Iterator[_PEER_KEYS]:
+def _client_keys() -> Iterator[Tuple[str, str, str, str]]:
     _CLIENT_KEYS.mkdir(parents=True, exist_ok=True)
 
     for peer in WG_PEERS:
@@ -57,8 +55,8 @@ def _client_keys() -> Iterator[_PEER_KEYS]:
 def wg_peers(networks: Networks) -> Mapping[str, WGPeer]:
     stack = networks.wireguard
     hosts = zip(stack.v4.hosts(), stack.v6.hosts())
-    gen = tuple(zip(_client_keys(), hosts))
-    peers = {peer: WGPeer(v4=v4, v6=v6) for (peer, _, _, _), (v4, v6) in gen}
+    next(hosts)
+    peers = {peer: WGPeer(v4=v4, v6=v6) for peer, (v4, v6) in zip(WG_PEERS, hosts)}
     return peers
 
 
@@ -75,7 +73,6 @@ def gen_qr(networks: Networks) -> None:
     stack = networks.wireguard
     hosts = zip(stack.v4.hosts(), stack.v6.hosts())
     dns_v4, dns_v6 = next(hosts)
-    gen = tuple(zip(_client_keys(), hosts))
 
     g_env = {
         "IPV6_ENABLED": ipv6_enabled(),
@@ -94,7 +91,9 @@ def gen_qr(networks: Networks) -> None:
         "WG_PORT": WG_PORT,
     }
 
-    for (peer, client_private, _, client_shared), (v4, v6) in gen:
+    for (peer, client_private, _, client_shared), (v4, v6) in zip(
+        _client_keys(), hosts
+    ):
         v4_addr = f"{v4}/{stack.v4.max_prefixlen}"
         v6_addr = f"{v6}/{stack.v6.max_prefixlen}"
 
