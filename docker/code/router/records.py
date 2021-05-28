@@ -12,8 +12,8 @@ from .wg import clients
 
 def _p_peers(networks: Networks) -> Iterator[Tuple[str, IPAddress]]:
     for client in clients(networks):
-        yield client.name, client.v4
-        yield client.name, client.v6
+        yield client.name, client.v4.ip
+        yield client.name, client.v6.ip
 
 
 def encode_dns(name: str) -> str:
