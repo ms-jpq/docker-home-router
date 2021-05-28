@@ -85,7 +85,7 @@ def _env(networks: Networks) -> Mapping[str, Any]:
             "LAN_DOMAIN": LAN_DOMAIN,
             "FORWARDED_PORTS": fwds,
             "DHCP_FIXED": dhcp_fixed(fwds),
-            "WG": wg_env(networks.wireguard),
+            "WG": wg_env(networks),
         }
         return env
 

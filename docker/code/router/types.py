@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum, auto
-from ipaddress import IPv4Address, IPv4Network, IPv6Address, IPv6Network
+from ipaddress import IPv4Network, IPv6Network
 from typing import AbstractSet, Mapping
 
 
@@ -16,15 +16,6 @@ class Networks:
     lan: DualStack
     tor: DualStack
     wireguard: DualStack
-
-
-@dataclass(frozen=True)
-class WGPeer:
-    v4: IPv4Address
-    v6: IPv6Address
-
-
-WGPeers = Mapping[str, WGPeer]
 
 
 class Protocol(Enum):

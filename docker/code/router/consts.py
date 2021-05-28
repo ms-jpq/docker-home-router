@@ -1,4 +1,5 @@
 from ipaddress import IPv4Network
+from locale import strxfrm
 from os import environ, sep
 from pathlib import Path
 from socket import getfqdn
@@ -80,7 +81,7 @@ LAN_DOMAIN = environ["LAN_DOMAIN"]
 
 
 WG_DOMAIN = environ["WG_DOMAIN"] or SERVER_NAME
-WG_PEERS = tuple(split(environ["WG_PEERS"]))
+WG_PEERS = sorted(frozenset(split(environ["WG_PEERS"])), key=strxfrm)
 
 
 SHORT_DURATION = 1

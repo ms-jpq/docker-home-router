@@ -7,13 +7,13 @@ from std2.types import IPAddress
 
 from .leases import srv_addrs
 from .types import Networks
-from .wg import wg_peers
+from .wg import clients
 
 
 def _p_peers(networks: Networks) -> Iterator[Tuple[str, IPAddress]]:
-    for name, addrs in wg_peers(networks).items():
-        yield name, addrs.v4
-        yield name, addrs.v6
+    for client in clients(networks):
+        yield client.name, client.v4
+        yield client.name, client.v6
 
 
 def encode_dns(name: str) -> str:
