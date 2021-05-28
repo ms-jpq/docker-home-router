@@ -20,16 +20,15 @@ def srv_addrs(networks: Networks) -> Iterator[Tuple[str, IPAddress]]:
 def leases(networks: Networks) -> Iterator[Tuple[str, IPAddress]]:
     LEASES.parent.mkdir(parents=True, exist_ok=True)
     LEASES.touch()
-    lines = LEASES.read_text().split(linesep)
+    lines = LEASES.read_text().rstrip().split(linesep)
 
     yield from srv_addrs(networks)
     for line in reversed(lines):
-        if line:
-            try:
-                _, _, addr, rhs = line.split(" ", maxsplit=3)
-            except ValueError:
-                pass
-            else:
-                name, _, _ = rhs.rpartition(" ")
-                if name != "*":
-                    yield name, ip_address(addr)
+        lhs, _, rest = line.partition(" ")
+        if lhs == "duid":
+            pass
+        else:
+            _, addr, rhs = rest.split(" ", maxsplit=2)
+            name, _, _ = rhs.rpartition(" ")
+            if name != "*":
+                yield name, ip_address(addr)
