@@ -2,6 +2,7 @@ from argparse import ArgumentParser, Namespace
 from ipaddress import IPv4Address, ip_address
 from string import Template
 from subprocess import check_call
+from sys import stderr
 from typing import Sequence, Tuple
 
 from std2.types import IPAddress
@@ -32,6 +33,7 @@ def _parse(hostname: str, addr: IPAddress) -> Tuple[str, str, str]:
 
 def _mod(op: str, *args: str) -> None:
     check_call(("unbound-control", "-c", str(_CONF), op, *args), timeout=SHORT_DURATION)
+    print(op, *args, file=stderr)
 
 
 def _add(hostname: str, addr: IPAddress) -> None:
