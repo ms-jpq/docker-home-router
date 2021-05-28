@@ -172,8 +172,8 @@ def gen_qr(networks: Networks) -> None:
     g_env = {
         "IPV6_ENABLED": ipv6_enabled(),
         "SERVER_PUBLIC_KEY": srv.public_key,
-        "DNS_ADDR_V4": srv.v4,
-        "DNS_ADDR_V6": srv.v6,
+        "DNS_ADDR_V4": srv.v4.ip,
+        "DNS_ADDR_V6": srv.v6.ip,
         "WG_NETWORK_V4": stack.v4,
         "WG_NETWORK_V6": stack.v6,
         "TOR_NETWORK_V4": networks.tor.v4,
