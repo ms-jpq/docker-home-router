@@ -7,10 +7,9 @@ from typing import Sequence, Tuple
 
 from std2.types import IPAddress
 
-from ..consts import LAN_DOMAIN, LOCAL_TTL, RUN, SHORT_DURATION
+from ..consts import LAN_DOMAIN, LOCAL_TTL,  SHORT_DURATION, UNBOUND_CONF
 from ..records import encode_dns
 
-_CONF = RUN / "unbound" / "0-include.conf"
 
 _ZONE_TYPE = "redirect"
 _LOCAL_ZONE = Template(f"$HOSTNAME.{LAN_DOMAIN}.")
