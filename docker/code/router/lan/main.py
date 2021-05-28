@@ -40,7 +40,7 @@ def _add(hostname: str, addr: IPAddress) -> None:
     _ctl("local_zones", zone, _ZONE_TYPE)
     _ctl("local_datas", ptr, na)
 
-    print("ADD", hostname, addr, file=stderr)
+    print("ADD", "--", hostname, addr, file=stderr)
 
 
 def _rm(hostname: str, addr: IPAddress) -> None:
@@ -48,7 +48,7 @@ def _rm(hostname: str, addr: IPAddress) -> None:
     _ctl("local_zones_remove", zone)
     _ctl("local_datas_remove", ptr, na)
 
-    print("RM ", hostname, addr, file=stderr)
+    print("RM ", "--", hostname, addr, file=stderr)
 
 
 def _parse_args(args: Sequence[str]) -> Namespace:
