@@ -89,7 +89,7 @@ def _gen_keys(networks: Networks) -> None:
     _UNBOUND.mkdir(parents=True, exist_ok=True)
     if not _PEM.exists() or not _KEY.exists():
         san = (
-            f"IP:{network[1]}"
+            f"IP:{next(network.hosts())}"
             for network in (
                 networks.guest.v4,
                 networks.guest.v6,
