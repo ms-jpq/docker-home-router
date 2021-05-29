@@ -1,9 +1,10 @@
 from multiprocessing import cpu_count
 from shutil import copystat
 from subprocess import check_call
-from typing import Any, Mapping
+from typing import Any, Mapping, cast
 
 from std2.pathlib import walk
+from std2.types import IPNetwork
 
 from ..consts import (
     DATA,
@@ -89,7 +90,7 @@ def _gen_keys(networks: Networks) -> None:
     _UNBOUND.mkdir(parents=True, exist_ok=True)
     if not _PEM.exists() or not _KEY.exists():
         san = (
-            f"IP:{next(network.hosts())}"
+            f"IP:{next(cast(IPNetwork,network).hosts())}"
             for network in (
                 networks.guest.v4,
                 networks.guest.v6,
@@ -143,4 +144,4 @@ def main() -> None:
             copystat(path, dest)
 
     gen_wg(networks)
-    _gen_keys()
+    _gen_keys(networks)
