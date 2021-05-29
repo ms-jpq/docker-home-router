@@ -60,8 +60,8 @@ def _env(networks: Networks) -> Mapping[str, Any]:
     else:
         fwds = tuple(forwarded_ports(networks))
         loop_back = calculate_loopback()
-        dns = tuple(srv for srv in DNS_SERVERS if _is_ip_addr(srv))
-        dns_tls = tuple(srv for srv in DNS_SERVERS if not _is_ip_addr(srv))
+        dns_addrs = tuple(srv for srv in DNS_SERVERS if _is_ip_addr(srv))
+        dns_hosts = tuple(srv for srv in DNS_SERVERS if not _is_ip_addr(srv))
         env = {
             "CPU_COUNT": cpu_count(),
             "SERVER_NAME": SERVER_NAME,
@@ -83,8 +83,8 @@ def _env(networks: Networks) -> Mapping[str, Any]:
             "WG_NETWORK_V6": networks.wireguard.v6,
             "LOCAL_TTL": LOCAL_TTL,
             "DNSSEC": DNSSEC,
-            "DNS_SERVERS": dns,
-            "DNS_TLS_SERVERS": dns_tls,
+            "DNS_ADDRS": dns_addrs,
+            "DNS_HOSTS": dns_hosts,
             "DNS_RECORDS": dns_records(networks),
             "SQUID_PORT": SQUID_PORT,
             "TOR_PORT": TOR_PORT,
