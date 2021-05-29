@@ -1,3 +1,4 @@
+from ipaddress import ip_address
 from multiprocessing import cpu_count
 from shutil import copystat
 from subprocess import check_call
@@ -40,6 +41,15 @@ _PEM = _UNBOUND / "tls.pem"
 _KEY = _UNBOUND / "tls.key"
 
 
+def _is_ip_addr(srv: str) -> bool:
+    try:
+        ip_address(srv)
+    except ValueError:
+        return False
+    else:
+        return True
+
+
 def _env(networks: Networks) -> Mapping[str, Any]:
     if not WAN_IF:
         raise ValueError("WAN_IF - required")
@@ -50,6 +60,8 @@ def _env(networks: Networks) -> Mapping[str, Any]:
     else:
         fwds = tuple(forwarded_ports(networks))
         loop_back = calculate_loopback()
+        dns = tuple(srv for srv in DNS_SERVERS if _is_ip_addr(srv))
+        dns_tls = tuple(srv for srv in DNS_SERVERS if not _is_ip_addr(srv))
         env = {
             "CPU_COUNT": cpu_count(),
             "SERVER_NAME": SERVER_NAME,
@@ -71,7 +83,8 @@ def _env(networks: Networks) -> Mapping[str, Any]:
             "WG_NETWORK_V6": networks.wireguard.v6,
             "LOCAL_TTL": LOCAL_TTL,
             "DNSSEC": DNSSEC,
-            "DNS_SERVERS": DNS_SERVERS,
+            "DNS_SERVERS": dns,
+            "DNS_TLS_SERVERS": dns_tls,
             "DNS_RECORDS": dns_records(networks),
             "SQUID_PORT": SQUID_PORT,
             "TOR_PORT": TOR_PORT,
