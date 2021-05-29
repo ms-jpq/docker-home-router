@@ -1,5 +1,6 @@
 from multiprocessing import cpu_count
 from shutil import copystat
+from subprocess import check_call
 from typing import Any, Mapping
 
 from std2.pathlib import walk
@@ -33,8 +34,9 @@ from ..subnets import calculate_loopback, calculate_networks, load_networks
 from ..types import Networks
 from ..wg import gen_wg, wg_env
 
-_PEM = DATA / "unbound" / "tls.pem"
-_KEY = DATA / "unbound" / "tls.key"
+_UNBOUND = DATA / "unbound"
+_PEM = _UNBOUND / "tls.pem"
+_KEY = _UNBOUND / "tls.key"
 
 
 def _env(networks: Networks) -> Mapping[str, Any]:
@@ -83,11 +85,41 @@ def _env(networks: Networks) -> Mapping[str, Any]:
         return env
 
 
-def _gen_keys() -> None:
-    if not _PEM.exists():
-        pass
-    if not _KEY.exists():
-        pass
+def _gen_keys(networks: Networks) -> None:
+    _UNBOUND.mkdir(parents=True, exist_ok=True)
+    if not _PEM.exists() or not _KEY.exists():
+        san = (
+            f"IP:{network[1]}"
+            for network in (
+                networks.guest.v4,
+                networks.guest.v6,
+                networks.lan.v4,
+                networks.lan.v6,
+                networks.wireguard.v4,
+                networks.wireguard.v6,
+            )
+        )
+        check_call(
+            (
+                "openssl",
+                "req",
+                "-x509",
+                "-newkey",
+                "rsa:4096",
+                "-sha256",
+                "-days",
+                "6969",
+                "-nodes",
+                "-out",
+                str(_PEM),
+                "-keyout",
+                str(_KEY),
+                "-subj",
+                f"/CN={SERVER_NAME}.{LAN_DOMAIN}",
+                "-addext",
+                f"subjectAltName={','.join(san)}",
+            )
+        )
 
 
 def main() -> None:
