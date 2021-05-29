@@ -47,6 +47,7 @@ RUN useradd --user-group --shell=/usr/sbin/nologin "$USER" && \
 # 67    UDP     -> DHCPv4
 # 123   UDP     -> NTP
 # 547   UDP     -> DHCPv6
+# 853   TCP     -> DNS-TLS
 # 5353  UDP     -> Bonjour
 
 ### Configurable
@@ -57,6 +58,7 @@ RUN useradd --user-group --shell=/usr/sbin/nologin "$USER" && \
 EXPOSE 53/tcp 53/udp \
        67/udp \
        123/udp \
+       853/tcp \
        5353/udp \
        8888/tcp \
        9060/tcp \
