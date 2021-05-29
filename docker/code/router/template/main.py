@@ -31,7 +31,7 @@ from ..records import dns_records
 from ..render import j2_build, j2_render
 from ..subnets import calculate_loopback, calculate_networks, load_networks
 from ..types import Networks
-from ..wg import gen_qr, wg_env
+from ..wg import gen_wg, wg_env
 
 _PEM = DATA / "unbound" / "tls.pem"
 _KEY = DATA / "unbound" / "tls.key"
@@ -110,5 +110,5 @@ def main() -> None:
             dest.write_text(text)
             copystat(path, dest)
 
-    gen_qr(networks)
+    gen_wg(networks)
     _gen_keys()

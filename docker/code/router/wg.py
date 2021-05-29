@@ -157,7 +157,7 @@ def clients(networks: Networks) -> Iterator[_Client]:
         yield client
 
 
-def gen_qr(networks: Networks) -> None:
+def gen_wg(networks: Networks) -> None:
     j2 = j2_build(J2)
 
     try:
