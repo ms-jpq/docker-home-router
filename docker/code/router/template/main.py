@@ -5,6 +5,7 @@ from typing import Any, Mapping
 from std2.pathlib import walk
 
 from ..consts import (
+    DATA,
     DHCP_LEASE_TIME,
     DNS_SERVERS,
     DNSSEC,
@@ -31,6 +32,9 @@ from ..render import j2_build, j2_render
 from ..subnets import calculate_loopback, calculate_networks, load_networks
 from ..types import Networks
 from ..wg import gen_qr, wg_env
+
+_PEM = DATA / "unbound" / "tls.pem"
+_KEY = DATA / "unbound" / "tls.key"
 
 
 def _env(networks: Networks) -> Mapping[str, Any]:
@@ -79,6 +83,13 @@ def _env(networks: Networks) -> Mapping[str, Any]:
         return env
 
 
+def _gen_keys() -> None:
+    if not _PEM.exists():
+        pass
+    if not _KEY.exists():
+        pass
+
+
 def main() -> None:
     try:
         networks = load_networks()
@@ -100,3 +111,4 @@ def main() -> None:
             copystat(path, dest)
 
     gen_qr(networks)
+    _gen_keys()
