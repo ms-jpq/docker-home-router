@@ -73,7 +73,7 @@ IP4_PREFIX = clamp(16, int(environ["IP4_PREFIX"]), 24)
 TOR_IP4_PREFIX = 16
 
 
-DHCP_LEASE_TIME = clamp(2, int(environ["DHCP_LEASE_TIME"]), 24 * 7)
+DHCP_LEASE_TIME = clamp(1, int(environ["DHCP_LEASE_TIME"]), 24 * 7)
 LOCAL_TTL = max(0, int(environ["LOCAL_TTL"]))
 DNSSEC = bool(int(environ["DNSSEC"]))
 DNS_SERVERS = frozenset(split(environ["DNS_SERVERS"]))
