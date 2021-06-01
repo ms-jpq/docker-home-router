@@ -3,7 +3,7 @@
 set -u
 
 
-TMP_KEY='/tmp/unbound-root.key'
+TMP_KEY='/var/tmp/unbound-root.key'
 DEST_KEY='/data/unbound/root.key'
 ARGS=(
   -a "$DEST_KEY"
