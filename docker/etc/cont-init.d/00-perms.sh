@@ -9,6 +9,7 @@ ARGS=(
   /config
   /data
   /var/log/squid
+  /tmp/unbound-root.key
   )
 
 
