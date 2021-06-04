@@ -3,10 +3,10 @@ from multiprocessing import cpu_count
 from shutil import copystat
 from socket import getaddrinfo
 from subprocess import check_call
-from typing import Any, Iterator, Mapping, Union, cast
+from typing import Any, Iterator, Mapping, cast
 
 from std2.pathlib import walk
-from std2.types import IPAddress, IPNetwork
+from std2.types import IPNetwork
 
 from ..consts import (
     DATA,
@@ -42,7 +42,7 @@ _PEM = _UNBOUND / "tls.pem"
 _KEY = _UNBOUND / "tls.key"
 
 
-def _dns_addrs() -> Iterator[Union[IPAddress, str]]:
+def _dns_addrs() -> Iterator[str]:
     for srv in (s.strip() for s in DNS_SERVERS):
         try:
             ip = ip_address(srv)
@@ -50,18 +50,19 @@ def _dns_addrs() -> Iterator[Union[IPAddress, str]]:
             tls = srv.endswith("@tls")
             host = srv.removesuffix("@tls")
             port_name = "domain-s" if tls else "domain"
+            port = 853 if tls else 53
             try:
                 for _, _, _, _, info in getaddrinfo(srv, port_name):
                     addr, *_ = info
                     ip = ip_address(addr)
                     if tls:
-                        yield f"{ip}#{host}"
+                        yield f"{ip}@{port}#{host}"
                     else:
-                        yield ip
+                        yield f"{ip}@{port}"
             except Exception:
                 pass
         else:
-            yield ip
+            yield f"{ip}@{53}"
 
 
 def _env(networks: Networks) -> Mapping[str, Any]:
