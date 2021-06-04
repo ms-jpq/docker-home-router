@@ -52,7 +52,7 @@ def _dns_addrs() -> Iterator[str]:
             port_name = "domain-s" if tls else "domain"
             port = 853 if tls else 53
             try:
-                for _, _, _, _, info in getaddrinfo(srv, port_name):
+                for _, _, _, _, info in getaddrinfo(host, port_name):
                     addr, *_ = info
                     ip = ip_address(addr)
                     if tls:
