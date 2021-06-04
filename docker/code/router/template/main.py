@@ -1,11 +1,12 @@
 from ipaddress import ip_address
 from multiprocessing import cpu_count
 from shutil import copystat
+from socket import getaddrinfo
 from subprocess import check_call
-from typing import Any, Mapping, cast
+from typing import Any, Iterator, Mapping, Union, cast
 
 from std2.pathlib import walk
-from std2.types import IPNetwork
+from std2.types import IPAddress, IPNetwork
 
 from ..consts import (
     DATA,
@@ -41,13 +42,26 @@ _PEM = _UNBOUND / "tls.pem"
 _KEY = _UNBOUND / "tls.key"
 
 
-def _is_ip_addr(srv: str) -> bool:
-    try:
-        ip_address(srv)
-    except ValueError:
-        return False
-    else:
-        return True
+def _dns_addrs() -> Iterator[Union[IPAddress, str]]:
+    for srv in (s.strip() for s in DNS_SERVERS):
+        try:
+            ip = ip_address(srv)
+        except ValueError:
+            tls = srv.endswith("@tls")
+            host = srv.removesuffix("@tls")
+            port_name = "domain-s" if tls else "domain"
+            try:
+                for _, _, _, _, info in getaddrinfo(srv, port_name):
+                    addr, *_ = info
+                    ip = ip_address(addr)
+                    if tls:
+                        yield f"{ip}#{host}"
+                    else:
+                        yield ip
+            except Exception:
+                pass
+        else:
+            yield ip
 
 
 def _env(networks: Networks) -> Mapping[str, Any]:
@@ -60,8 +74,6 @@ def _env(networks: Networks) -> Mapping[str, Any]:
     else:
         fwds = tuple(forwarded_ports(networks))
         loop_back = calculate_loopback()
-        dns_addrs = tuple(srv for srv in DNS_SERVERS if _is_ip_addr(srv))
-        dns_hosts = tuple(srv for srv in DNS_SERVERS if not _is_ip_addr(srv))
         env = {
             "CPU_COUNT": cpu_count(),
             "SERVER_NAME": SERVER_NAME,
@@ -83,8 +95,7 @@ def _env(networks: Networks) -> Mapping[str, Any]:
             "WG_NETWORK_V6": networks.wireguard.v6,
             "LOCAL_TTL": LOCAL_TTL,
             "DNSSEC": DNSSEC,
-            "DNS_ADDRS": dns_addrs,
-            "DNS_HOSTS": dns_hosts,
+            "DNS_ADDRS": _dns_addrs(),
             "DNS_RECORDS": dns_records(networks),
             "SQUID_PORT": SQUID_PORT,
             "TOR_PORT": TOR_PORT,
