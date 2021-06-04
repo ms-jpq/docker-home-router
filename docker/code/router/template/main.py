@@ -54,7 +54,10 @@ def _dns_addrs() -> Iterator[str]:
                 for _, _, _, _, info in getaddrinfo(srv, port):
                     addr, *_ = info
                     ip = ip_address(addr)
-                    yield f"{ip}#{srv}"
+                    if DNS_TLS:
+                        yield f"{ip}#{srv}"
+                    else:
+                        yield str(ip)
             except Exception:
                 pass
         else:
