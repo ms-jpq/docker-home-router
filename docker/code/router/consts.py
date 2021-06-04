@@ -78,6 +78,7 @@ LOCAL_TTL = max(0, int(environ["LOCAL_TTL"]))
 
 DNS_SEC = bool(int(environ["DNS_SEC"]))
 DNS_TLS = bool(int(environ["DNS_TLS"]))
+DNS_FALLBACK = bool(int(environ["DNS_FALLBACK"]))
 DNS_SERVERS = frozenset(split(environ["DNS_SERVERS"]))
 LAN_DOMAIN = environ["LAN_DOMAIN"]
 

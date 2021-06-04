@@ -11,6 +11,7 @@ from std2.types import IPNetwork
 from ..consts import (
     DATA,
     DHCP_LEASE_TIME,
+    DNS_FALLBACK,
     DNS_SEC,
     DNS_SERVERS,
     DNS_TLS,
@@ -92,6 +93,7 @@ def _env(networks: Networks) -> Mapping[str, Any]:
             "LOCAL_TTL": LOCAL_TTL,
             "DNS_SEC": DNS_SEC,
             "DNS_TLS": DNS_TLS,
+            "DNS_FALLBACK": DNS_FALLBACK,
             "DNS_ADDRS": tuple(_dns_addrs()),
             "DNS_RECORDS": dns_records(networks),
             "SQUID_PORT": SQUID_PORT,

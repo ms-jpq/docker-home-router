@@ -103,6 +103,7 @@ ENV WAN_IF= \
     LOCAL_TTL=1 \
     DNS_SEC=1 \
     DNS_TLS=1 \
+    DNS_FALLBACK=1 \
     DNS_SERVERS= \
     LAN_DOMAIN=lan \
     WG_DOMAIN= \
