@@ -4,6 +4,8 @@ from time import sleep
 
 from ..consts import DATA, SHORT_DURATION, UNBOUND_CTL
 
+_MAX_DELTA = timedelta(minutes=1)
+
 _UNBOUND = DATA / "unbound"
 _CACHE = _UNBOUND / "cache.txt"
 _TMP = _UNBOUND / ".cache.txt"
@@ -17,7 +19,7 @@ def _cached() -> bytes:
         mtime = _CACHE.stat().st_mtime
         mod = datetime.utcfromtimestamp(mtime)
         now = datetime.utcnow()
-        if abs(now - mod) > timedelta(minutes=1):
+        if abs(now - mod) > _MAX_DELTA:
             return bytes()
         else:
             return _CACHE.read_bytes()
