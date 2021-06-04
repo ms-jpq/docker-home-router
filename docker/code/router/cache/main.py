@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from subprocess import CalledProcessError, check_call, check_output, run
 from time import sleep
 
@@ -10,10 +11,16 @@ _TMP = _UNBOUND / ".cache.txt"
 
 def _cached() -> bytes:
     _CACHE.parent.mkdir(parents=True, exist_ok=True)
-    _CACHE.touch()
-    cached = _CACHE.read_bytes()
-    _CACHE.unlink(missing_ok=True)
-    return cached
+    if not _CACHE.exists():
+        return bytes()
+    else:
+        mtime = _CACHE.stat().st_mtime
+        mod = datetime.utcfromtimestamp(mtime)
+        now = datetime.utcnow()
+        if abs(now - mod) > timedelta(minutes=1):
+            return bytes()
+        else:
+            return _CACHE.read_bytes()
 
 
 def _wait() -> None:
