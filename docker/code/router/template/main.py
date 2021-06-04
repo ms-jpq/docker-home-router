@@ -11,8 +11,9 @@ from std2.types import IPNetwork
 from ..consts import (
     DATA,
     DHCP_LEASE_TIME,
+    DNS_SEC,
     DNS_SERVERS,
-    DNSSEC,
+    DNS_TLS,
     GUEST_IF,
     LAN_DOMAIN,
     LAN_IF,
@@ -43,27 +44,20 @@ _KEY = _UNBOUND / "tls.key"
 
 
 def _dns_addrs() -> Iterator[str]:
+    port = "domain-s" if DNS_TLS else "domain"
     for srv in (s.strip() for s in DNS_SERVERS):
         try:
             ip = ip_address(srv)
         except ValueError:
-            tls = srv.endswith("@tls")
-            host = srv.removesuffix("@tls")
-            port_name = "domain-s" if tls else "domain"
-            port = 853 if tls else 53
             try:
-                for _, _, _, _, info in getaddrinfo(host, port_name):
+                for _, _, _, _, info in getaddrinfo(srv, port):
                     addr, *_ = info
                     ip = ip_address(addr)
-                    if tls:
-                        yield f"{ip}@{port}#{host}"
-                    else:
-                        yield f"{ip}@{port}"
+                    yield f"{ip}#{srv}"
             except Exception:
                 pass
         else:
-            port = 53
-            yield f"{ip}@{port}"
+            yield str(ip)
 
 
 def _env(networks: Networks) -> Mapping[str, Any]:
@@ -96,7 +90,8 @@ def _env(networks: Networks) -> Mapping[str, Any]:
             "WG_NETWORK_V4": networks.wireguard.v4,
             "WG_NETWORK_V6": networks.wireguard.v6,
             "LOCAL_TTL": LOCAL_TTL,
-            "DNSSEC": DNSSEC,
+            "DNS_SEC": DNS_SEC,
+            "DNS_TLS": DNS_TLS,
             "DNS_ADDRS": tuple(_dns_addrs()),
             "DNS_RECORDS": dns_records(networks),
             "SQUID_PORT": SQUID_PORT,

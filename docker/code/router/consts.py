@@ -75,7 +75,9 @@ TOR_IP4_PREFIX = 16
 
 DHCP_LEASE_TIME = clamp(1, int(environ["DHCP_LEASE_TIME"]), 24 * 7)
 LOCAL_TTL = max(0, int(environ["LOCAL_TTL"]))
-DNSSEC = bool(int(environ["DNSSEC"]))
+
+DNS_SEC = bool(int(environ["DNS_SEC"]))
+DNS_TLS = bool(int(environ["DNS_TLS"]))
 DNS_SERVERS = frozenset(split(environ["DNS_SERVERS"]))
 LAN_DOMAIN = environ["LAN_DOMAIN"]
 
