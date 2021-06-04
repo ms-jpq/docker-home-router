@@ -9,8 +9,7 @@ ARGS=(
   /config
   /data
   /var/log/squid
-  /var/tmp/unbound-root.key
   )
 
 
-exec chown -R "$USER:$USER" "${ARGS[@]}"
+exec chown -R "$USER:$USER" -- "${ARGS[@]}"

@@ -12,12 +12,13 @@ ARGS=(
 
 if [[ -f "$TMP_KEY" ]] && [[ ! -f "$DEST_KEY" ]]
 then
-if ! s6-setuidgid "$USER" mv -- "$TMP_KEY" "$DEST_KEY"
+if ! mv -- "$TMP_KEY" "$DEST_KEY"
 then
   exit 1
 fi
 fi
 
+chown "$USER:$USER" -- "$DEST_KEY"
 s6-setuidgid "$USER" unbound-anchor "${ARGS[@]}"
 true
 
