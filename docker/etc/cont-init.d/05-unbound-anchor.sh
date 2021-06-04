@@ -10,9 +10,9 @@ ARGS=(
   )
 
 
-if [[ -f "$TMP_KEY" ]] && [[ ! -f "$DEST_KEY" ]]
+if [[ ! -f "$DEST_KEY" ]]
 then
-if ! mv -- "$TMP_KEY" "$DEST_KEY"
+if ! cp -- "$TMP_KEY" "$DEST_KEY"
 then
   exit 1
 fi
