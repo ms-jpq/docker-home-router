@@ -62,7 +62,8 @@ def _dns_addrs() -> Iterator[str]:
             except Exception:
                 pass
         else:
-            yield f"{ip}@{53}"
+            port = 53
+            yield f"{ip}@{port}"
 
 
 def _env(networks: Networks) -> Mapping[str, Any]:
