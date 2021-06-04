@@ -97,7 +97,7 @@ def _env(networks: Networks) -> Mapping[str, Any]:
             "WG_NETWORK_V6": networks.wireguard.v6,
             "LOCAL_TTL": LOCAL_TTL,
             "DNSSEC": DNSSEC,
-            "DNS_ADDRS": _dns_addrs(),
+            "DNS_ADDRS": tuple(_dns_addrs()),
             "DNS_RECORDS": dns_records(networks),
             "SQUID_PORT": SQUID_PORT,
             "TOR_PORT": TOR_PORT,
