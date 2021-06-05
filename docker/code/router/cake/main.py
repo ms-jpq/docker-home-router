@@ -1,16 +1,16 @@
 from json import loads
 from subprocess import check_call, check_output
 
-from ..consts import TC_TX, TC_IFB, TC_RX, WAN_IF
+from ..consts import TC_IFB, TC_RX, TC_TX, WAN_IF
 
-_INGRESS_OPTS = (
+_TX_OPTS = (
     "ingress",
     "nat",
     "dual-dsthost",
     *TC_RX,
 )
 
-_EGRESS_OPTS = (
+_TX_OPTS = (
     "egress",
     "nat",
     "dual-srchost",
@@ -21,7 +21,7 @@ _EGRESS_OPTS = (
 _QDISC_ID = "ffff:"
 
 
-def _egress(wan_if: str) -> None:
+def _tx(wan_if: str) -> None:
     check_call(
         (
             "tc",
@@ -31,13 +31,12 @@ def _egress(wan_if: str) -> None:
             wan_if,
             "root",
             "cake",
-            *_EGRESS_OPTS,
+            *_TX_OPTS,
         )
     )
 
 
-def _ingress(wan_if: str) -> None:
-
+def _rx(wan_if: str) -> None:
     raw_links = check_output(("ip", "--json", "link", "show"), text=True)
     links = loads(raw_links)
     for link in links:
@@ -58,7 +57,7 @@ def _ingress(wan_if: str) -> None:
             TC_IFB,
             "root",
             "cake",
-            *_INGRESS_OPTS,
+            *_TX_OPTS,
         )
     )
     check_call(("ip", "link", "set", TC_IFB, "up"))
@@ -83,5 +82,5 @@ def _ingress(wan_if: str) -> None:
 
 
 def main() -> None:
-    _egress(WAN_IF)
-    _ingress(WAN_IF)
+    _tx(WAN_IF)
+    _rx(WAN_IF)
