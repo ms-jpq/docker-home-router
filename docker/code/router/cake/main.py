@@ -3,7 +3,7 @@ from subprocess import check_call, check_output
 
 from ..consts import TC_IFB, TC_RX, TC_TX, WAN_IF
 
-_TX_OPTS = (
+_RX_OPTS = (
     "ingress",
     "nat",
     "dual-dsthost",
@@ -57,7 +57,7 @@ def _rx(wan_if: str) -> None:
             TC_IFB,
             "root",
             "cake",
-            *_TX_OPTS,
+            *_RX_OPTS,
         )
     )
     check_call(("ip", "link", "set", TC_IFB, "up"))
