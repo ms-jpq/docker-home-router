@@ -62,8 +62,8 @@ GUEST_IF = environ["GUEST_IF"]
 WG_IF = environ["WG_IF"]
 IF_EXCLUSIONS = frozenset(split(environ["IF_EXCLUSIONS"]))
 
-TC_INGRESS = tuple(split(environ["TC_INGRESS"]))
-TC_EGRESS = tuple(split(environ["TC_EGRESS"]))
+TC_RX = tuple(split(environ["TC_RX"]))
+TC_TX = tuple(split(environ["TC_TX"]))
 TC_IFB = f"ifb4{WAN_IF}"
 
 LOOPBACK_EXCLUSION = frozenset(map(IPv4Network, split(environ["LOOPBACK_EXCLUSION"])))

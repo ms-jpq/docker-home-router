@@ -1,20 +1,20 @@
 from json import loads
 from subprocess import check_call, check_output
 
-from ..consts import TC_EGRESS, TC_IFB, TC_INGRESS, WAN_IF
+from ..consts import TC_TX, TC_IFB, TC_RX, WAN_IF
 
 _INGRESS_OPTS = (
     "ingress",
     "nat",
     "dual-dsthost",
-    *TC_INGRESS,
+    *TC_RX,
 )
 
 _EGRESS_OPTS = (
     "egress",
     "nat",
     "dual-srchost",
-    *TC_EGRESS,
+    *TC_TX,
 )
 
 
