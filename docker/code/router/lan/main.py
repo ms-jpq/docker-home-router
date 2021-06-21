@@ -1,6 +1,6 @@
 from argparse import ArgumentParser, Namespace
 from ipaddress import IPv4Address, ip_address
-from os import linesep
+from os import environ, linesep
 from string import Template
 from subprocess import run
 from sys import stderr
@@ -63,10 +63,12 @@ def _parse_args(args: Sequence[str]) -> Namespace:
 def main(argv: Sequence[str]) -> None:
     args = _parse_args(argv)
     addr: IPAddress = ip_address(args.ip)
+    hostname = environ.get("DNSMASQ_SUPPLIED_HOSTNAME", args.hostname)
     if args.hostname:
         if args.op in {"old", "add"}:
-            _add(args.hostname, addr=addr)
+            _add(hostname, addr=addr)
         elif args.op in {"del"}:
-            _rm(args.hostname, addr=addr)
+            _rm(hostname, addr=addr)
         else:
             assert False
+
