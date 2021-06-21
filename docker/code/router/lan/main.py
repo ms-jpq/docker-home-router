@@ -64,7 +64,7 @@ def main(argv: Sequence[str]) -> None:
     args = _parse_args(argv)
     addr: IPAddress = ip_address(args.ip)
     hostname = environ.get("DNSMASQ_SUPPLIED_HOSTNAME", args.hostname)
-    if args.hostname:
+    if hostname:
         if args.op in {"old", "add"}:
             _add(hostname, addr=addr)
         elif args.op in {"del"}:
