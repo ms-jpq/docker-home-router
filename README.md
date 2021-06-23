@@ -52,7 +52,7 @@ Pretty good to put all the untrusted stuff on the guest network.
     <b>VPN (1 step set-up)</b>
   </summary>
 
-Just go to `http://<router-name>.lan:8888/wg/` from (not your guest network) and BAM!
+Just go to <code>http://<router-name>.lan:8888/wg/</code> from (not your guest network) and BAM!
 
 There are the QR codes you can scan on your phone, to add VPN profiles. (Need the official wireguard app).
 
@@ -100,9 +100,9 @@ DOT is also blocked.
     <b>Wildcard LAN domains (*.&lthostname&gt.lan)</b>
   </summary>
 
-Suppose you have a computer called `<name>`. Most routers will let you use `<name>.lan` to visit `<name>`.
+Suppose you have a computer called <code><name></code>. Most routers will let you use <code><name>.lan</code> to visit <code><name></code>.
 
-I go one step further. Everything under `*.<name>.lan` also goes to `<name>`.
+I go one step further. Everything under <code>*.<name>.lan</code> also goes to <code><name></code>.
 
 Very useful for reverse proxies.
 
@@ -122,7 +122,7 @@ All you need to do is write down the IP ranges on the other side of your tunnel,
     <b>Indepth Dashboard</b>
   </summary>
 
-  Go to `http://<router-name>.lan:8888/` (from not guest network), and you will see information on DHCP leases, forwarded ports, subnet assignment, firewall rules, HTTP cache performance, and packet scheduler statistics.
+  Go to <code>http://<router-name>.lan:8888/</code> (from not guest network), and you will see information on DHCP leases, forwarded ports, subnet assignment, firewall rules, HTTP cache performance, and packet scheduler statistics.
 
 </details>
 
@@ -151,7 +151,7 @@ Not very useful these days, tbh, but kinda cool.
     <b>Visit TOR dark-web with regular browsers</b>
   </summary>
 
-Visit `.onion` websites without having to setup TOR.
+Visit <code>.onion</code> websites without having to setup TOR.
 
 Disclaimer: This is purely for convenience / fun, not privacy.
 
@@ -214,7 +214,7 @@ Also works well with other Docker images, so I can justify spending $$$ on beefi
 
 ### NAT66
 
-Same reason as NAT44, because you only need 1 `::/128` address.
+Same reason as NAT44, because you only need 1 <code>::/128</code> address.
 
 Even tho in theory we have almost unlimited IP6 addresses, there are many situations, such as shared living arrangements, bad ISPs, normie landlords, etc, where you do not get a nice stable block of prefixes.
 
