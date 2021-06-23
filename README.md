@@ -102,7 +102,7 @@ DOT is also blocked.
 
 Suppose you have a computer called <code>name</code>. Most routers will let you use <code>name.lan</code> to visit <code>name</code>.
 
-I go one step further. Everything under <code>*.name.lan</code> also goes to <code>name</code>.
+I go one step further. Everything under <code>\*.name.lan</code> also goes to <code>name</code>.
 
 Very useful for reverse proxies.
 
@@ -122,7 +122,7 @@ All you need to do is write down the IP ranges on the other side of your tunnel,
     <b>Indepth Dashboard</b>
   </summary>
 
-  Go to <code>http://router-name.lan:8888/</code> (from not guest network), and you will see information on DHCP leases, forwarded ports, subnet assignment, firewall rules, HTTP cache performance, and packet scheduler statistics.
+Go to <code>http://router-name.lan:8888/</code> (from not guest network), and you will see information on DHCP leases, forwarded ports, subnet assignment, firewall rules, HTTP cache performance, and packet scheduler statistics.
 
 </details>
 
@@ -219,3 +219,4 @@ Same reason as NAT44, because you only need 1 <code>::/128</code> address.
 Even tho in theory we have almost unlimited IP6 addresses, there are many situations, such as shared living arrangements, bad ISPs, normie landlords, etc, where you do not get a nice stable block of prefixes.
 
 Kinda sucks, but it be like that sometimes.
+
