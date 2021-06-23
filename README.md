@@ -122,7 +122,7 @@ All you need to do is write down the IP ranges on the other side of your tunnel,
     <b>Indepth Dashboard</b>
   </summary>
 
-  Go to <code>http://<router-name>.lan:8888/</code> (from not guest network), and you will see information on DHCP leases, forwarded ports, subnet assignment, firewall rules, HTTP cache performance, and packet scheduler statistics.
+  Go to <code>http://router-name.lan:8888/</code> (from not guest network), and you will see information on DHCP leases, forwarded ports, subnet assignment, firewall rules, HTTP cache performance, and packet scheduler statistics.
 
 </details>
 
