@@ -52,7 +52,7 @@ Pretty good to put all the untrusted stuff on the guest network.
     <b>VPN (1 step set-up)</b>
   </summary>
 
-Just go to <code>http://<router-name>.lan:8888/wg/</code> from (not your guest network) and BAM!
+Just go to <code>http://router-name.lan:8888/wg/</code> from (not your guest network) and BAM!
 
 There are the QR codes you can scan on your phone, to add VPN profiles. (Need the official wireguard app).
 
@@ -100,9 +100,9 @@ DOT is also blocked.
     <b>Wildcard LAN domains (*.&lthostname&gt.lan)</b>
   </summary>
 
-Suppose you have a computer called <code><name></code>. Most routers will let you use <code><name>.lan</code> to visit <code><name></code>.
+Suppose you have a computer called <code>name</code>. Most routers will let you use <code>name.lan</code> to visit <code>name</code>.
 
-I go one step further. Everything under <code>*.<name>.lan</code> also goes to <code><name></code>.
+I go one step further. Everything under <code>*.name.lan</code> also goes to <code>name</code>.
 
 Very useful for reverse proxies.
 
