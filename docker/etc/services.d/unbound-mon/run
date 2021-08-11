@@ -11,4 +11,3 @@ do
   /etc/services.d/unbound/data/check &>>/dev/null
   sleep 1
 done
-

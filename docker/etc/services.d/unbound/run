@@ -11,4 +11,4 @@ ARGS=(
 
 
 unbound-checkconf -- "$CONF"
-exec s6-notifyoncheck -- unbound "${ARGS[@]}"
+exec s6-notifyoncheck unbound "${ARGS[@]}"
