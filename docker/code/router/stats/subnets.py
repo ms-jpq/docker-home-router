@@ -12,5 +12,7 @@ def feed() -> str:
     networks = load_networks()
     data = encode(networks, encoders=BUILTIN_ENCODERS)
     json = dumps(data, check_circular=False, ensure_ascii=False)
-    yaml = check_output(("sortd", "yaml"), text=True, input=json, timeout=SHORT_DURATION)
+    yaml = check_output(
+        ("sortd", "yaml"), text=True, input=json, timeout=SHORT_DURATION
+    )
     return yaml.strip()
