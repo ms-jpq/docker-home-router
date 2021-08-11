@@ -4,7 +4,7 @@ set -eu
 set -o pipefail
 
 
-s6-svwait -U /var/run/services.d/dnsmasq
+s6-svwait -U /var/run/s6/dnsmasq
 
 while true
 do
