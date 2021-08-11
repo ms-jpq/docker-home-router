@@ -11,7 +11,7 @@ ARGS=(
 
 s6-setuidgid "$USER" /srv/run/unbound/ctl.sh status
 
-printf '%s' $'\n' >&3
+printf '\n' >&3
 exec 3>&-
 
 exec dnsmasq "${ARGS[@]}"
