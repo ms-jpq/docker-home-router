@@ -25,9 +25,9 @@ RUN dnf install -y \
 
 
 RUN wget "${S6}" --output-document /tmp/s6 && \
-    chmod +x /tmp/s6 && \
+    chmod +x -- /tmp/s6 && \
     /tmp/s6 / && \
-    rm -rf /tmp/*
+    rm -rf -- /etc/s6/services/s6-fdholderd/down /tmp/*
 ENV S6_KEEP_ENV=1 \
     S6_BEHAVIOUR_IF_STAGE2_FAILS=2
 ENTRYPOINT ["/init"]
