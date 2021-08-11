@@ -4,7 +4,7 @@ set -eu
 set -o pipefail
 
 
-s6-svc -wU dnsmasq
+s6-svc -wU /etc/services.d/dnsmasq
 
 while true
 do
