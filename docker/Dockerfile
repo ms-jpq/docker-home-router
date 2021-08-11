@@ -4,7 +4,7 @@ FROM fedora:latest
 ARG S6="https://github.com/just-containers/s6-overlay/releases/download/v2.2.0.3/s6-overlay-amd64-installer"
 
 
-RUN dnf install -y \
+RUN dnf install --yes -- \
     procps-ng \
     nftables \
     openssl \
