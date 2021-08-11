@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 
-set -u
+set -eu
+set -o pipefail
 
 
-sysctl net.ipv4.ip_forward=1
-sysctl net.ipv6.conf.all.forwarding=1
-true
-
+sysctl net.ipv4.ip_forward=1 || true
+sysctl net.ipv6.conf.all.forwarding=1 || true

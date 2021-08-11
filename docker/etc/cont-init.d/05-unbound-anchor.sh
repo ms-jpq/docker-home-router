@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-set -u
+set -eu
+set -o pipefail
 
 
 TMP_KEY='/var/tmp/unbound-root.key'
@@ -12,13 +13,8 @@ ARGS=(
 
 if [[ ! -f "$DEST_KEY" ]]
 then
-if ! cp -- "$TMP_KEY" "$DEST_KEY"
-then
-  exit 1
-fi
+  cp -- "$TMP_KEY" "$DEST_KEY"
 fi
 
 chown "$USER:$USER" -- "$DEST_KEY"
-s6-setuidgid "$USER" unbound-anchor "${ARGS[@]}"
-true
-
+s6-setuidgid "$USER" unbound-anchor "${ARGS[@]}" || true
