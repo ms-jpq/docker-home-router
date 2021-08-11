@@ -10,9 +10,6 @@ ARGS=(
 
 
 s6-setuidgid "$USER" /srv/run/unbound/ctl.sh status
-
-exec 3<> "$(mkstemp)"
 printf '%s' "rdy" >&3
-exec 3>&-
 
 exec dnsmasq "${ARGS[@]}"
