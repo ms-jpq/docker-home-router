@@ -11,6 +11,6 @@ ARGS=(
   )
 
 
-s6-setuidgid "$USER" squid "${ARGS[@]}" -z
-exec s6-setuidgid "$USER" squid "${ARGS[@]}"
+s6-setuidgid "$USER" -- squid "${ARGS[@]}" -z
+exec s6-setuidgid "$USER" -- squid "${ARGS[@]}"
 
