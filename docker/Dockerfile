@@ -21,7 +21,7 @@ RUN dnf install -y \
     qrencode \
     iftop && \
     dnf clean all && \
-    rm -rf /tmp/*
+    rm -rf -- /tmp/*
 
 
 RUN wget "${S6}" --output-document /tmp/s6 && \
