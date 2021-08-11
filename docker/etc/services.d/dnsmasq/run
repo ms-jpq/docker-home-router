@@ -9,9 +9,6 @@ ARGS=(
   )
 
 
-s6-setuidgid "$USER" /srv/run/unbound/ctl.sh status &>>/dev/null
-
-printf '\n' >&3
-exec 3>&-
+s6-svwait -U /var/run/s6/services/unbound
 
 exec dnsmasq "${ARGS[@]}"
