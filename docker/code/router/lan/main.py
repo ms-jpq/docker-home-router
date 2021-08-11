@@ -32,7 +32,7 @@ def _parse(hostname: str, addr: IPAddress) -> Tuple[str, str, str]:
 
 def _ctl(op: str, *args: str) -> None:
     stdin = (linesep.join(args) + linesep).encode()
-    run((str(UNBOUND_CTL), op), input=stdin, timeout=SHORT_DURATION).check_returncode()
+    run((UNBOUND_CTL, op), input=stdin, timeout=SHORT_DURATION).check_returncode()
 
 
 def _add(hostname: str, addr: IPAddress) -> None:
@@ -71,4 +71,3 @@ def main(argv: Sequence[str]) -> None:
             _rm(hostname, addr=addr)
         else:
             assert False
-

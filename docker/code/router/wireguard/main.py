@@ -22,7 +22,7 @@ def _set_up() -> None:
 
 
 def _wg_up() -> None:
-    check_call(("wg", "setconf", WG_IF, str(_SRV_CONF)))
+    check_call(("wg", "setconf", WG_IF, _SRV_CONF))
 
 
 def main() -> None:

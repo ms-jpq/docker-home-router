@@ -26,7 +26,7 @@ def _parse_stats(raw: str) -> Any:
 
 def feed() -> str:
     raw = check_output(
-        (str(UNBOUND_CTL), "stats_noreset"), text=True, timeout=SHORT_DURATION
+        (UNBOUND_CTL, "stats_noreset"), text=True, timeout=SHORT_DURATION
     )
     data = _parse_stats(raw)
     json = dumps(data, check_circular=False, ensure_ascii=False)

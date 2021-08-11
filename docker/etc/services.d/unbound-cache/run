@@ -4,4 +4,6 @@ set -eu
 set -o pipefail
 
 
+s6-svwait -U /var/run/s6/services/unbound
+
 exec s6-setuidgid "$USER" python3 -m router cache
