@@ -10,6 +10,5 @@ ARGS=(
   )
 
 
-rm --force -- '/tmp/unbound.sock'
 unbound-checkconf -- "$CONF"
 exec unbound "${ARGS[@]}"
