@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -eu
+set -o pipefail
+
+
+s6-svc -wU /etc/services.d/dnsmasq
+
+while true
+do
+  s6-setuidgid "$USER" /srv/run/unbound/ctl.sh status
+  sleep 1
+done
+
