@@ -24,11 +24,12 @@ def leases(networks: Networks) -> Iterator[Tuple[str, IPAddress]]:
 
     yield from srv_addrs(networks)
     for line in reversed(lines):
-        lhs, _, rest = line.partition(" ")
-        if lhs == "duid":
-            pass
-        else:
-            _, addr, rhs = rest.split(" ", maxsplit=2)
-            name, _, _ = rhs.rpartition(" ")
-            if name != "*":
-                yield name, ip_address(addr)
+        if line:
+            lhs, _, rest = line.partition(" ")
+            if lhs == "duid":
+                pass
+            else:
+                _, addr, rhs = rest.split(" ", maxsplit=2)
+                name, _, _ = rhs.rpartition(" ")
+                if name != "*":
+                    yield name, ip_address(addr)

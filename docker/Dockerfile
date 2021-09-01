@@ -1,26 +1,26 @@
-FROM fedora:latest
+FROM ubuntu:focal
 
 
 ARG S6="https://github.com/just-containers/s6-overlay/releases/download/v2.2.0.3/s6-overlay-amd64-installer"
 
 
-RUN dnf install -y -- \
-    procps-ng \
+RUN apt update && \
+    DEBIAN_FRONTEND=noninteractive apt install --yes -- \
+    procps \
     nftables \
     openssl \
     wget \
-    iproute \
+    iproute2 \
     python3-pip \
     dnsmasq \
     unbound \
-    avahi \
+    avahi-daemon \
     chrony \
     tor \
     squid \
-    wireguard-tools \
+    wireguard \
     qrencode \
     iftop && \
-    dnf clean all && \
     rm -rf -- /tmp/*
 
 
