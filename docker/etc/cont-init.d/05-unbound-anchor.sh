@@ -17,4 +17,4 @@ then
 fi
 
 chown "$USER:$USER" -- "$DEST_KEY"
-s6-setuidgid "$USER" unbound-anchor "${ARGS[@]}" || true
+exec s6-setuidgid "$USER" unbound-anchor "${ARGS[@]}" || true
