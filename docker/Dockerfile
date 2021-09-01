@@ -11,7 +11,7 @@ RUN apt update && \
     openssl \
     wget \
     iproute2 \
-    python3-pip \
+    python3-venv \
     dnsmasq \
     unbound \
     avahi-daemon \
@@ -31,6 +31,10 @@ RUN wget "${S6}" --output-document /tmp/s6 && \
 ENV S6_KEEP_ENV=1 \
     S6_BEHAVIOUR_IF_STAGE2_FAILS=2
 ENTRYPOINT ["/init"]
+
+
+RUN python3 -m venv -- /venv
+ENV PATH="/venv/bin:$PATH"
 
 
 WORKDIR /srv/run
