@@ -10,4 +10,5 @@ ARGS=(
   )
 
 
+rm -rf -- /var/run/avahi-daemon
 exec avahi-daemon "${ARGS[@]}"

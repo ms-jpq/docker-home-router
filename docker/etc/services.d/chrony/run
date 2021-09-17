@@ -11,4 +11,5 @@ ARGS=(
   )
 
 
+rm -rf -- /var/run/chrony
 exec chronyd "${ARGS[@]}"
