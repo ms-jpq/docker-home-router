@@ -28,7 +28,7 @@ def _head(
     _ = handler.rfile.read(content_len)
 
     body = _render(j2, title=title, feed=feed).encode()
-    handler.send_response(HTTPStatus.OK)
+    handler.send_response_only(HTTPStatus.OK)
     handler.send_header("Content-Length", value=str(len(body)))
     handler.send_header("Content-Type", value="text/html")
     handler.end_headers()

@@ -54,7 +54,7 @@ def _get(handler: BaseHTTPRequestHandler, page: bytes) -> None:
     content_len = int(headers.get("content-length", 0))
     _ = handler.rfile.read(content_len)
 
-    handler.send_response(HTTPStatus.OK)
+    handler.send_response_only(HTTPStatus.OK)
     handler.send_header("Content-Length", value=str(len(page)))
     handler.send_header("Content-Type", value="text/html")
     handler.end_headers()
