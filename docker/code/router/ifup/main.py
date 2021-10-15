@@ -16,7 +16,7 @@ def if_up(addrs: Addrs, interface: str, networks: AbstractSet[IPNetwork]) -> Non
         for network in networks
     }
 
-    check_call(("ip", "link", "set", interface, "up"))
+    check_call(("ip", "link", "set", "up", "dev", interface))
 
     for addr in addrs:
         if addr.ifname == interface:

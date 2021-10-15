@@ -60,7 +60,7 @@ def _rx(wan_if: str) -> None:
             *_RX_OPTS,
         )
     )
-    check_call(("ip", "link", "set", TC_IFB, "up"))
+    check_call(("ip", "link", "set", "up", "dev", TC_IFB))
     check_call(
         (
             "tc",
