@@ -8,10 +8,9 @@ services:
     cap_add:
       - NET_ADMIN
     environment:
-      - TZ
-      - WAN_IF=eth0
-      - LAN_IF=eth0
+      TZ:
+      WAN_IF: eth0
+      LAN_IF: eth1
     network_mode: host
     volumes:
       - ./tmp:/data
-
