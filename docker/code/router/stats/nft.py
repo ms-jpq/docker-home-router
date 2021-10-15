@@ -4,5 +4,9 @@ from ..consts import SHORT_DURATION
 
 
 def feed() -> str:
-    raw = check_output(("nft", "list", "ruleset"), text=True, timeout=SHORT_DURATION)
+    raw = check_output(
+        ("sudo", "nft", "list", "ruleset"),
+        text=True,
+        timeout=SHORT_DURATION,
+    )
     return raw.strip().replace("\t", " " * 4)
