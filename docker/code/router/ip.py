@@ -16,6 +16,7 @@ from .consts import IPV6_STAT, WAN_IF
 class _AddrInfo:
     local: IPAddress
     prefixlen: int
+    tentative: bool = False
 
 
 @dataclass(frozen=True)

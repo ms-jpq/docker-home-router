@@ -20,7 +20,9 @@ def if_up(addrs: Addrs, interface: str, networks: AbstractSet[IPNetwork]) -> Non
         if addr.ifname == interface:
             for info in addr.addr_info:
                 local: IPInterface = ip_interface(f"{info.local}/{info.prefixlen}")
-                if local in acc:
+                if info.tentative:
+                    check_call(("ip", "addr", "del", str(local), "dev", interface))
+                elif local in acc:
                     acc.discard(local)
                 else:
                     if local.ip not in LINK_LOCAL_V6:
