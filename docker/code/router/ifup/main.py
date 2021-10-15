@@ -1,4 +1,4 @@
-from ipaddress import ip_interface
+from ipaddress import IPv4Address, ip_interface
 from subprocess import check_call
 from typing import AbstractSet, MutableSet
 
@@ -6,7 +6,7 @@ from std2.ipaddress import LINK_LOCAL_V6
 from std2.types import IPInterface, IPNetwork
 
 from ..consts import GUEST_IF, LAN_IF
-from ..ip import Addrs, addr_show
+from ..ip import Addrs, addr_show, ipv6_enabled
 from ..subnets import load_networks
 
 
@@ -30,7 +30,8 @@ def if_up(addrs: Addrs, interface: str, networks: AbstractSet[IPNetwork]) -> Non
         raise ValueError(f"IF NOT FOUND - {interface}")
 
     for ip in acc:
-        check_call(("ip", "addr", "add", str(ip), "dev", interface))
+        if isinstance(ip, IPv4Address) or ipv6_enabled():
+            check_call(("ip", "addr", "add", str(ip), "dev", interface))
 
 
 def main() -> None:
