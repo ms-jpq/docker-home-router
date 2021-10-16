@@ -56,6 +56,8 @@ STATS_PORT = clamp(1025, int(environ["STATS_PORT"]), 2 ** 16 - 1)
 SQUID_PORT = clamp(1025, int(environ["SQUID_PORT"]), 2 ** 16 - 1)
 TOR_PORT = clamp(1025, int(environ["TOR_PORT"]), 2 ** 16 - 1)
 
+EXPOSE_STATS = int(environ["EXPOSE_STATS"])
+
 USER = environ["USER"]
 
 WAN_IF = environ["WAN_IF"]

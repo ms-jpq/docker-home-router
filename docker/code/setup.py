@@ -5,7 +5,7 @@ from pathlib import Path
 from setuptools import find_packages, setup
 
 packages = find_packages(exclude=("tests*",))
-package_data = {pkg: ("py.typed", "*.html", "*.conf") for pkg in packages}
+package_data = {pkg: ["py.typed", "*.html", "*.conf"] for pkg in packages}
 install_requires = Path("requirements.txt").read_text().splitlines()
 
 setup(

@@ -113,6 +113,7 @@ ENV WAN_IF= \
     WG_DOMAIN= \
     WG_PEERS="me,my wife,my wife's boyfriend" \
     WG_PORT=51820 \
+    EXPOSE_STATS=1 \
     STATS_PORT=8888 \
     TOR_PORT=9060 \
     SQUID_PORT=9080

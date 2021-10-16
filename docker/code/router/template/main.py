@@ -5,8 +5,8 @@ from socket import getaddrinfo
 from subprocess import check_call
 from typing import Any, Iterator, Mapping, cast
 
-from std2.pathlib import walk
 from std2.ipaddress import IPNetwork
+from std2.pathlib import walk
 
 from ..consts import (
     DATA,
@@ -15,6 +15,7 @@ from ..consts import (
     DNS_SEC,
     DNS_SERVERS,
     DNS_TLS,
+    EXPOSE_STATS,
     GUEST_IF,
     LAN_DOMAIN,
     LAN_IF,
@@ -105,6 +106,7 @@ def _env(networks: Networks) -> Mapping[str, Any]:
             "TOR_PORT": TOR_PORT,
             "WG_PORT": WG_PORT,
             "STATS_PORT": STATS_PORT,
+            "EXPOSE_STATS": EXPOSE_STATS,
             "LOOPBACK_LOCAL": loop_back,
             "LAN_DOMAIN": LAN_DOMAIN,
             "FORWARDED_PORTS": fwds,
