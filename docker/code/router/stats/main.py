@@ -110,7 +110,7 @@ def main() -> None:
             _get(handler, page=page)
 
         elif path is _Path.wg:
-            get(static_j2, handler=handler, base=_Path.wg.value, root=QR_DIR)
+            get(static_j2, handler=handler, prefix=_Path.wg.value, root=QR_DIR)
 
         else:
             never(path)
