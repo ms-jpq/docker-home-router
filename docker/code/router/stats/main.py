@@ -57,6 +57,8 @@ def _get(handler: BaseHTTPRequestHandler, page: bytes) -> None:
     handler.send_response_only(HTTPStatus.OK)
     handler.send_header("Content-Length", value=str(len(page)))
     handler.send_header("Content-Type", value="text/html")
+    handler.send_header("Cache-Control", value="no-store, must-revalidate")
+    handler.send_header("Expires", value="0")
     handler.end_headers()
     handler.wfile.write(page)
 
