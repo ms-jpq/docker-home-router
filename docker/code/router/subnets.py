@@ -6,10 +6,8 @@ from itertools import chain, islice
 from json import loads
 from typing import AbstractSet, Iterable, Iterator, Optional
 
-from std2.ipaddress import LOOPBACK_V4, PRIVATE_V4
-from std2.pickle import decode
-from std2.pickle.coders import BUILTIN_DECODERS
-from std2.types import IPInterface
+from std2.ipaddress import LOOPBACK_V4, PRIVATE_V4, IPInterface
+from std2.pickle.decoder import new_decoder
 
 from .consts import (
     IF_EXCLUSIONS,
@@ -43,7 +41,7 @@ class _V6Stack:
 
 def load_networks() -> Networks:
     json = loads(NETWORKS_JSON.read_text())
-    networks: Networks = decode(Networks, json, decoders=BUILTIN_DECODERS)
+    networks = new_decoder[Networks](Networks)(json)
     return networks
 
 

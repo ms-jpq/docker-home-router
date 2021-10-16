@@ -4,10 +4,8 @@ from json import dumps, loads
 from subprocess import check_output
 from typing import Optional, Sequence
 
-from std2.ipaddress import LINK_LOCAL_V6
-from std2.pickle import decode
-from std2.pickle.coders import BUILTIN_DECODERS
-from std2.types import IPAddress
+from std2.ipaddress import LINK_LOCAL_V6, IPAddress
+from std2.pickle.decoder import new_decoder
 
 from .consts import IPV6_STAT, WAN_IF
 
@@ -32,7 +30,7 @@ Addrs = Sequence[Addr]
 def addr_show() -> Addrs:
     raw = check_output(("ip", "--json", "address", "show"), text=True)
     json = loads(raw)
-    addrs: Addrs = decode(Addrs, json, strict=False, decoders=BUILTIN_DECODERS)
+    addrs = new_decoder[Addrs](Addrs, strict=False)(json)
     return addrs
 
 
@@ -47,7 +45,7 @@ Links = Sequence[Link]
 def link_show() -> Links:
     raw = check_output(("ip", "--json", "link", "show"), text=True)
     json = loads(raw)
-    links: Links = decode(Links, json, strict=False)
+    links = new_decoder[Links](Links, strict=False)(json)
     return links
 
 

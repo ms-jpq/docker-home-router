@@ -14,7 +14,7 @@ from typing import (
 
 from std2.pickle import decode
 from std2.tree import merge
-from std2.types import IPAddress
+from std2.ipaddress import IPAddress
 from yaml import safe_load
 
 from .consts import PORT_FWD, SERVER_NAME

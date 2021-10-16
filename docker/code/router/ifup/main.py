@@ -2,8 +2,7 @@ from ipaddress import IPv4Address, ip_interface
 from subprocess import check_call
 from typing import AbstractSet, MutableSet
 
-from std2.ipaddress import LINK_LOCAL_V6
-from std2.types import IPInterface, IPNetwork
+from std2.ipaddress import LINK_LOCAL_V6, IPInterface, IPNetwork
 
 from ..consts import GUEST_IF, LAN_IF
 from ..ip import Addrs, addr_show, ipv6_enabled

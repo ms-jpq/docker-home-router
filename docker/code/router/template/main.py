@@ -6,7 +6,7 @@ from subprocess import check_call
 from typing import Any, Iterator, Mapping, cast
 
 from std2.pathlib import walk
-from std2.types import IPNetwork
+from std2.ipaddress import IPNetwork
 
 from ..consts import (
     DATA,

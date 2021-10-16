@@ -4,6 +4,7 @@ from os import environ, sep
 from pathlib import Path
 from socket import getfqdn
 
+from std2 import clamp
 from std2.ipaddress import (
     LINK_LOCAL_V4,
     LINK_LOCAL_V6,
@@ -13,7 +14,8 @@ from std2.ipaddress import (
     PRIVATE_V6,
 )
 from std2.lex import split
-from std2.ordinal import clamp
+
+_SEP, _ESC = ",", "\\"
 
 SERVER_NAME = getfqdn()
 
@@ -60,15 +62,19 @@ WAN_IF = environ["WAN_IF"]
 LAN_IF = environ["LAN_IF"]
 GUEST_IF = environ["GUEST_IF"]
 WG_IF = environ["WG_IF"]
-IF_EXCLUSIONS = frozenset(split(environ["IF_EXCLUSIONS"]))
+IF_EXCLUSIONS = frozenset(split(environ["IF_EXCLUSIONS"], sep=_SEP, esc=_ESC))
 
-TC_RX = tuple(split(environ["TC_RX"]))
-TC_TX = tuple(split(environ["TC_TX"]))
+TC_RX = tuple(split(environ["TC_RX"], sep=_SEP, esc=_ESC))
+TC_TX = tuple(split(environ["TC_TX"], sep=_SEP, esc=_ESC))
 TC_IFB = f"ifb4{WAN_IF}"
 
-LOOPBACK_EXCLUSION = frozenset(map(IPv4Network, split(environ["LOOPBACK_EXCLUSION"])))
+LOOPBACK_EXCLUSION = frozenset(
+    map(IPv4Network, split(environ["LOOPBACK_EXCLUSION"], sep=_SEP, esc=_ESC))
+)
 IP6_ULA_GLOBAL = environ["IP6_ULA_GLOBAL"]
-IP4_EXCLUSION = frozenset(map(IPv4Network, split(environ["IP4_EXCLUSION"])))
+IP4_EXCLUSION = frozenset(
+    map(IPv4Network, split(environ["IP4_EXCLUSION"], sep=_SEP, esc=_ESC))
+)
 IP4_PREFIX = clamp(16, int(environ["IP4_PREFIX"]), 24)
 TOR_IP4_PREFIX = 16
 
@@ -79,12 +85,12 @@ LOCAL_TTL = max(0, int(environ["LOCAL_TTL"]))
 DNS_SEC = bool(int(environ["DNS_SEC"]))
 DNS_TLS = bool(int(environ["DNS_TLS"]))
 DNS_FALLBACK = bool(int(environ["DNS_FALLBACK"]))
-DNS_SERVERS = frozenset(split(environ["DNS_SERVERS"]))
+DNS_SERVERS = frozenset(split(environ["DNS_SERVERS"], sep=_SEP, esc=_ESC))
 LAN_DOMAIN = environ["LAN_DOMAIN"]
 
 
 WG_DOMAIN = environ["WG_DOMAIN"] or SERVER_NAME
-WG_PEERS = sorted(frozenset(split(environ["WG_PEERS"])), key=strxfrm)
+WG_PEERS = sorted(frozenset(split(environ["WG_PEERS"], sep=_SEP, esc=_ESC)), key=strxfrm)
 
 
 SHORT_DURATION = 1

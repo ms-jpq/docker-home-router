@@ -3,7 +3,7 @@ from itertools import chain
 from locale import strxfrm
 from typing import Iterator, Mapping, MutableMapping, MutableSet, Sequence, Tuple
 
-from std2.types import IPAddress
+from std2.ipaddress import IPAddress
 
 from .leases import srv_addrs
 from .types import Networks

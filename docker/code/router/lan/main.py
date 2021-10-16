@@ -6,7 +6,7 @@ from subprocess import run
 from sys import stderr
 from typing import Sequence, Tuple
 
-from std2.types import IPAddress
+from std2.ipaddress import IPAddress
 
 from ..consts import LAN_DOMAIN, LOCAL_TTL, SHORT_DURATION, UNBOUND_CTL
 from ..records import encode_dns

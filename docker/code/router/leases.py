@@ -2,7 +2,7 @@ from ipaddress import ip_address
 from os import linesep
 from typing import Iterator, Tuple
 
-from std2.types import IPAddress
+from std2.ipaddress import IPAddress
 
 from .consts import GUEST_IF, LEASES, SERVER_NAME
 from .types import Networks
