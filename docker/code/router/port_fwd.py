@@ -12,9 +12,9 @@ from typing import (
     cast,
 )
 
-from std2.pickle import decode
-from std2.tree import merge
+from std2.graphlib import merge
 from std2.ipaddress import IPAddress
+from std2.pickle.decoder import new_decoder
 from yaml import safe_load
 
 from .consts import PORT_FWD, SERVER_NAME
@@ -98,7 +98,7 @@ def forwarded_ports(
         yaml = safe_load(raw)
         acc = merge(acc, yaml)
 
-    forwards: Forwards = decode(Forwards, acc, strict=False)
+    forwards = new_decoder[Forwards](Forwards, strict=False)(acc)
     leased = _leased(networks)
 
     def cont(stack: DualStack, forwards: FWDs) -> Iterator[Mapping[str, Any]]:

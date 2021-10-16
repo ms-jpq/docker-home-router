@@ -7,9 +7,9 @@ from shutil import rmtree
 from subprocess import check_output, run
 from typing import Any, Iterable, Iterator, Mapping, MutableSet, Tuple
 
-from std2.pickle import decode, encode
-from std2.pickle.coders import BUILTIN_DECODERS, BUILTIN_ENCODERS
-from std2.types import IPInterface
+from std2.ipaddress import IPInterface
+from std2.pickle.decoder import new_decoder
+from std2.pickle.encoder import new_encoder
 
 from .consts import DATA, J2, QR_DIR, WG_DOMAIN, WG_PEERS, WG_PORT
 from .ip import ipv6_enabled
@@ -84,7 +84,8 @@ def _ip_gen(
         seen.add(v4)
         seen.add(v6)
         if write:
-            data = encode((v4, v6), encoders=BUILTIN_ENCODERS)
+            addr_pair = Tuple[IPv4Interface, IPv6Interface]
+            data = new_encoder[addr_pair](addr_pair)((v4, v6))
             json = dumps(data, check_circular=False, ensure_ascii=False, indent=2)
             json_p.write_text(json)
 
@@ -109,7 +110,7 @@ def _ip_gen(
         if json_p.exists():
             raw = json_p.read_text()
             json = loads(raw)
-            addrs: _IFS = decode(_IFS, json, decoders=BUILTIN_DECODERS)
+            addrs = new_decoder[_IFS](_IFS)(json)
             v4, v6 = addrs
             if v4 not in seen and v6 not in seen and v4 in wg_v4 and v6 in wg_v6:
                 end(v4, v6, write=False)
