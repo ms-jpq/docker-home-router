@@ -9,4 +9,4 @@ def feed() -> str:
         text=True,
         timeout=SHORT_DURATION,
     )
-    return raw.strip().replace("\t", " " * 4)
+    return raw.strip().expandtabs()
