@@ -36,8 +36,8 @@ _CONFIG = Path(sep, "config")
 _TMP = Path(sep, "tmp")
 DATA = Path(sep, "data")
 
-TEMPLATES = _SRV / Path("templates")
-RUN = _SRV / Path("run")
+TEMPLATES = _SRV / "templates"
+RUN = _SRV / "run"
 
 PORT_FWD = _CONFIG / "port_fwd"
 

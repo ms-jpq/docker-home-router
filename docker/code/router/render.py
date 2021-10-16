@@ -1,3 +1,4 @@
+from os.path import normcase
 from pathlib import Path, PurePath
 from typing import Any, Mapping
 
@@ -16,5 +17,5 @@ def j2_build(*base: Path) -> Environment:
 
 
 def j2_render(j2: Environment, path: PurePath, env: Mapping[str, Any]) -> str:
-    text = j2.get_template(str(path)).render(env)
+    text = j2.get_template(normcase(path)).render(env)
     return text
