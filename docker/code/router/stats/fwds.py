@@ -13,6 +13,6 @@ def feed() -> str:
     networks = load_networks()
     tp = Sequence[Mapping[str, Any]]
     data = new_encoder[tp](tp)(tuple(forwarded_ports(networks)))
-    json = dumps(data, check_circular=False, ensure_ascii=False)
+    json = dumps(data, check_circular=False, ensure_ascii=False, allow_nan=False)
     raw = check_output(("sortd", "yaml"), text=True, input=json, timeout=SHORT_DURATION)
     return raw.strip()
