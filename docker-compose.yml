@@ -12,5 +12,7 @@ services:
       WAN_IF: eth0
       LAN_IF: eth1
     network_mode: host
+    tmpfs:
+      - /tmp
     volumes:
       - ./tmp:/data
