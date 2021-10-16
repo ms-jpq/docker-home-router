@@ -1,6 +1,5 @@
 from ipaddress import IPv4Address, IPv6Address
 from itertools import chain
-from locale import strxfrm
 from typing import (
     Any,
     Iterator,
@@ -14,6 +13,7 @@ from typing import (
 
 from std2.graphlib import merge
 from std2.ipaddress import IPAddress
+from std2.locale import pathsort_key
 from std2.pickle.decoder import new_decoder
 from yaml import safe_load
 
@@ -83,15 +83,13 @@ def _pick(
     return v4, v6
 
 
-def forwarded_ports(
-    networks: Networks,
-) -> Iterator[Mapping[str, Any]]:
+def forwarded_ports(networks: Networks) -> Iterator[Mapping[str, Any]]:
     PORT_FWD.mkdir(parents=True, exist_ok=True)
 
     acc: MutableMapping[str, Any] = {"lan": {}, "guest": {}}
     paths = sorted(
         chain(PORT_FWD.glob("*.yaml"), PORT_FWD.glob("*.yml")),
-        key=lambda p: strxfrm(p.name),
+        key=pathsort_key,
     )
     for path in paths:
         raw = path.read_text()
