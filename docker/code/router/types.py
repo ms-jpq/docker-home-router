@@ -28,7 +28,6 @@ class PortFwd:
     proto: Protocol
     from_port: int
     to_port: int
-    proxy_proto: bool = False
 
 
 FWDs = Mapping[str, AbstractSet[PortFwd]]

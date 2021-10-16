@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from ipaddress import IPv4Address, IPv6Address
 from itertools import chain
 from typing import (
@@ -19,24 +20,22 @@ from yaml import safe_load
 
 from .consts import PORT_FWD, SERVER_NAME
 from .leases import leases
-from .types import DualStack, Forwards, FWDs, Networks, PortFwd
+from .types import DualStack, Forwards, FWDs, Networks
 
 
-def _mk_spec(
-    hostname: str, fwd: PortFwd, v4: IPv4Address, v6: IPv6Address
-) -> Mapping[str, Any]:
-    spec = {
-        "FROM_NAME": hostname,
-        "PROTO": fwd.proto.name,
-        "FROM_PORT": fwd.from_port,
-        "TO_PORT": fwd.to_port,
-        "PROXY_PROTO": fwd.proxy_proto,
-        "TO_ADDR": {
-            "V4": v4,
-            "V6": v6,
-        },
-    }
-    return spec
+@dataclass(frozen=True)
+class _Addrs:
+    V4: IPv4Address
+    V6: IPv6Address
+
+
+@dataclass(frozen=True)
+class Forwarded:
+    FROM_NAME: str
+    PROTO: str
+    FROM_PORT: int
+    TO_PORT: int
+    TO_ADDR: _Addrs
 
 
 def _leased(networks: Networks) -> MutableMapping[str, MutableSet[IPAddress]]:
@@ -83,7 +82,7 @@ def _pick(
     return v4, v6
 
 
-def forwarded_ports(networks: Networks) -> Iterator[Mapping[str, Any]]:
+def forwarded_ports(networks: Networks) -> Iterator[Forwarded]:
     PORT_FWD.mkdir(parents=True, exist_ok=True)
 
     acc: MutableMapping[str, Any] = {"lan": {}, "guest": {}}
@@ -99,21 +98,27 @@ def forwarded_ports(networks: Networks) -> Iterator[Mapping[str, Any]]:
     forwards = new_decoder[Forwards](Forwards, strict=False)(acc)
     leased = _leased(networks)
 
-    def cont(stack: DualStack, forwards: FWDs) -> Iterator[Mapping[str, Any]]:
+    def cont(stack: DualStack, forwards: FWDs) -> Iterator[Forwarded]:
         for hostname, fws in forwards.items():
-            for fw in fws:
+            for fwd in fws:
                 v4, v6 = _pick(leased, stack=stack, hostname=hostname)
-                spec = _mk_spec(hostname, fwd=fw, v4=v4, v6=v6)
+                spec = Forwarded(
+                    FROM_NAME=hostname,
+                    PROTO=fwd.proto.name,
+                    FROM_PORT=fwd.from_port,
+                    TO_PORT=fwd.to_port,
+                    TO_ADDR=_Addrs(V4=v4, V6=v6),
+                )
                 yield spec
 
     yield from cont(networks.guest, forwards=forwards.guest)
     yield from cont(networks.lan, forwards=forwards.lan)
 
 
-def dhcp_fixed(fwds: Sequence[Mapping[str, Any]]) -> Iterator[Mapping[str, Any]]:
+def dhcp_fixed(fwds: Sequence[Forwarded]) -> Iterator[Forwarded]:
     seen: MutableSet[str] = set()
     for fwd in fwds:
-        name = fwd["FROM_NAME"]
+        name = fwd.FROM_NAME
         if name not in seen:
             seen.add(name)
             yield fwd
