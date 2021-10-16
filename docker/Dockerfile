@@ -18,6 +18,7 @@ RUN apt update && \
     chrony \
     tor \
     squid \
+    squidclient \
     wireguard \
     qrencode \
     iftop && \
