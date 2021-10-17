@@ -95,7 +95,8 @@ def _ip_gen(
 
         def cont() -> _IFS:
             hashed = int(sha256(peer.encode()).hexdigest(), 16)
-            n4, n6 = hashed % wg_v4.num_addresses, hashed % wg_v6.num_addresses
+            n4 = hashed % (wg_v4.num_addresses - 1)
+            n6 = hashed % (wg_v6.num_addresses - 1)
             while True:
                 v4 = ip_interface(f"{wg_v4[n4]}/{wg_v4.max_prefixlen}")
                 v6 = ip_interface(f"{wg_v6[n6]}/{wg_v6.max_prefixlen}")
