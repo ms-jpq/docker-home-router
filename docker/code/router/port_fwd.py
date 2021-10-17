@@ -31,7 +31,7 @@ class _Addrs:
 
 @dataclass(frozen=True)
 class Forwarded:
-    FROM_NAME: str
+    TO_NAME: str
     PROTO: str
     FROM_PORT: int
     TO_PORT: int
@@ -103,7 +103,7 @@ def forwarded_ports(networks: Networks) -> Iterator[Forwarded]:
             for fwd in fws:
                 v4, v6 = _pick(leased, stack=stack, hostname=hostname)
                 spec = Forwarded(
-                    FROM_NAME=hostname,
+                    TO_NAME=hostname,
                     PROTO=fwd.proto.name,
                     FROM_PORT=fwd.from_port,
                     TO_PORT=fwd.to_port,
@@ -118,7 +118,7 @@ def forwarded_ports(networks: Networks) -> Iterator[Forwarded]:
 def dhcp_fixed(fwds: Sequence[Forwarded]) -> Iterator[Forwarded]:
     seen: MutableSet[str] = set()
     for fwd in fwds:
-        name = fwd.FROM_NAME
+        name = fwd.TO_NAME
         if name not in seen:
             seen.add(name)
             yield fwd
