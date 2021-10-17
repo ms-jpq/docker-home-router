@@ -76,6 +76,8 @@ def _ip_gen(
     seen: MutableSet[IPInterface] = {
         ip_interface(f"{wg_v4[0]}/{wg_v4.max_prefixlen}"),
         ip_interface(f"{wg_v6[0]}/{wg_v6.max_prefixlen}"),
+        ip_interface(f"{wg_v4.broadcast_address}/{wg_v4.max_prefixlen}"),
+        ip_interface(f"{wg_v6.broadcast_address}/{wg_v6.max_prefixlen}"),
         srv.v4,
         srv.v6,
     }
