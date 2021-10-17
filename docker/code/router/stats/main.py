@@ -4,7 +4,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from os import sep
 from pathlib import Path, PurePosixPath
 from typing import AbstractSet, Any, Callable, Mapping
-from urllib.parse import urlsplit
+from urllib.parse import unquote, urlsplit
 
 from py_dev.srv.static import build_j2, get
 from std2.pathlib import is_relative_to
@@ -19,6 +19,7 @@ from .nft import feed as nft_feed
 from .squid import feed as squid_feed
 from .subnets import feed as subnets_feed
 from .tc import feed as tc_feed
+from .wg import feed as wg_feed
 
 Feed = Callable[[], str]
 
@@ -37,10 +38,11 @@ class _Path(Enum):
     squid = PurePosixPath(sep, "squid")
     tc = PurePosixPath(sep, "tc")
     wg = PurePosixPath(sep, "wg")
+    wgc = PurePosixPath(sep, "wgc")
 
 
 def _route(handler: BaseHTTPRequestHandler) -> _Path:
-    path = urlsplit(handler.path).path
+    path = unquote(urlsplit(handler.path).path)
     paths: AbstractSet[_Path] = {*_Path} - {_Path.index}
     for candidate in paths:
         if is_relative_to(path, candidate.value):
@@ -113,6 +115,11 @@ def main() -> None:
 
         elif path is _Path.wg:
             get(static_j2, handler=handler, prefix=_Path.wg.value, root=QR_DIR)
+
+        elif path is _Path.wgc:
+            env = {"TITLE": path.name, "BODY": wg_feed()}
+            page = j2_render(j2, path=_SHOW_TPL, env=env).encode()
+            _get(handler, page=page)
 
         else:
             never(path)
