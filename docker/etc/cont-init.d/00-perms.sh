@@ -8,8 +8,6 @@ ARGS=(
   /srv
   /config
   /data
-  /var/log/squid
-  /var/spool/squid
   )
 
 
