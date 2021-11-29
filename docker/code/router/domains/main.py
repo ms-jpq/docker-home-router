@@ -8,24 +8,38 @@ from typing import Sequence, Tuple
 
 from std2.ipaddress import IPAddress
 
-from ..consts import LAN_DOMAIN, LOCAL_TTL, SHORT_DURATION, UNBOUND_CTL
+from ..consts import GUEST_DOMAIN, LAN_DOMAIN, LOCAL_TTL, SHORT_DURATION, UNBOUND_CTL
 from ..records import encode_dns
+from ..subnets import load_networks
 
 _ZONE_TYPE = "redirect"
-_LOCAL_ZONE = Template(f"$HOSTNAME.{LAN_DOMAIN}.")
-_LOCAL_DATA_PTR = Template(f"$RDDA. {LOCAL_TTL} IN PTR $HOSTNAME.{LAN_DOMAIN}.")
-_LOCAL_DATA_A = Template(f"$HOSTNAME.{LAN_DOMAIN}. {LOCAL_TTL} IN A $ADDR")
-_LOCAL_DATA_AAAA = Template(f"$HOSTNAME.{LAN_DOMAIN}. {LOCAL_TTL} IN AAAA $ADDR")
+_LOCAL_ZONE = Template("$HOSTNAME.$DOMAIN.")
+_LOCAL_DATA_PTR = Template(f"$RDDA. {LOCAL_TTL} IN PTR $HOSTNAME.$DOMAIN.")
+_LOCAL_DATA_A = Template(f"$HOSTNAME.$DOMAIN. {LOCAL_TTL} IN A $ADDR")
+_LOCAL_DATA_AAAA = Template(f"$HOSTNAME.$DOMAIN. {LOCAL_TTL} IN AAAA $ADDR")
+
+
+def _domain(addr: IPAddress) -> str:
+    networks = load_networks()
+    if addr in networks.lan.v4 or addr in networks.lan.v6:
+        return LAN_DOMAIN
+    elif addr in networks.guest.v4 or addr in networks.guest.v6:
+        return GUEST_DOMAIN
+    else:
+        assert False
 
 
 def _parse(hostname: str, addr: IPAddress) -> Tuple[str, str, str]:
     hostname = encode_dns(hostname)
-    zone = _LOCAL_ZONE.substitute(HOSTNAME=hostname)
-    ptr = _LOCAL_DATA_PTR.substitute(HOSTNAME=hostname, RDDA=addr.reverse_pointer)
+    domain = _domain(addr)
+    zone = _LOCAL_ZONE.substitute(DOMAIN=domain, HOSTNAME=hostname)
+    ptr = _LOCAL_DATA_PTR.substitute(
+        DOMAIN=domain, HOSTNAME=hostname, RDDA=addr.reverse_pointer
+    )
     na = (
-        _LOCAL_DATA_A.substitute(HOSTNAME=hostname, ADDR=addr)
+        _LOCAL_DATA_A.substitute(DOMAIN=domain, HOSTNAME=hostname, ADDR=addr)
         if isinstance(addr, IPv4Address)
-        else _LOCAL_DATA_AAAA.substitute(HOSTNAME=hostname, ADDR=addr)
+        else _LOCAL_DATA_AAAA.substitute(DOMAIN=domain, HOSTNAME=hostname, ADDR=addr)
     )
     return zone, ptr, na
 

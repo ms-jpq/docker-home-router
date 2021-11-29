@@ -36,7 +36,7 @@ from ..consts import (
 )
 from ..ip import ipv6_enabled
 from ..port_fwd import dhcp_fixed, forwarded_ports
-from ..records import dns_records
+from ..records import wg_records
 from ..render import j2_build, j2_render
 from ..subnets import calculate_loopback, calculate_networks, load_networks
 from ..types import Networks
@@ -104,7 +104,7 @@ def _env(networks: Networks) -> Mapping[str, Any]:
             "DNS_TLS": DNS_TLS,
             "DNS_FALLBACK": DNS_FALLBACK,
             "DNS_ADDRS": tuple(_dns_addrs()),
-            "DNS_RECORDS": dns_records(networks),
+            "WG_RECORDS": wg_records(networks),
             "SQUID_PORT": SQUID_PORT,
             "TOR_PORT": TOR_PORT,
             "WG_PORT": WG_PORT,

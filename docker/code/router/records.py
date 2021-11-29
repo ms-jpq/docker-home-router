@@ -1,11 +1,9 @@
 from ipaddress import IPv4Address, IPv6Address
-from itertools import chain
 from locale import strxfrm
 from typing import Iterator, Mapping, MutableMapping, MutableSet, Sequence, Tuple
 
 from std2.ipaddress import IPAddress
 
-from .leases import srv_addrs
 from .types import Networks
 from .wg import clients
 
@@ -27,11 +25,11 @@ def encode_dns(name: str) -> str:
     return "".join(cont())
 
 
-def dns_records(
+def wg_records(
     networks: Networks,
 ) -> Mapping[str, Tuple[Sequence[IPv4Address], Sequence[IPv6Address]]]:
     mappings: MutableMapping[str, MutableSet[IPAddress]] = {}
-    for name, addr in chain(srv_addrs(networks), _p_peers(networks)):
+    for name, addr in _p_peers(networks):
         acc = mappings.setdefault(name, set())
         acc.add(addr)
 

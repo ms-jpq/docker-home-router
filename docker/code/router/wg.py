@@ -11,8 +11,9 @@ from std2.ipaddress import IPInterface
 from std2.pickle.decoder import new_decoder
 from std2.pickle.encoder import new_encoder
 
-from .consts import DATA, J2, QR_DIR, WG_SERVER_NAME, WG_PEERS, WG_PORT
+from .consts import DATA, J2, QR_DIR, WG_PEERS, WG_PORT, WG_SERVER_NAME
 from .ip import ipv6_enabled
+from .records import encode_dns
 from .render import j2_build, j2_render
 from .types import Networks
 
@@ -151,7 +152,7 @@ def clients(networks: Networks) -> Iterator[_Client]:
         ).rstrip()
 
         client = _Client(
-            name=peer,
+            name=encode_dns(peer),
             private_key=private_key,
             public_key=public_key,
             shared_key=shared_key,
