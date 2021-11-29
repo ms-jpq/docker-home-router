@@ -35,7 +35,7 @@ def _leased(networks: Networks) -> MutableMapping[str, MutableSet[IPAddress]]:
         addrs = leased.setdefault(name, set())
         addrs.add(addr)
 
-    addrs = leased.setdefault(SERVER_NAME)
+    addrs = leased.setdefault(SERVER_NAME, set())
     for addr in cast(
         Iterator[IPAddress],
         (
