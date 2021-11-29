@@ -4,4 +4,4 @@ set -eu
 set -o pipefail
 
 
-exec python3 -m router lan "$@"
+exec python3 -m router domains "$@"
