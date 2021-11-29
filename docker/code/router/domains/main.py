@@ -8,8 +8,14 @@ from typing import Sequence, Tuple
 
 from std2.ipaddress import IPAddress
 
-from ..consts import GUEST_DOMAIN, LAN_DOMAIN, LOCAL_TTL, SHORT_DURATION, UNBOUND_CTL
-from ..records import encode_dns
+from ..consts import (
+    GUEST_DOMAIN,
+    LAN_DOMAIN,
+    LOCAL_TTL,
+    SHORT_DURATION,
+    UNBOUND_CTL,
+    encode_dns,
+)
 from ..subnets import load_networks
 
 _ZONE_TYPE = "redirect"

@@ -3,6 +3,7 @@ from locale import strxfrm
 from os import environ, sep
 from pathlib import Path
 from socket import getfqdn
+from typing import Iterator
 
 from std2 import clamp
 from std2.ipaddress import (
@@ -16,6 +17,18 @@ from std2.ipaddress import (
 from std2.lex import split
 
 _SEP, _ESC = ",", "\\"
+
+
+def encode_dns(name: str) -> str:
+    def cont() -> Iterator[str]:
+        for char in name.encode("idna").decode():
+            if char.isalnum():
+                yield char
+            else:
+                yield "-"
+
+    return "".join(cont())
+
 
 SERVER_NAME = getfqdn()
 
@@ -96,7 +109,8 @@ GUEST_DOMAIN = environ["GUEST_DOMAIN"].encode("idna").decode()
 
 WG_SERVER_NAME = environ["WG_SERVER_NAME"] or SERVER_NAME
 WG_PEERS = sorted(
-    frozenset(split(environ["WG_PEERS"], sep=_SEP, esc=_ESC)), key=strxfrm
+    frozenset(map(encode_dns, split(environ["WG_PEERS"], sep=_SEP, esc=_ESC))),
+    key=strxfrm,
 )
 
 

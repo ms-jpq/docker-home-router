@@ -14,17 +14,6 @@ def _p_peers(networks: Networks) -> Iterator[Tuple[str, IPAddress]]:
         yield client.name, client.v6.ip
 
 
-def encode_dns(name: str) -> str:
-    def cont() -> Iterator[str]:
-        for char in name.encode("idna").decode():
-            if char.isalnum():
-                yield char
-            else:
-                yield "-"
-
-    return "".join(cont())
-
-
 def wg_records(
     networks: Networks,
 ) -> Mapping[str, Tuple[Sequence[IPv4Address], Sequence[IPv6Address]]]:
@@ -34,7 +23,7 @@ def wg_records(
         acc.add(addr)
 
     records = {
-        encode_dns(key): (
+        key: (
             sorted(i for i in mappings[key] if isinstance(i, IPv4Address)),
             sorted(i for i in mappings[key] if isinstance(i, IPv6Address)),
         )

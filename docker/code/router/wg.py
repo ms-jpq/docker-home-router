@@ -13,7 +13,6 @@ from std2.pickle.encoder import new_encoder
 
 from .consts import DATA, J2, QR_DIR, WG_PEERS, WG_PORT, WG_SERVER_NAME
 from .ip import ipv6_enabled
-from .records import encode_dns
 from .render import j2_build, j2_render
 from .types import Networks
 
@@ -152,7 +151,7 @@ def clients(networks: Networks) -> Iterator[_Client]:
         ).rstrip()
 
         client = _Client(
-            name=encode_dns(peer),
+            name=peer,
             private_key=private_key,
             public_key=public_key,
             shared_key=shared_key,
