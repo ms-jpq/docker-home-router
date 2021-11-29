@@ -16,7 +16,7 @@ services:
       ## Recommended
       - GUEST_IF=# <Guest interface name>
       - DNS_SERVERS=# Set this to a pihole or something
-      - WG_DOMAIN=# Server name / IP from WAN side, used for VPN clients
+      - WG_SERVER_NAME=# Server name / IP from WAN side, used for VPN clients
       - WG_PEERS=# ',' seperated list of VPN client names
 
       ## Niche

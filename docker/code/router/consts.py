@@ -91,7 +91,7 @@ DNS_SERVERS = frozenset(split(environ["DNS_SERVERS"], sep=_SEP, esc=_ESC))
 LAN_DOMAIN = environ["LAN_DOMAIN"]
 
 
-WG_DOMAIN = environ["WG_DOMAIN"] or SERVER_NAME
+WG_SERVER_NAME = environ["WG_SERVER_NAME"] or SERVER_NAME
 WG_PEERS = sorted(frozenset(split(environ["WG_PEERS"], sep=_SEP, esc=_ESC)), key=strxfrm)
 
 

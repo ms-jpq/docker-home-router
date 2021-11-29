@@ -85,7 +85,7 @@ EXPOSE 53/tcp 53/udp \
 # DNS_SERVERS              -> Upstream DNS servers: default is a recursive resolver @ loopback
 # LAN_DOMAIN               -> Domain name of local networks
 
-# WG_DOMAIN                -> IP / domain name of wireguard server location
+# WG_SERVER_NAME                -> IP / domain name of wireguard server location
 # WG_PEERS                 -> ',' delimited : List of peers to create for wireguard
 # WG_PORT                  -> Port for wireguard server
 
@@ -111,7 +111,9 @@ ENV WAN_IF= \
     DNS_FALLBACK=1 \
     DNS_SERVERS= \
     LAN_DOMAIN=lan \
-    WG_DOMAIN= \
+    GUEST_DOMAIN=gan \
+    WG_DOMAIN=wan \
+    WG_SERVER_NAME= \
     WG_PEERS="me,my wife,my wife's boyfriend" \
     WG_PORT=51820 \
     EXPOSE_STATS=1 \

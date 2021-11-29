@@ -11,7 +11,7 @@ from std2.ipaddress import IPInterface
 from std2.pickle.decoder import new_decoder
 from std2.pickle.encoder import new_encoder
 
-from .consts import DATA, J2, QR_DIR, WG_DOMAIN, WG_PEERS, WG_PORT
+from .consts import DATA, J2, QR_DIR, WG_SERVER_NAME, WG_PEERS, WG_PORT
 from .ip import ipv6_enabled
 from .render import j2_build, j2_render
 from .types import Networks
@@ -186,7 +186,7 @@ def gen_wg(networks: Networks) -> None:
         "LAN_NETWORK_V6": networks.lan.v6,
         "GUEST_NETWORK_V4": networks.guest.v4,
         "GUEST_NETWORK_V6": networks.guest.v6,
-        "WG_DOMAIN": WG_DOMAIN,
+        "WG_SERVER_NAME": WG_SERVER_NAME,
         "WG_PORT": WG_PORT,
     }
 
