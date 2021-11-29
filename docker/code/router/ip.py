@@ -54,10 +54,7 @@ def ipv6_enabled() -> bool:
         for addr in addr_show():
             if addr.ifname == WAN_IF:
                 for info in addr.addr_info:
-                    if (
-                        isinstance(info.local, IPv6Address)
-                        and info.local not in LINK_LOCAL_V6
-                    ):
+                    if isinstance(info.local, IPv6Address):
                         return True
         else:
             return False
