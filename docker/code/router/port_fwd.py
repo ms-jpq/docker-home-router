@@ -1,16 +1,7 @@
 from dataclasses import dataclass
 from ipaddress import IPv4Address, IPv6Address
 from itertools import chain
-from typing import (
-    Any,
-    Iterator,
-    Mapping,
-    MutableMapping,
-    MutableSet,
-    Sequence,
-    Tuple,
-    cast,
-)
+from typing import Any, Iterator, MutableMapping, MutableSet, Sequence, Tuple, cast
 
 from std2.graphlib import merge
 from std2.ipaddress import IPAddress
@@ -40,7 +31,7 @@ class Forwarded:
 
 def _leased(networks: Networks) -> MutableMapping[str, MutableSet[IPAddress]]:
     leased: MutableMapping[str, MutableSet[IPAddress]] = {}
-    for name, addr in leases(networks):
+    for name, addr in leases():
         addrs = leased.setdefault(name, set())
         addrs.add(addr)
 
