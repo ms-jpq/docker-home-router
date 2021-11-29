@@ -5,7 +5,7 @@ from socket import getaddrinfo
 from subprocess import check_call
 from typing import Any, Iterator, Mapping, cast
 
-from std2.ipaddress import IPNetwork
+from std2.ipaddress import LINK_LOCAL_V6, IPNetwork
 from std2.pathlib import walk
 
 from ..consts import (
@@ -88,6 +88,7 @@ def _env(networks: Networks) -> Mapping[str, Any]:
             "DHCP_LEASE_TIME": DHCP_LEASE_TIME,
             "WG_IF": WG_IF,
             "IPV6_ENABLED": ipv6_enabled(),
+            "LINK_LOCAL_V6": LINK_LOCAL_V6,
             "GUEST_NETWORK_V4": networks.guest.v4,
             "GUEST_NETWORK_V6": networks.guest.v6,
             "LAN_NETWORK_V4": networks.lan.v4,
