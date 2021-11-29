@@ -88,11 +88,16 @@ DNS_SEC = bool(int(environ["DNS_SEC"]))
 DNS_TLS = bool(int(environ["DNS_TLS"]))
 DNS_FALLBACK = bool(int(environ["DNS_FALLBACK"]))
 DNS_SERVERS = frozenset(split(environ["DNS_SERVERS"], sep=_SEP, esc=_ESC))
-LAN_DOMAIN = environ["LAN_DOMAIN"]
+
+LAN_DOMAIN = environ["LAN_DOMAIN"].encode("idna").decode()
+WG_DOMAIN = environ["WG_DOMAIN"].encode("idna").decode()
+GUEST_DOMAIN = environ["GUEST_DOMAIN"].encode("idna").decode()
 
 
 WG_SERVER_NAME = environ["WG_SERVER_NAME"] or SERVER_NAME
-WG_PEERS = sorted(frozenset(split(environ["WG_PEERS"], sep=_SEP, esc=_ESC)), key=strxfrm)
+WG_PEERS = sorted(
+    frozenset(split(environ["WG_PEERS"], sep=_SEP, esc=_ESC)), key=strxfrm
+)
 
 
 SHORT_DURATION = 1
