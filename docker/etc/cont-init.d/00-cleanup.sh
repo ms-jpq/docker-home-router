@@ -7,6 +7,7 @@ shopt -s globstar nullglob
 
 ARGS=(
   /tmp/*
+  /srv/run/nftables/docker/*
   )
 
 
