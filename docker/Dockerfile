@@ -84,6 +84,8 @@ EXPOSE 53/tcp 53/udp \
 # DHCP_LEASE_TIME          -> DHCP lease duration in hours, min is 2
 # DNS_SERVERS              -> Upstream DNS servers: default is a recursive resolver @ loopback
 # LAN_DOMAIN               -> Domain name of local networks
+# WG_DOMAIN                -> Domain name of wg networks
+# GUEST_DOMAIN             -> Domain name of guest networks
 
 # WG_SERVER_NAME                -> IP / domain name of wireguard server location
 # WG_PEERS                 -> ',' delimited : List of peers to create for wireguard
@@ -104,6 +106,7 @@ ENV WAN_IF= \
     IP6_ULA_GLOBAL= \
     IP4_EXCLUSION=10.0.0.0/20,192.168.0.0/20,172.16.0.0/12 \
     IP4_PREFIX=24 \
+    NAT_V6=1 \
     DHCP_LEASE_TIME=2 \
     LOCAL_TTL=1 \
     DNS_SEC=1 \
