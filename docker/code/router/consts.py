@@ -93,6 +93,7 @@ IP4_EXCLUSION = frozenset(
 IP4_PREFIX = clamp(16, int(environ["IP4_PREFIX"]), 24)
 TOR_IP4_PREFIX = 16
 
+IPV6_PD = bool(int(environ["IPV6_PD"]))
 
 DHCP_LEASE_TIME = clamp(1, int(environ["DHCP_LEASE_TIME"]), 24 * 7)
 LOCAL_TTL = max(0, int(environ["LOCAL_TTL"]))

@@ -80,6 +80,7 @@ EXPOSE 53/tcp 53/udp \
 # IP6_ULA_GLOBAL           -> Globally unique 40 bit prefix (in HEX)
 # IP4_EXCLUSION            -> ',' delimited : Networks to exclude from assignment in 'x.x.x.x/mask' form
 # IP4_PREFIX               -> ',' delimited : Prefix of IPv4 networks
+# IPV6_PD                  -> assign publicly routable /64 to devices
 
 # DHCP_LEASE_TIME          -> DHCP lease duration in hours, min is 2
 # DNS_SERVERS              -> Upstream DNS servers: default is a recursive resolver @ loopback
@@ -107,6 +108,7 @@ ENV WAN_IF= \
     IP4_EXCLUSION=10.0.0.0/20,192.168.0.0/20,172.16.0.0/12 \
     IP4_PREFIX=24 \
     DHCP_LEASE_TIME=2 \
+    IPV6_PD=0 \
     LOCAL_TTL=1 \
     DNS_SEC=1 \
     DNS_TLS=0 \
