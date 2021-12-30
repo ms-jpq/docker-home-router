@@ -1,0 +1,7 @@
+---
+interfaces:
+  wan: eth0
+  trusted: eth1
+dns:
+  upstream_servers: 
+    - 127.0.0.11

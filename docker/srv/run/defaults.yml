@@ -1,5 +1,6 @@
 ---
 interfaces:
+  wan:
   trusted:
   wireguard: wg0
   guest: null
@@ -54,9 +55,9 @@ port_bindings:
   statistics: 8080
 
 port_forwards:
-  trusted: []
-  wireguard: []
-  guest: []
+  trusted: {}
+  wireguard: {}
+  guest: {}
 
 guest_accessible:
   trusted: []

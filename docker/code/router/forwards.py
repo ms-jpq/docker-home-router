@@ -1,18 +1,24 @@
 from dataclasses import dataclass
 from ipaddress import IPv4Address, IPv6Address
 from itertools import chain
-from typing import Any, Iterator, MutableMapping, MutableSet, Sequence, Tuple, cast
+from typing import (
+    AbstractSet,
+    Iterable,
+    Iterator,
+    Mapping,
+    MutableMapping,
+    MutableSet,
+    Tuple,
+    cast,
+)
 
-from std2.graphlib import merge
 from std2.ipaddress import IPAddress
-from std2.locale import pathsort_key
-from std2.pickle.decoder import new_decoder
-from yaml import safe_load
 
 from .consts import SERVER_NAME
 from .leases import leases
-from .options.types import PortForward, PortForwards
-from .types import DualStack,  Networks
+from .options.parser import settings
+from .options.types import PortForward
+from .types import DualStack, Networks
 
 
 @dataclass(frozen=True)
@@ -74,23 +80,12 @@ def _pick(
     return v4, v6
 
 
-def forwarded_ports(networks: Networks) -> Iterator[Forwarded]:
-    PORT_FWD.mkdir(parents=True, exist_ok=True)
-
-    acc: MutableMapping[str, Any] = {"lan": {}, "guest": {}}
-    paths = sorted(
-        chain(PORT_FWD.glob("*.yaml"), PORT_FWD.glob("*.yml")),
-        key=pathsort_key,
-    )
-    for path in paths:
-        raw = path.read_text()
-        yaml = safe_load(raw)
-        acc = merge(acc, yaml)
-
-    forwards = new_decoder[Forwards](Forwards, strict=False)(acc)
+def forwarded_ports(networks: Networks) -> Tuple[AbstractSet[Forwarded]]:
     leased = _leased(networks)
 
-    def cont(stack: DualStack, forwards: FWDs) -> Iterator[Forwarded]:
+    def cont(
+        stack: DualStack, forwards: Mapping[str, AbstractSet[PortForward]]
+    ) -> Iterator[Forwarded]:
         for hostname, fws in forwards.items():
             for fwd in fws:
                 v4, v6 = _pick(leased, stack=stack, hostname=hostname)
@@ -103,11 +98,15 @@ def forwarded_ports(networks: Networks) -> Iterator[Forwarded]:
                 )
                 yield spec
 
-    yield from cont(networks.guest, forwards=forwards.guest)
-    yield from cont(networks.trusted, forwards=forwards.lan)
+    fwd = {
+        *cont(networks.wireguard, forwards=settings().port_forwards.wireguard),
+        *cont(networks.trusted, forwards=settings().port_forwards.trusted),
+        *cont(networks.guest, forwards=settings().port_forwards.guest),
+    }
+    return (fwd,)
 
 
-def dhcp_fixed(fwds: Sequence[Forwarded]) -> Iterator[Forwarded]:
+def dhcp_fixed(fwds: Iterable[Forwarded]) -> Iterator[Forwarded]:
     seen: MutableSet[str] = set()
     for fwd in fwds:
         name = fwd.TO_NAME

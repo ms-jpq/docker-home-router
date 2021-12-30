@@ -11,14 +11,14 @@ from ..consts import CONFIG, DEFAULT_CONFIG
 from .types import (
     DHCP,
     DNS,
-    Settings,
     Domains,
     GuestAccessible,
-    _IPAddresses,
     IPv4,
     IPv6,
     PortBindings,
+    Settings,
     WireGuard,
+    _IPAddresses,
 )
 
 
@@ -38,7 +38,7 @@ def _raw() -> Settings:
 def encode_dns_name(raw: str) -> str:
     def cont() -> Iterator[str]:
         for char in raw.encode("idna").decode():
-            if char.isalnum():
+            if char.isalnum() or char in {"."}:
                 yield char
             else:
                 yield "-"
@@ -71,8 +71,8 @@ def settings() -> Settings:
             ipv4=IPv4(
                 loopback_exclusions=raw.ip_addresses.ipv4.loopback_exclusions,
                 managed_network_exclusions=raw.ip_addresses.ipv4.managed_network_exclusions,
-                managed_prefix_len=2,
-                tor_prefix_len=2,
+                managed_prefix_len=raw.ip_addresses.ipv4.managed_prefix_len,
+                tor_prefix_len=raw.ip_addresses.ipv4.tor_prefix_len,
             ),
             ipv6=IPv6(
                 ula_global_prefix=raw.ip_addresses.ipv6.ula_global_prefix,

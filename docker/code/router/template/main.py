@@ -1,9 +1,11 @@
 from ipaddress import ip_address
 from multiprocessing import cpu_count
-from shutil import copystat
+from pprint import pformat
+from shutil import copystat, get_terminal_size
 from socket import getaddrinfo
 from subprocess import check_call
 from sys import stderr
+from textwrap import dedent
 from typing import Any, Iterator, Mapping, cast
 
 from std2.ipaddress import LINK_LOCAL_V6, PRIVATE_V6, IPAddress, IPNetwork
@@ -25,27 +27,42 @@ _KEY = _UNBOUND / "tls.key"
 
 
 def _resolv_addrs() -> Iterator[IPAddress]:
-    for srv in settings().dns.upstream_servers:
+    srvs = settings().dns.upstream_servers
+    count = 0
+    for srv in srvs:
         try:
             ip = ip_address(srv)
         except ValueError:
             try:
                 addr_infos = getaddrinfo(srv, "domain")
             except Exception as e:
-                print(e, file=stderr)
+                msg = f"""
+                {e}
+                {srv}
+                """
+                print(dedent(msg), file=stderr)
             else:
-                for _, _, _, _, info in addr_infos:
-                    addr, *_ = info
-                    ip = ip_address(addr)
-                    yield ip
+                if not addr_infos:
+                    msg = f"""
+                    WARN :: No IPs found for DNS server :: {srv}
+                    """
+                    print(dedent(msg), file=stderr)
+                else:
+                    for _, _, _, _, info in addr_infos:
+                        addr, *_ = info
+                        ip = ip_address(addr)
+                        count += 1
+                        yield ip
         else:
+            count += 1
             yield ip
     else:
-        raise RuntimeError("NO DNS SERVERS")
+        if not count:
+            raise RuntimeError(f"NO DNS SERVERS -- {srvs}")
 
 
 def _env(networks: Networks) -> Mapping[str, Any]:
-    fwds = tuple(forwarded_ports(networks))
+    fwds, *_ = forwarded_ports(networks)
     loop_back = calculate_loopback()
     env = {
         "CPU_COUNT": cpu_count(),
@@ -124,7 +141,21 @@ def _gen_keys(networks: Networks) -> None:
         )
 
 
+def _pprn() -> None:
+    cols, _ = get_terminal_size()
+    print(
+        pformat(
+            settings(),
+            indent=2,
+            width=cols,
+        ),
+        file=stderr,
+    )
+
+
 def main() -> None:
+    _pprn()
+
     try:
         networks = load_networks()
     except Exception:

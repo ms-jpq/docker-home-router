@@ -39,7 +39,7 @@ def load_networks() -> Networks:
 
 def _private_subnets(prefix: int) -> Iterator[IPv4Network]:
     for network in PRIVATE_V4:
-        for subnet in network.subnets(new_prefix=prefix):
+        for subnet in network.subnets(new_prefix=max(network.prefixlen, prefix)):
             yield subnet
 
 
@@ -66,6 +66,8 @@ def _pick_private(
                 seen.add(candidate)
                 yield candidate
                 break
+        else:
+            raise RuntimeError(f"No network available -- prefix :: {prefix}")
 
 
 def _v4(
@@ -110,7 +112,8 @@ def _v6(prefix: Optional[str]) -> _V6Stack:
 def calculate_networks() -> Networks:
     patterns = {settings().interfaces.wan, *settings().interfaces.unmanaged}
     v4 = _v4(
-        patterns, exclusions=settings().ip_addresses.ipv4.managed_network_exclusions
+        patterns,
+        exclusions=settings().ip_addresses.ipv4.managed_network_exclusions,
     )
     v6 = _v6(settings().ip_addresses.ipv6.ula_global_prefix)
 

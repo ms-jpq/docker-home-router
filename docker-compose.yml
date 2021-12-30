@@ -1,18 +1,14 @@
 ---
-version: "3.7"
+version: "3.8"
 
 services:
   router:
-    restart: always
     build: ./docker
     cap_add:
       - NET_ADMIN
     environment:
-      TZ:
-      WAN_IF: eth0
-      TRUSTED_IF: eth1
+      - TZ
     network_mode: host
-    tmpfs:
-      - /tmp
     volumes:
-      - ./tmp:/data
+      - /data
+      - ./config:/config:ro
