@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from hashlib import sha256
 from ipaddress import IPv4Interface, IPv6Interface, ip_interface
 from json import dumps, loads
+from locale import strxfrm
 from pathlib import PurePath
 from shutil import rmtree
 from subprocess import check_output, run
@@ -11,8 +12,9 @@ from std2.ipaddress import IPInterface
 from std2.pickle.decoder import new_decoder
 from std2.pickle.encoder import new_encoder
 
-from .consts import DATA, J2, QR_DIR, WG_PEERS, WG_PORT, WG_SERVER_NAME
+from .consts import DATA, J2, QR_DIR
 from .ip import ipv6_enabled
+from .options.parser import settings
 from .render import j2_build, j2_render
 from .types import Networks
 
@@ -49,8 +51,8 @@ def _srv(networks: Networks) -> _Server:
     _SRV_KEY.parent.mkdir(parents=True, exist_ok=True)
 
     wg = networks.wireguard
-    v4 = ip_interface(f"{next(wg.v4.hosts())}/{wg.v4.max_prefixlen}")
-    v6 = ip_interface(f"{next(wg.v6.hosts())}/{wg.v6.max_prefixlen}")
+    v4 = IPv4Interface(f"{next(wg.v4.hosts())}/{wg.v4.max_prefixlen}")
+    v6 = IPv6Interface(f"{next(wg.v6.hosts())}/{wg.v6.max_prefixlen}")
 
     if not _SRV_KEY.exists():
         pk = check_output(("wg", "genkey"), text=True).rstrip()
@@ -98,8 +100,8 @@ def _ip_gen(
             n4 = hashed % wg_v4.num_addresses
             n6 = hashed % wg_v6.num_addresses
             while True:
-                v4 = ip_interface(f"{wg_v4[n4]}/{wg_v4.max_prefixlen}")
-                v6 = ip_interface(f"{wg_v6[n6]}/{wg_v6.max_prefixlen}")
+                v4 = IPv4Interface(f"{wg_v4[n4]}/{wg_v4.max_prefixlen}")
+                v6 = IPv6Interface(f"{wg_v6[n6]}/{wg_v6.max_prefixlen}")
 
                 if v4 in seen:
                     n4 = (n4 + 1) % wg_v4.num_addresses
@@ -131,7 +133,8 @@ def _ip_gen(
 def clients(networks: Networks) -> Iterator[_Client]:
     _CLIENT_KEYS.mkdir(parents=True, exist_ok=True)
 
-    for peer, (v4, v6) in zip(WG_PEERS, _ip_gen(WG_PEERS, networks=networks)):
+    wg_peers = sorted(settings().wireguard.peers, key=strxfrm)
+    for peer, (v4, v6) in zip(wg_peers, _ip_gen(wg_peers, networks=networks)):
         key_p, psk_p = _CLIENT_KEYS / f"{peer}.key", _CLIENT_KEYS / f"{peer}.psk"
 
         if key_p.exists():
@@ -182,12 +185,12 @@ def gen_wg(networks: Networks) -> None:
         "WG_NETWORK_V6": stack.v6,
         "TOR_NETWORK_V4": networks.tor.v4,
         "TOR_NETWORK_V6": networks.tor.v6,
-        "LAN_NETWORK_V4": networks.lan.v4,
-        "LAN_NETWORK_V6": networks.lan.v6,
+        "TRUSTED_NETWORK_V4": networks.trusted.v4,
+        "TRUSTED_NETWORK_V6": networks.trusted.v6,
         "GUEST_NETWORK_V4": networks.guest.v4,
         "GUEST_NETWORK_V6": networks.guest.v6,
-        "WG_SERVER_NAME": WG_SERVER_NAME,
-        "WG_PORT": WG_PORT,
+        "WG_SERVER_NAME": settings().wireguard.server_name,
+        "WG_PORT": settings().port_bindings.wireguard,
     }
 
     for client in clients(networks):
@@ -222,7 +225,7 @@ def wg_env(networks: Networks) -> Mapping[str, Any]:
     )
     env = {
         "SERVER_PRIVATE_KEY": srv.private_key,
-        "PORT": WG_PORT,
+        "PORT": settings().port_bindings.wireguard,
         "PEERS": peers,
     }
     return env

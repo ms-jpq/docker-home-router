@@ -11,7 +11,7 @@ services:
       - TZ
       ## Required
       - WAN_IF=# <WAN interface name>
-      - LAN_IF=# <LAN interface name>
+      - TRUSTED_IF=# <TRUSTED interface name>
 
       ## Recommended
       - GUEST_IF=# <Guest interface name>

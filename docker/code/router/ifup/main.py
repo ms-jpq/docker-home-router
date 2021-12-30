@@ -4,8 +4,8 @@ from typing import AbstractSet, MutableSet
 
 from std2.ipaddress import LINK_LOCAL_V6, IPInterface, IPNetwork
 
-from ..consts import GUEST_IF, LAN_IF
 from ..ip import Addrs, addr_show, ipv6_enabled
+from ..options.parser import settings
 from ..subnets import load_networks
 
 
@@ -42,13 +42,13 @@ def main() -> None:
     addrs = addr_show()
     if_up(
         addrs,
-        interface=LAN_IF,
-        networks={networks.lan.v4, networks.lan.v6},
+        interface=settings().interfaces.trusted,
+        networks={networks.trusted.v4, networks.trusted.v6},
     )
 
-    if GUEST_IF:
+    if guest_if := settings().interfaces.guest:
         if_up(
             addrs,
-            interface=GUEST_IF,
+            interface=guest_if,
             networks={networks.guest.v4, networks.guest.v6},
         )

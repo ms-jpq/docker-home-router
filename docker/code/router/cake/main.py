@@ -1,20 +1,22 @@
 from json import loads
 from subprocess import check_call, check_output
 
-from ..consts import TC_IFB, TC_RX, TC_TX, WAN_IF
+from ..options.parser import settings
+
+TC_IFB = f"ifb4{settings().interfaces.wan}"
 
 _RX_OPTS = (
     "ingress",
     "nat",
     "dual-dsthost",
-    *TC_RX,
+    *settings().traffic_control.receive,
 )
 
 _TX_OPTS = (
     "egress",
     "nat",
     "dual-srchost",
-    *TC_TX,
+    *settings().traffic_control.transmit,
 )
 
 
@@ -82,5 +84,5 @@ def _rx(wan_if: str) -> None:
 
 
 def main() -> None:
-    _tx(WAN_IF)
-    _rx(WAN_IF)
+    _tx(settings().interfaces.wan)
+    _rx(settings().interfaces.wan)

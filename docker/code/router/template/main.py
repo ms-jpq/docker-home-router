@@ -9,33 +9,10 @@ from typing import Any, Iterator, Mapping, cast
 from std2.ipaddress import LINK_LOCAL_V6, PRIVATE_V6, IPAddress, IPNetwork
 from std2.pathlib import walk
 
-from ..consts import (
-    DATA,
-    DHCP_LEASE_TIME,
-    DNS_SEC,
-    DNS_SERVERS,
-    EXPOSE_STATS,
-    GUEST_DOMAIN,
-    GUEST_IF,
-    IPV6_PD,
-    LAN_DOMAIN,
-    LAN_IF,
-    LOCAL_TTL,
-    PRIVATE_ADDRS,
-    RUN,
-    SERVER_NAME,
-    SQUID_PORT,
-    STATS_PORT,
-    TEMPLATES,
-    TOR_PORT,
-    USER,
-    WAN_IF,
-    WG_DOMAIN,
-    WG_IF,
-    WG_PORT,
-)
+from ..consts import DATA, PRIVATE_ADDRS, RUN, SERVER_NAME, TEMPLATES, USER
+from ..forwards import dhcp_fixed, forwarded_ports
 from ..ip import ipv6_enabled
-from ..port_fwd import dhcp_fixed, forwarded_ports
+from ..options.parser import settings
 from ..records import wg_records
 from ..render import j2_build, j2_render
 from ..subnets import calculate_loopback, calculate_networks, load_networks
@@ -48,7 +25,7 @@ _KEY = _UNBOUND / "tls.key"
 
 
 def _resolv_addrs() -> Iterator[IPAddress]:
-    for srv in DNS_SERVERS:
+    for srv in settings().dns.upstream_servers:
         try:
             ip = ip_address(srv)
         except ValueError:
@@ -68,55 +45,46 @@ def _resolv_addrs() -> Iterator[IPAddress]:
 
 
 def _env(networks: Networks) -> Mapping[str, Any]:
-    if not WAN_IF:
-        raise ValueError("WAN_IF - required")
-    elif not LAN_IF:
-        raise ValueError("LAN_IF - required")
-    elif not WG_IF:
-        raise ValueError("WG_IF - required")
-    else:
-        fwds = tuple(forwarded_ports(networks))
-        loop_back = calculate_loopback()
-        env = {
-            "CPU_COUNT": cpu_count(),
-            "SERVER_NAME": SERVER_NAME,
-            "IPV6_ULA": PRIVATE_V6,
-            "PRIVATE_ADDRS": PRIVATE_ADDRS,
-            "USER": USER,
-            "WAN_IF": WAN_IF,
-            "LAN_IF": LAN_IF,
-            "GUEST_IF": GUEST_IF,
-            "DHCP_LEASE_TIME": DHCP_LEASE_TIME,
-            "WG_IF": WG_IF,
-            "IPV6_ENABLED": ipv6_enabled(),
-            "LINK_LOCAL_V6": LINK_LOCAL_V6,
-            "GUEST_NETWORK_V4": networks.guest.v4,
-            "GUEST_NETWORK_V6": networks.guest.v6,
-            "LAN_NETWORK_V4": networks.lan.v4,
-            "LAN_NETWORK_V6": networks.lan.v6,
-            "TOR_NETWORK_V4": networks.tor.v4,
-            "TOR_NETWORK_V6": networks.tor.v6,
-            "WG_NETWORK_V4": networks.wireguard.v4,
-            "WG_NETWORK_V6": networks.wireguard.v6,
-            "IPV6_PD": IPV6_PD,
-            "LOCAL_TTL": LOCAL_TTL,
-            "DNS_SEC": DNS_SEC,
-            "DNS_ADDRS": _resolv_addrs(),
-            "WG_RECORDS": wg_records(networks),
-            "SQUID_PORT": SQUID_PORT,
-            "TOR_PORT": TOR_PORT,
-            "WG_PORT": WG_PORT,
-            "STATS_PORT": STATS_PORT,
-            "EXPOSE_STATS": EXPOSE_STATS,
-            "LOOPBACK_LOCAL": loop_back,
-            "LAN_DOMAIN": LAN_DOMAIN,
-            "WG_DOMAIN": WG_DOMAIN,
-            "GUEST_DOMAIN": GUEST_DOMAIN,
-            "FORWARDED_PORTS": fwds,
-            "DHCP_FIXED": dhcp_fixed(fwds),
-            "WG": wg_env(networks),
-        }
-        return env
+    fwds = tuple(forwarded_ports(networks))
+    loop_back = calculate_loopback()
+    env = {
+        "CPU_COUNT": cpu_count(),
+        "DHCP_FIXED": dhcp_fixed(fwds),
+        "DHCP_LEASE_TIME": settings().dhcp.lease_time,
+        "DNS_ADDRS": _resolv_addrs(),
+        "FORWARDED_PORTS": fwds,
+        "GUEST_DOMAIN": settings().dns.local_domains.guest,
+        "GUEST_IF": settings().interfaces.guest,
+        "GUEST_NETWORK_V4": networks.guest.v4,
+        "GUEST_NETWORK_V6": networks.guest.v6,
+        "IPV6_ENABLED": ipv6_enabled(),
+        "IPV6_PD": settings().ip_addresses.ipv6.prefix_delegation,
+        "IPV6_ULA": PRIVATE_V6,
+        "LINK_LOCAL_V6": LINK_LOCAL_V6,
+        "LOCAL_TTL": settings().dns.local_ttl,
+        "LOOPBACK_LOCAL": loop_back,
+        "PRIVATE_ADDRS": PRIVATE_ADDRS,
+        "SERVER_NAME": SERVER_NAME,
+        "SQUID_PORT": settings().port_bindings.squid,
+        "STATS_PORT": settings().port_bindings.statistics,
+        "TOR_NETWORK_V4": networks.tor.v4,
+        "TOR_NETWORK_V6": networks.tor.v6,
+        "TOR_PORT": settings().port_bindings.tor,
+        "TRUSTED_DOMAIN": settings().dns.local_domains.trusted,
+        "TRUSTED_IF": settings().interfaces.trusted,
+        "TRUSTED_NETWORK_V4": networks.trusted.v4,
+        "TRUSTED_NETWORK_V6": networks.trusted.v6,
+        "USER": USER,
+        "WAN_IF": settings().interfaces.wan,
+        "WG": wg_env(networks),
+        "WG_DOMAIN": settings().dns.local_domains.wireguard,
+        "WG_IF": settings().interfaces.wireguard,
+        "WG_NETWORK_V4": networks.wireguard.v4,
+        "WG_NETWORK_V6": networks.wireguard.v6,
+        "WG_PORT": settings().port_bindings.wireguard,
+        "WG_RECORDS": wg_records(networks),
+    }
+    return env
 
 
 def _gen_keys(networks: Networks) -> None:
@@ -127,8 +95,8 @@ def _gen_keys(networks: Networks) -> None:
             for network in (
                 networks.guest.v4,
                 networks.guest.v6,
-                networks.lan.v4,
-                networks.lan.v6,
+                networks.trusted.v4,
+                networks.trusted.v6,
                 networks.wireguard.v4,
                 networks.wireguard.v6,
             )
@@ -149,7 +117,7 @@ def _gen_keys(networks: Networks) -> None:
                 "-keyout",
                 _KEY,
                 "-subj",
-                f"/CN={SERVER_NAME}.{LAN_DOMAIN}",
+                f"/CN={SERVER_NAME}.{settings().dns.local_domains.trusted}",
                 "-addext",
                 f"subjectAltName={','.join(san)}",
             )

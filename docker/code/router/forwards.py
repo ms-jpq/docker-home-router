@@ -9,9 +9,10 @@ from std2.locale import pathsort_key
 from std2.pickle.decoder import new_decoder
 from yaml import safe_load
 
-from .consts import PORT_FWD, SERVER_NAME
+from .consts import SERVER_NAME
 from .leases import leases
-from .types import DualStack, Forwards, FWDs, Networks
+from .options.types import PortForward, PortForwards
+from .types import DualStack,  Networks
 
 
 @dataclass(frozen=True)
@@ -41,8 +42,8 @@ def _leased(networks: Networks) -> MutableMapping[str, MutableSet[IPAddress]]:
         (
             next(networks.guest.v4.hosts()),
             next(networks.guest.v6.hosts()),
-            next(networks.lan.v4.hosts()),
-            next(networks.lan.v6.hosts()),
+            next(networks.trusted.v4.hosts()),
+            next(networks.trusted.v6.hosts()),
         ),
     ):
         addrs.add(addr)
@@ -103,7 +104,7 @@ def forwarded_ports(networks: Networks) -> Iterator[Forwarded]:
                 yield spec
 
     yield from cont(networks.guest, forwards=forwards.guest)
-    yield from cont(networks.lan, forwards=forwards.lan)
+    yield from cont(networks.trusted, forwards=forwards.lan)
 
 
 def dhcp_fixed(fwds: Sequence[Forwarded]) -> Iterator[Forwarded]:

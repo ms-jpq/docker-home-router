@@ -3,9 +3,9 @@
     "v4": "{{ GUEST_NETWORK_V4 }}",
     "v6": "{{ GUEST_NETWORK_V6 }}"
   },
-  "lan": {
-    "v4": "{{ LAN_NETWORK_V4 }}",
-    "v6": "{{ LAN_NETWORK_V6 }}"
+  "trusted": {
+    "v4": "{{ TRUSTED_NETWORK_V4 }}",
+    "v6": "{{ TRUSTED_NETWORK_V6 }}"
   },
   "tor": {
     "v4": "{{ TOR_NETWORK_V4 }}",

@@ -9,23 +9,15 @@ from typing import AbstractSet, Iterable, Iterator, Optional
 from std2.ipaddress import LOOPBACK_V4, PRIVATE_V4, IPInterface
 from std2.pickle.decoder import new_decoder
 
-from .consts import (
-    IF_EXCLUSIONS,
-    IP4_EXCLUSION,
-    IP4_PREFIX,
-    IP6_ULA_GLOBAL,
-    LOOPBACK_EXCLUSION,
-    NETWORKS_JSON,
-    TOR_IP4_PREFIX,
-    WAN_IF,
-)
+from .consts import NETWORKS_JSON
 from .ip import addr_show
+from .options.parser import settings
 from .types import DualStack, Networks
 
 
 @dataclass(frozen=True)
 class _V4Stack:
-    lan: IPv4Network
+    trusted: IPv4Network
     wg: IPv4Network
     tor: IPv4Network
     guest: IPv4Network
@@ -33,7 +25,7 @@ class _V4Stack:
 
 @dataclass(frozen=True)
 class _V6Stack:
-    lan: IPv6Network
+    trusted: IPv6Network
     wg: IPv6Network
     tor: IPv6Network
     guest: IPv6Network
@@ -80,16 +72,22 @@ def _v4(
     if_exclusions: AbstractSet[str], exclusions: AbstractSet[IPv4Network]
 ) -> _V4Stack:
     nono = chain(exclusions, _existing(if_exclusions))
-    lan, wg, tor, guest = _pick_private(
-        nono, prefixes=(IP4_PREFIX, IP4_PREFIX, TOR_IP4_PREFIX, IP4_PREFIX)
+    trusted, wg, tor, guest = _pick_private(
+        nono,
+        prefixes=(
+            settings().ip_addresses.ipv4.managed_prefix_len,
+            settings().ip_addresses.ipv4.managed_prefix_len,
+            settings().ip_addresses.ipv4.tor_prefix_len,
+            settings().ip_addresses.ipv4.managed_prefix_len,
+        ),
     )
-    stack = _V4Stack(lan=lan, wg=wg, tor=tor, guest=guest)
+    stack = _V4Stack(trusted=trusted, wg=wg, tor=tor, guest=guest)
     return stack
 
 
 def _gen_prefix() -> str:
     for addr in addr_show():
-        if addr.ifname == WAN_IF:
+        if addr.ifname == settings().interfaces.wan:
             if addr.address:
                 hashed = int(sha256(addr.address.encode()).hexdigest(), 16)
                 integer = hashed % (2 ** 40 - 1)
@@ -103,17 +101,21 @@ def _gen_prefix() -> str:
 def _v6(prefix: Optional[str]) -> _V6Stack:
     org_prefix = prefix or _gen_prefix()
     org = IPv6Network(f"{org_prefix}::/48")
-    lan, wg, tor, guest = islice(org.subnets(new_prefix=64), 4)
+    trusted, wg, tor, guest = islice(org.subnets(new_prefix=64), 4)
 
-    stack = _V6Stack(lan=lan, wg=wg, tor=tor, guest=guest)
+    stack = _V6Stack(trusted=trusted, wg=wg, tor=tor, guest=guest)
     return stack
 
 
 def calculate_networks() -> Networks:
-    patterns = {WAN_IF, *IF_EXCLUSIONS}
-    v4, v6 = _v4(patterns, exclusions=IP4_EXCLUSION), _v6(IP6_ULA_GLOBAL)
+    patterns = {settings().interfaces.wan, *settings().interfaces.unmanaged}
+    v4 = _v4(
+        patterns, exclusions=settings().ip_addresses.ipv4.managed_network_exclusions
+    )
+    v6 = _v6(settings().ip_addresses.ipv6.ula_global_prefix)
+
     networks = Networks(
-        lan=DualStack(v4=v4.lan, v6=v6.lan),
+        trusted=DualStack(v4=v4.trusted, v6=v6.trusted),
         wireguard=DualStack(v4=v4.wg, v6=v6.wg),
         tor=DualStack(v4=v4.tor, v6=v6.tor),
         guest=DualStack(v4=v4.guest, v6=v6.guest),
@@ -123,7 +125,10 @@ def calculate_networks() -> Networks:
 
 def calculate_loopback() -> IPv4Address:
     for ip in LOOPBACK_V4.hosts():
-        if all(ip not in network for network in LOOPBACK_EXCLUSION):
+        if all(
+            ip not in network
+            for network in settings().ip_addresses.ipv4.loopback_exclusions
+        ):
             return ip
     else:
         raise ValueError()
