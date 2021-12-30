@@ -3,6 +3,7 @@ from multiprocessing import cpu_count
 from shutil import copystat
 from socket import getaddrinfo
 from subprocess import check_call
+from sys import stderr
 from typing import Any, Iterator, Mapping, cast
 
 from std2.ipaddress import LINK_LOCAL_V6, PRIVATE_V6, IPAddress, IPNetwork
@@ -46,15 +47,15 @@ _PEM = _UNBOUND / "tls.pem"
 _KEY = _UNBOUND / "tls.key"
 
 
-def _dns_addrs() -> Iterator[IPAddress]:
-    for srv in (s.strip() for s in DNS_SERVERS):
+def _resolv_addrs() -> Iterator[IPAddress]:
+    for srv in DNS_SERVERS:
         try:
             ip = ip_address(srv)
         except ValueError:
             try:
                 addr_infos = getaddrinfo(srv, "domain")
-            except Exception:
-                pass
+            except Exception as e:
+                print(e, file=stderr)
             else:
                 for _, _, _, _, info in addr_infos:
                     addr, *_ = info
@@ -62,6 +63,8 @@ def _dns_addrs() -> Iterator[IPAddress]:
                     yield ip
         else:
             yield ip
+    else:
+        raise RuntimeError("NO DNS SERVERS")
 
 
 def _env(networks: Networks) -> Mapping[str, Any]:
@@ -98,7 +101,7 @@ def _env(networks: Networks) -> Mapping[str, Any]:
             "IPV6_PD": IPV6_PD,
             "LOCAL_TTL": LOCAL_TTL,
             "DNS_SEC": DNS_SEC,
-            "DNS_ADDRS": tuple(_dns_addrs()),
+            "DNS_ADDRS": _resolv_addrs(),
             "WG_RECORDS": wg_records(networks),
             "SQUID_PORT": SQUID_PORT,
             "TOR_PORT": TOR_PORT,

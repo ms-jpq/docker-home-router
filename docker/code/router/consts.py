@@ -99,7 +99,9 @@ DHCP_LEASE_TIME = clamp(1, int(environ["DHCP_LEASE_TIME"]), 24 * 7)
 LOCAL_TTL = max(0, int(environ["LOCAL_TTL"]))
 
 DNS_SEC = bool(int(environ["DNS_SEC"]))
-DNS_SERVERS = frozenset(split(environ["DNS_SERVERS"], sep=_SEP, esc=_ESC))
+DNS_SERVERS = frozenset(
+    s.strip() for s in split(environ["DNS_SERVERS"], sep=_SEP, esc=_ESC)
+)
 
 LAN_DOMAIN = environ["LAN_DOMAIN"].encode("idna").decode()
 WG_DOMAIN = environ["WG_DOMAIN"].encode("idna").decode()
