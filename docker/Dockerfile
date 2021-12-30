@@ -55,73 +55,20 @@ RUN useradd --user-group --shell=/usr/sbin/nologin -- "$USER" && \
 # 853   TCP     -> DNS-TLS
 # 5353  UDP     -> Bonjour
 
-### Configurable
-# 8888  TCP     -> HTTP - Statistics
-# 9060  TCP     -> TOR
-# 9080  TCP     -> Squid
 # 51820 UDP     -> WireGuard
+# 8080  TCP     -> HTTP alt
+# 3128  TCP     -> Squid
+# 1080  TCP     -> Tor
 EXPOSE 53/tcp 53/udp \
        67/udp \
        123/udp \
+       547/udp \
        853/tcp \
        5353/udp \
-       8888/tcp \
-       9060/tcp \
-       9080/tcp \
-       51820/udp
-
-
-# WAN_IF, LAN_IF           -> [REQUIRED] Interface names: assigned different IP address space
-# GUEST_IF                 -> see above, but not required
-# WG_IF                    -> Name for wireguard interface
-# IF_EXCLUSIONS            -> ',' delimited : For interfaces with these glob patterns, their IPv4 networks will be excluded from subnet calculations
-
-# LOOPBACK_EXCLUSION       -> ',' delimited : IPv4 loopback addresses excluded from assignment
-# IP6_ULA_GLOBAL           -> Globally unique 40 bit prefix (in HEX)
-# IP4_EXCLUSION            -> ',' delimited : Networks to exclude from assignment in 'x.x.x.x/mask' form
-# IP4_PREFIX               -> ',' delimited : Prefix of IPv4 networks
-# IPV6_PD                  -> assign publicly routable /64 to devices
-
-# DHCP_LEASE_TIME          -> DHCP lease duration in hours, min is 2
-# DNS_SERVERS              -> Upstream DNS servers: default is a recursive resolver @ loopback
-# LAN_DOMAIN               -> Domain name of local networks
-# WG_DOMAIN                -> Domain name of wg networks
-# GUEST_DOMAIN             -> Domain name of guest networks
-
-# WG_SERVER_NAME                -> IP / domain name of wireguard server location
-# WG_PEERS                 -> ',' delimited : List of peers to create for wireguard
-# WG_PORT                  -> Port for wireguard server
-
-# STATS_PORT               -> Port for statistics
-# TOR_PORT                 -> Port for TOR portal
-# SQUID_PORT               -> Port for Squid proxy
-
-ENV WAN_IF= \
-    LAN_IF= \
-    WG_IF=wg0 \
-    GUEST_IF= \
-    TC_RX=besteffort,wash,rtt,10ms \
-    TC_TX=diffserv3,wash,rtt,50ms,autorate-ingress \
-    IF_EXCLUSIONS=docker* \
-    LOOPBACK_EXCLUSION=127.0.0.0/16 \
-    IP6_ULA_GLOBAL= \
-    IP4_EXCLUSION=10.0.0.0/20,192.168.0.0/20,172.16.0.0/12 \
-    IP4_PREFIX=24 \
-    DHCP_LEASE_TIME=2 \
-    IPV6_PD=0 \
-    LOCAL_TTL=1 \
-    DNS_SEC=1 \
-    DNS_SERVERS= \
-    LAN_DOMAIN=lan \
-    GUEST_DOMAIN=gan \
-    WG_DOMAIN=wan \
-    WG_SERVER_NAME= \
-    WG_PEERS="me,my wife,my wife's boyfriend" \
-    WG_PORT=51820 \
-    EXPOSE_STATS=1 \
-    STATS_PORT=8888 \
-    TOR_PORT=9060 \
-    SQUID_PORT=9080
+       51820/udp \
+       8080/tcp \
+       3128/tcp \
+       1080/tcp
 
 
 VOLUME /config \

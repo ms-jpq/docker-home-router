@@ -1,0 +1,64 @@
+---
+interfaces:
+  wan:
+  trusted:
+  wireguard: wg0
+  guest: null
+  unmanaged:
+    - "docker*"
+
+ip_addresses:
+  ipv4:
+    loopback_exclusions:
+      - 127.0.0.0/16
+    managed_network_exclusions:
+      - 10.0.0.0/20
+      - 192.168.0.0/20
+      - 172.16.0.0/12
+    managed_prefix_len: 24
+    tor_prefix_len: 16
+  ipv6:
+    ula_global_prefix: null
+    prefix_delegation: false
+
+dhcp:
+  lease_time: 1
+dns:
+  local_domains:
+    trusted: lan
+    wireguard: wg
+    guest: gan
+  local_ttl: 1
+  upstream_servers: []
+
+wireguard:
+  server_name: ""
+  peers: []
+
+traffic_control:
+  transmit:
+    - diffserv3
+    - wash
+    - rtt
+    - 50ms
+    - autorate-ingress
+  receive:
+    - besteffort
+    - wash
+    - rtt
+    - 10ms
+
+port_bindings:
+  wireguard: 51820
+  squid: 3128
+  tor: 1080
+  statistics: 8080
+
+port_forwards:
+  trusted: {}
+  wireguard: {}
+  guest: {}
+
+guest_accessible:
+  trusted: []
+  wireguard: []

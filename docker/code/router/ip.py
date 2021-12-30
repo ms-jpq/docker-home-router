@@ -4,10 +4,11 @@ from json import dumps, loads
 from subprocess import check_output
 from typing import Optional, Sequence
 
-from std2.ipaddress import LINK_LOCAL_V6, IPAddress
+from std2.ipaddress import IPAddress
 from std2.pickle.decoder import new_decoder
 
-from .consts import IPV6_STAT, WAN_IF
+from .consts import IPV6_JSON
+from .options.parser import settings
 
 
 @dataclass(frozen=True)
@@ -52,17 +53,17 @@ def link_show() -> Links:
 def ipv6_enabled() -> bool:
     def cont() -> bool:
         for addr in addr_show():
-            if addr.ifname == WAN_IF:
+            if addr.ifname == settings().interfaces.wan:
                 for info in addr.addr_info:
                     if isinstance(info.local, IPv6Address):
                         return True
         else:
             return False
 
-    if IPV6_STAT.exists():
-        val: bool = loads(IPV6_STAT.read_text())
+    if IPV6_JSON.exists():
+        val: bool = loads(IPV6_JSON.read_text())
         return val
     else:
         val = cont()
-        IPV6_STAT.write_text(dumps(val))
+        IPV6_JSON.write_text(dumps(val))
         return val

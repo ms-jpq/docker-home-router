@@ -8,35 +8,33 @@ from typing import Sequence, Tuple
 
 from std2.ipaddress import IPAddress
 
-from ..consts import (
-    GUEST_DOMAIN,
-    LAN_DOMAIN,
-    LOCAL_TTL,
-    SHORT_DURATION,
-    UNBOUND_CTL,
-    encode_dns,
-)
+from ..consts import SHORT_DURATION, UNBOUND_CTL
+from ..options.parser import encode_dns_name, settings
 from ..subnets import load_networks
 
 _ZONE_TYPE = "redirect"
 _LOCAL_ZONE = Template("$HOSTNAME.$DOMAIN.")
-_LOCAL_DATA_PTR = Template(f"$RDDA. {LOCAL_TTL} IN PTR $HOSTNAME.$DOMAIN.")
-_LOCAL_DATA_A = Template(f"$HOSTNAME.$DOMAIN. {LOCAL_TTL} IN A $ADDR")
-_LOCAL_DATA_AAAA = Template(f"$HOSTNAME.$DOMAIN. {LOCAL_TTL} IN AAAA $ADDR")
+_LOCAL_DATA_PTR = Template(
+    f"$RDDA. {settings().dns.local_ttl} IN PTR $HOSTNAME.$DOMAIN."
+)
+_LOCAL_DATA_A = Template(f"$HOSTNAME.$DOMAIN. {settings().dns.local_ttl} IN A $ADDR")
+_LOCAL_DATA_AAAA = Template(
+    f"$HOSTNAME.$DOMAIN. {settings().dns.local_ttl} IN AAAA $ADDR"
+)
 
 
 def _domain(addr: IPAddress) -> str:
     networks = load_networks()
-    if addr in networks.lan.v4 or addr in networks.lan.v6:
-        return LAN_DOMAIN
+    if addr in networks.trusted.v4 or addr in networks.trusted.v6:
+        return settings().dns.local_domains.trusted
     elif addr in networks.guest.v4 or addr in networks.guest.v6:
-        return GUEST_DOMAIN
+        return settings().dns.local_domains.guest
     else:
         assert False
 
 
 def _parse(hostname: str, addr: IPAddress) -> Tuple[str, str, str]:
-    hostname = encode_dns(hostname)
+    hostname = encode_dns_name(hostname)
     domain = _domain(addr)
     zone = _LOCAL_ZONE.substitute(DOMAIN=domain, HOSTNAME=hostname)
     ptr = _LOCAL_DATA_PTR.substitute(

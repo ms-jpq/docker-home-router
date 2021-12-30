@@ -9,33 +9,7 @@ services:
       - NET_ADMIN
     environment:
       - TZ
-      ## Required
-      - WAN_IF=# <WAN interface name>
-      - LAN_IF=# <LAN interface name>
-
-      ## Recommended
-      - GUEST_IF=# <Guest interface name>
-      - DNS_SERVERS=# Set this to a pihole or something
-      - WG_SERVER_NAME=# Server name / IP from WAN side, used for VPN clients
-      - WG_PEERS=# ',' seperated list of VPN client names
-
-      ## Niche
-      # -> Go read https://github.com/ms-jpq/docker-home-router/tree/whale/docker/Dockerfile
-      ## I made lots of comments at the bottom
     network_mode: host
     volumes:
-      - data:/data
-
-      # Optional
-      # Your own firewall rules, in *.conf files
-      # See https://github.com/ms-jpq/docker-home-router/tree/whale/install/nftables/0-example.conf
-      - ./nftables:/config/nftables
-
-      # Optional
-      # Your own port forward rules, if any
-      # See https://github.com/ms-jpq/docker-home-router/tree/whale/install/port_fwd/0-example.yml
-      - ./port_fwd:/config/port_fwd
-
-volumes:
-  # This stores DHCP leases and Wireguard keys
-  data: {}
+      - /data
+      - ./config:/config:ro

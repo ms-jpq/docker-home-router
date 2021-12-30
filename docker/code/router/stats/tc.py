@@ -1,7 +1,9 @@
 from os import linesep
 from subprocess import check_output
 
-from ..consts import SHORT_DURATION, TC_IFB, WAN_IF
+from ..cake.main import TC_IFB
+from ..consts import SHORT_DURATION
+from ..options.parser import settings
 
 
 def _feed(if_name: str) -> str:
@@ -14,5 +16,5 @@ def _feed(if_name: str) -> str:
 
 
 def feed() -> str:
-    raw1, raw2 = _feed(WAN_IF), _feed(TC_IFB)
+    raw1, raw2 = _feed(settings().interfaces.wan), _feed(TC_IFB)
     return "-- TX --" + linesep + raw1 + linesep * 3 + "-- RX --" + linesep + raw2
