@@ -5,9 +5,8 @@ set -o pipefail
 
 
 ARGS=(
-  --conf-dir /srv/run/dnsmasq/conf.d
+  --conf-dir /srv/run/dnsmasq/dns/conf.d
   )
 
 
-s6-svwait -U /var/run/s6/services/unbound
 exec dnsmasq "${ARGS[@]}"

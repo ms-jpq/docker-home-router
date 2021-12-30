@@ -5,16 +5,14 @@ from socket import getaddrinfo
 from subprocess import check_call
 from typing import Any, Iterator, Mapping, cast
 
-from std2.ipaddress import LINK_LOCAL_V6, PRIVATE_V6, IPNetwork
+from std2.ipaddress import LINK_LOCAL_V6, PRIVATE_V6, IPAddress, IPNetwork
 from std2.pathlib import walk
 
 from ..consts import (
     DATA,
     DHCP_LEASE_TIME,
-    DNS_FALLBACK,
     DNS_SEC,
     DNS_SERVERS,
-    DNS_TLS,
     EXPOSE_STATS,
     GUEST_DOMAIN,
     GUEST_IF,
@@ -48,26 +46,22 @@ _PEM = _UNBOUND / "tls.pem"
 _KEY = _UNBOUND / "tls.key"
 
 
-def _dns_addrs() -> Iterator[str]:
-    port = "domain-s" if DNS_TLS else "domain"
+def _dns_addrs() -> Iterator[IPAddress]:
     for srv in (s.strip() for s in DNS_SERVERS):
         try:
             ip = ip_address(srv)
         except ValueError:
             try:
-                addr_infos = getaddrinfo(srv, port)
+                addr_infos = getaddrinfo(srv, "domain")
             except Exception:
                 pass
             else:
                 for _, _, _, _, info in addr_infos:
                     addr, *_ = info
                     ip = ip_address(addr)
-                    if DNS_TLS:
-                        yield f"{ip}#{srv}"
-                    else:
-                        yield str(ip)
+                    yield ip
         else:
-            yield str(ip)
+            yield ip
 
 
 def _env(networks: Networks) -> Mapping[str, Any]:
@@ -104,8 +98,6 @@ def _env(networks: Networks) -> Mapping[str, Any]:
             "IPV6_PD": IPV6_PD,
             "LOCAL_TTL": LOCAL_TTL,
             "DNS_SEC": DNS_SEC,
-            "DNS_TLS": DNS_TLS,
-            "DNS_FALLBACK": DNS_FALLBACK,
             "DNS_ADDRS": tuple(_dns_addrs()),
             "WG_RECORDS": wg_records(networks),
             "SQUID_PORT": SQUID_PORT,

@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+set -eu
+set -o pipefail
+
+
+ARGS=(
+  --conf-dir /srv/run/dnsmasq/dhcp/conf.d
+  )
+
+
+s6-svwait -U /var/run/s6/services/unbound
+exec dnsmasq "${ARGS[@]}"

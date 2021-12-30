@@ -1,4 +1,4 @@
-FROM ubuntu:focal
+FROM ubuntu:jammy
 
 
 ARG S6="https://github.com/just-containers/s6-overlay/releases/download/v2.2.0.3/s6-overlay-amd64-installer"
@@ -111,8 +111,6 @@ ENV WAN_IF= \
     IPV6_PD=0 \
     LOCAL_TTL=1 \
     DNS_SEC=1 \
-    DNS_TLS=0 \
-    DNS_FALLBACK=1 \
     DNS_SERVERS= \
     LAN_DOMAIN=lan \
     GUEST_DOMAIN=gan \
