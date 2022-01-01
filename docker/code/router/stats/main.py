@@ -1,12 +1,13 @@
 from enum import Enum
 from http import HTTPStatus
-from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from http.server import BaseHTTPRequestHandler
 from os import sep
 from pathlib import Path, PurePosixPath
 from typing import AbstractSet, Any, Callable, Mapping
 from urllib.parse import unquote, urlsplit
 
 from py_dev.srv.static import build_j2, get
+from std2.http.server import create_server
 from std2.pathlib import is_relative_to
 from std2.types import never
 
@@ -132,5 +133,6 @@ def main() -> None:
             except BrokenPipeError:
                 pass
 
-    srv = ThreadingHTTPServer(("", settings().port_bindings.statistics), Handler)
-    srv.serve_forever()
+    srv = create_server(("", settings().port_bindings.statistics), Handler)
+    with srv:
+        srv.serve_forever()
