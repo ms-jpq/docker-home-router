@@ -93,8 +93,8 @@ class PortForwards:
 
 @dataclass(frozen=True)
 class GuestAccessible:
-    trusted: AbstractSet[str]
-    wireguard: AbstractSet[str]
+    trusted: Mapping[str, AbstractSet[int]]
+    wireguard: Mapping[str, AbstractSet[int]]
 
 
 @dataclass(frozen=True)

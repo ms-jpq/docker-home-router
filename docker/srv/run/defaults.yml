@@ -60,5 +60,5 @@ port_forwards:
   guest: {}
 
 guest_accessible:
-  trusted: []
-  wireguard: []
+  trusted: {}
+  wireguard: {}

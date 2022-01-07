@@ -99,8 +99,8 @@ def settings() -> Settings:
         port_bindings=raw.port_bindings,
         port_forwards=raw.port_forwards,
         guest_accessible=GuestAccessible(
-            trusted=set(),
-            wireguard=set(),
+            trusted=raw.guest_accessible.trusted,
+            wireguard=raw.guest_accessible.wireguard,
         ),
     )
     return settings

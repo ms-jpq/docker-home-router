@@ -17,7 +17,7 @@ from std2.ipaddress import IPAddress
 from .consts import SERVER_NAME
 from .leases import leases
 from .options.parser import settings
-from .options.types import PortForward
+from .options.types import PortForward, Protocol
 from .types import DualStack, Networks
 
 
@@ -30,10 +30,17 @@ class _Addrs:
 @dataclass(frozen=True)
 class Forwarded:
     TO_NAME: str
-    PROTO: str
+    PROTO: Protocol
     FROM_PORT: int
     TO_PORT: int
     TO_ADDR: _Addrs
+
+
+@dataclass(frozen=True)
+class Available:
+    NAME: str
+    PROTO: Protocol
+    PORT: str
 
 
 def _leased(networks: Networks) -> MutableMapping[str, MutableSet[IPAddress]]:
@@ -91,7 +98,7 @@ def forwarded_ports(networks: Networks) -> Tuple[AbstractSet[Forwarded]]:
                 v4, v6 = _pick(leased, stack=stack, hostname=hostname)
                 spec = Forwarded(
                     TO_NAME=hostname,
-                    PROTO=fwd.proto.name,
+                    PROTO=fwd.proto,
                     FROM_PORT=fwd.from_port,
                     TO_PORT=fwd.to_port,
                     TO_ADDR=_Addrs(V4=v4, V6=v6),
