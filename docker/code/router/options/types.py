@@ -85,20 +85,20 @@ class Accessible:
 
 @dataclass(frozen=True)
 class PortForward(Accessible):
-    from_port: Optional[int]
+    from_port: Optional[int] = None
 
 
 @dataclass(frozen=True)
 class PortForwards:
-    trusted: Mapping[str, AbstractSet[PortForward]]
-    wireguard: Mapping[str, AbstractSet[PortForward]]
-    guest: Mapping[str, AbstractSet[PortForward]]
+    trusted: Mapping[str, Sequence[PortForward]]
+    wireguard: Mapping[str, Sequence[PortForward]]
+    guest: Mapping[str, Sequence[PortForward]]
 
 
 @dataclass(frozen=True)
 class GuestAccessible:
-    trusted: Mapping[str, AbstractSet[Accessible]]
-    wireguard: Mapping[str, AbstractSet[Accessible]]
+    trusted: Mapping[str, Sequence[Accessible]]
+    wireguard: Mapping[str, Sequence[Accessible]]
 
 
 @dataclass(frozen=True)

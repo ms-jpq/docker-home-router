@@ -8,6 +8,7 @@ from typing import (
     Mapping,
     MutableMapping,
     MutableSet,
+    Sequence,
     Tuple,
     cast,
 )
@@ -95,7 +96,7 @@ def forwarded_ports(
     leased = _leased(networks)
 
     def c1(
-        stack: DualStack, forwards: Mapping[str, AbstractSet[PortForward]]
+        stack: DualStack, forwards: Mapping[str, Sequence[PortForward]]
     ) -> Iterator[Forwarded]:
         for hostname, fws in forwards.items():
             for fwd in fws:
@@ -111,7 +112,7 @@ def forwarded_ports(
                     yield spec
 
     def c2(
-        stack: DualStack, available: Mapping[str, AbstractSet[Accessible]]
+        stack: DualStack, available: Mapping[str, Sequence[Accessible]]
     ) -> Iterator[Available]:
         for hostname, accessible in available.items():
             for acc in accessible:
