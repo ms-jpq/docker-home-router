@@ -11,9 +11,11 @@ ARGS=(
   )
 
 
-if [[ -f /config/nftables ]]
+RULES=(/config/nftables/*)
+
+if (( ${#RULES[@]} ))
 then
-  cp -r -- /config/nftables /srv/run/nftables/user
+  cp -r -- "${RULES[@]}" /srv/run/nftables/user/
 fi
 
 exec chown -R "$USER:$USER" -- "${ARGS[@]}"
