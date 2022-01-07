@@ -78,10 +78,14 @@ class Protocol(Enum):
 
 
 @dataclass(frozen=True)
-class PortForward:
+class Accessible:
     proto: Protocol
-    from_port: int
     to_port: int
+
+
+@dataclass(frozen=True)
+class PortForward(Accessible):
+    from_port: int
 
 
 @dataclass(frozen=True)
@@ -93,8 +97,8 @@ class PortForwards:
 
 @dataclass(frozen=True)
 class GuestAccessible:
-    trusted: Mapping[str, AbstractSet[int]]
-    wireguard: Mapping[str, AbstractSet[int]]
+    trusted: Mapping[str, AbstractSet[Accessible]]
+    wireguard: Mapping[str, AbstractSet[Accessible]]
 
 
 @dataclass(frozen=True)

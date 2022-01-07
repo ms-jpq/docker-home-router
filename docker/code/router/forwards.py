@@ -17,7 +17,7 @@ from std2.ipaddress import IPAddress
 from .consts import SERVER_NAME
 from .leases import leases
 from .options.parser import settings
-from .options.types import PortForward, Protocol
+from .options.types import Accessible, PortForward, Protocol
 from .types import DualStack, Networks
 
 
@@ -28,19 +28,21 @@ class _Addrs:
 
 
 @dataclass(frozen=True)
-class Forwarded:
-    TO_NAME: str
+class _Dest:
+    NAME: str
     PROTO: Protocol
-    FROM_PORT: int
-    TO_PORT: int
-    TO_ADDR: _Addrs
+    PORT: int
+    ADDR: _Addrs
 
 
 @dataclass(frozen=True)
-class Available:
-    NAME: str
-    PROTO: Protocol
-    PORT: str
+class Forwarded(_Dest):
+    FROM_PORT: int
+
+
+@dataclass(frozen=True)
+class Available(_Dest):
+    ...
 
 
 def _leased(networks: Networks) -> MutableMapping[str, MutableSet[IPAddress]]:
@@ -87,36 +89,56 @@ def _pick(
     return v4, v6
 
 
-def forwarded_ports(networks: Networks) -> Tuple[AbstractSet[Forwarded]]:
+def forwarded_ports(
+    networks: Networks,
+) -> Tuple[AbstractSet[Forwarded], AbstractSet[Available]]:
     leased = _leased(networks)
 
-    def cont(
+    def c1(
         stack: DualStack, forwards: Mapping[str, AbstractSet[PortForward]]
     ) -> Iterator[Forwarded]:
         for hostname, fws in forwards.items():
             for fwd in fws:
                 v4, v6 = _pick(leased, stack=stack, hostname=hostname)
                 spec = Forwarded(
-                    TO_NAME=hostname,
+                    NAME=hostname,
                     PROTO=fwd.proto,
                     FROM_PORT=fwd.from_port,
-                    TO_PORT=fwd.to_port,
-                    TO_ADDR=_Addrs(V4=v4, V6=v6),
+                    PORT=fwd.to_port,
+                    ADDR=_Addrs(V4=v4, V6=v6),
+                )
+                yield spec
+
+    def c2(
+        stack: DualStack, available: Mapping[str, AbstractSet[Accessible]]
+    ) -> Iterator[Available]:
+        for hostname, accessible in available.items():
+            for acc in accessible:
+                v4, v6 = _pick(leased, stack=stack, hostname=hostname)
+                spec = Available(
+                    NAME=hostname,
+                    PROTO=acc.proto,
+                    PORT=acc.to_port,
+                    ADDR=_Addrs(V4=v4, V6=v6),
                 )
                 yield spec
 
     fwd = {
-        *cont(networks.wireguard, forwards=settings().port_forwards.wireguard),
-        *cont(networks.trusted, forwards=settings().port_forwards.trusted),
-        *cont(networks.guest, forwards=settings().port_forwards.guest),
+        *c1(networks.wireguard, forwards=settings().port_forwards.wireguard),
+        *c1(networks.trusted, forwards=settings().port_forwards.trusted),
+        *c1(networks.guest, forwards=settings().port_forwards.guest),
     }
-    return (fwd,)
+    available = {
+        *c2(networks.wireguard, available=settings().guest_accessible.wireguard),
+        *c2(networks.trusted, available=settings().guest_accessible.trusted),
+    }
+    return fwd, available
 
 
 def dhcp_fixed(fwds: Iterable[Forwarded]) -> Iterator[Forwarded]:
     seen: MutableSet[str] = set()
     for fwd in fwds:
-        name = fwd.TO_NAME
+        name = fwd.NAME
         if name not in seen:
             seen.add(name)
             yield fwd
