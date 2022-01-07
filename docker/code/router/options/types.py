@@ -3,6 +3,8 @@ from enum import Enum, auto
 from ipaddress import IPv4Network
 from typing import AbstractSet, Mapping, Optional, Sequence
 
+from std2.ipaddress import IPAddress
+
 
 @dataclass(frozen=True)
 class Interfaces:
@@ -50,6 +52,7 @@ class DNS:
     local_domains: Domains
     local_ttl: int
     upstream_servers: AbstractSet[str]
+    records: Mapping[str, AbstractSet[IPAddress]]
 
 
 @dataclass(frozen=True)
