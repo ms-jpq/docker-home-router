@@ -6,7 +6,7 @@ from socket import getaddrinfo
 from subprocess import check_call
 from sys import stderr
 from textwrap import dedent
-from typing import Any, Iterator, Mapping, cast
+from typing import Any, Iterator, Mapping, MutableSet, cast
 
 from std2.ipaddress import LINK_LOCAL_V6, PRIVATE_V6, IPAddress, IPNetwork
 from std2.pathlib import walk
@@ -28,7 +28,7 @@ _KEY = _UNBOUND / "tls.key"
 
 def _resolv_addrs() -> Iterator[IPAddress]:
     srvs = settings().dns.upstream_servers
-    count = 0
+    seen: MutableSet[IPAddress] = set()
     for srv in srvs:
         try:
             ip = ip_address(srv)
@@ -51,13 +51,15 @@ def _resolv_addrs() -> Iterator[IPAddress]:
                     for _, _, _, _, info in addr_infos:
                         addr, *_ = info
                         ip = ip_address(addr)
-                        count += 1
-                        yield ip
+                        if ip not in seen:
+                            seen.add(ip)
+                            yield ip
         else:
-            count += 1
-            yield ip
+            if ip not in seen:
+                seen.add(ip)
+                yield ip
     else:
-        if not count:
+        if not seen:
             raise RuntimeError(f"NO DNS SERVERS -- {srvs}")
 
 
