@@ -79,13 +79,13 @@ class Protocol(Enum):
 
 @dataclass(frozen=True)
 class Accessible:
-    proto: Protocol
-    to_port: int
+    protocols: AbstractSet[Protocol]
+    port: int
 
 
 @dataclass(frozen=True)
 class PortForward(Accessible):
-    from_port: int
+    from_port: Optional[int]
 
 
 @dataclass(frozen=True)

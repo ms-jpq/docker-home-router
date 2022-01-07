@@ -5,13 +5,13 @@ from typing import AbstractSet, Tuple
 from std2.pickle.encoder import new_encoder
 
 from ..consts import SHORT_DURATION
-from ..forwards import Forwarded, forwarded_ports
+from ..forwards import Available, Forwarded, forwarded_ports
 from .subnets import load_networks
 
 
 def feed() -> str:
-    coder = new_encoder[Tuple[AbstractSet[Forwarded]],](
-        Tuple[AbstractSet[Forwarded]],
+    coder = new_encoder[Tuple[AbstractSet[Forwarded], AbstractSet[Available]]](
+        Tuple[AbstractSet[Forwarded], AbstractSet[Available]]
     )
     networks = load_networks()
     data = coder(forwarded_ports(networks))

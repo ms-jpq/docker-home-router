@@ -62,7 +62,7 @@ def _resolv_addrs() -> Iterator[IPAddress]:
 
 
 def _env(networks: Networks) -> Mapping[str, Any]:
-    fwds, *_ = forwarded_ports(networks)
+    fwds, avail = forwarded_ports(networks)
     loop_back = calculate_loopback()
     env = {
         "CPU_COUNT": cpu_count(),
@@ -70,6 +70,7 @@ def _env(networks: Networks) -> Mapping[str, Any]:
         "DHCP_LEASE_TIME": settings().dhcp.lease_time,
         "DNS_ADDRS": _resolv_addrs(),
         "FORWARDED_PORTS": fwds,
+        "GUEST_ACCESSIBLE": avail,
         "GUEST_DOMAIN": settings().dns.local_domains.guest,
         "GUEST_IF": settings().interfaces.guest,
         "GUEST_NETWORK_V4": networks.guest.v4,

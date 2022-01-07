@@ -99,29 +99,31 @@ def forwarded_ports(
     ) -> Iterator[Forwarded]:
         for hostname, fws in forwards.items():
             for fwd in fws:
-                v4, v6 = _pick(leased, stack=stack, hostname=hostname)
-                spec = Forwarded(
-                    NAME=hostname,
-                    PROTO=fwd.proto,
-                    FROM_PORT=fwd.from_port,
-                    PORT=fwd.to_port,
-                    ADDR=_Addrs(V4=v4, V6=v6),
-                )
-                yield spec
+                for proto in fwd.protocols:
+                    v4, v6 = _pick(leased, stack=stack, hostname=hostname)
+                    spec = Forwarded(
+                        NAME=hostname,
+                        PROTO=proto,
+                        FROM_PORT=fwd.from_port or fwd.port,
+                        PORT=fwd.port,
+                        ADDR=_Addrs(V4=v4, V6=v6),
+                    )
+                    yield spec
 
     def c2(
         stack: DualStack, available: Mapping[str, AbstractSet[Accessible]]
     ) -> Iterator[Available]:
         for hostname, accessible in available.items():
             for acc in accessible:
-                v4, v6 = _pick(leased, stack=stack, hostname=hostname)
-                spec = Available(
-                    NAME=hostname,
-                    PROTO=acc.proto,
-                    PORT=acc.to_port,
-                    ADDR=_Addrs(V4=v4, V6=v6),
-                )
-                yield spec
+                for proto in acc.protocols:
+                    v4, v6 = _pick(leased, stack=stack, hostname=hostname)
+                    spec = Available(
+                        NAME=hostname,
+                        PROTO=proto,
+                        PORT=acc.port,
+                        ADDR=_Addrs(V4=v4, V6=v6),
+                    )
+                    yield spec
 
     fwd = {
         *c1(networks.wireguard, forwards=settings().port_forwards.wireguard),
