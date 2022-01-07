@@ -15,7 +15,7 @@ _TMP = _UNBOUND / ".cache.txt"
 def _cached() -> Optional[bytes]:
     _CACHE.parent.mkdir(parents=True, exist_ok=True)
     if not _CACHE.exists():
-        return bytes()
+        return None
     else:
         mtime = _CACHE.stat().st_mtime
         mod = datetime.utcfromtimestamp(mtime)
@@ -27,9 +27,7 @@ def _cached() -> Optional[bytes]:
 
 
 def main() -> None:
-    cached = _cached()
-
-    if cached:
+    if cached := _cached():
         run(
             (UNBOUND_CTL, "load_cache"), input=cached, timeout=SHORT_DURATION
         ).check_returncode()

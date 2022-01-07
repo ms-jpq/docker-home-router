@@ -11,11 +11,11 @@ _SRV_CONF = RUN / "wireguard" / "server.conf"
 
 def _add_link() -> None:
     for link in link_show():
-        if link.ifname == settings().interfaces.wan:
+        if link.ifname == settings().interfaces.wireguard:
             break
     else:
         check_call(
-            ("ip", "link", "add", settings().interfaces.wan, "type", "wireguard")
+            ("ip", "link", "add", settings().interfaces.wireguard, "type", "wireguard")
         )
 
 
@@ -28,7 +28,7 @@ def _set_up() -> None:
             "multicast",
             "on",
             "dev",
-            settings().interfaces.wan,
+            settings().interfaces.wireguard,
         )
     )
     check_call(
@@ -38,7 +38,7 @@ def _set_up() -> None:
             "set",
             "up",
             "dev",
-            settings().interfaces.wan,
+            settings().interfaces.wireguard,
         )
     )
 
@@ -48,7 +48,7 @@ def _wg_up() -> None:
         (
             "wg",
             "setconf",
-            settings().interfaces.wan,
+            settings().interfaces.wireguard,
             _SRV_CONF,
         )
     )
@@ -60,7 +60,7 @@ def main() -> None:
     _add_link()
     if_up(
         addrs,
-        interface=settings().interfaces.wan,
+        interface=settings().interfaces.wireguard,
         networks={networks.wireguard.v4, networks.wireguard.v6},
     )
     _wg_up()
