@@ -44,9 +44,7 @@ COPY . /
 ENV USER=router
 RUN useradd --user-group --shell=/usr/sbin/nologin -- "$USER" && \
     pip3 install --upgrade --no-cache-dir -- /code && \
-    rm -rf -- /etc/dnsmasq* /code && \
-    unbound-anchor -a /var/tmp/unbound-root.key && exit 1 || exit 0
-
+    rm -rf -- /etc/dnsmasq* /code
 
 ### Well known
 # 53    TCP/UDP -> DNS
