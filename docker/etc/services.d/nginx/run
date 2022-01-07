@@ -10,4 +10,3 @@ ARGS=(
 
 
 exec s6-setuidgid "$USER" nginx "${ARGS[@]}"
-

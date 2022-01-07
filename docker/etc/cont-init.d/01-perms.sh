@@ -12,10 +12,12 @@ ARGS=(
 
 
 RULES=(/config/nftables/*)
+DEST=/srv/run/nftables/user/
 
 if (( ${#RULES[@]} ))
 then
-  cp -r -- "${RULES[@]}" /srv/run/nftables/user/
+  mkdir -p -- "$DEST"
+  cp -r -- "${RULES[@]}" "$DEST"
 fi
 
 exec chown -R "$USER:$USER" -- "${ARGS[@]}"
