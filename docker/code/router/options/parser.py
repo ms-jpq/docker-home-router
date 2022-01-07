@@ -90,6 +90,7 @@ def settings() -> Settings:
             ),
             local_ttl=raw.dns.local_ttl,
             upstream_servers={*map(encode_dns_name, raw.dns.upstream_servers)},
+            records=raw.dns.records,
         ),
         wireguard=WireGuard(
             server_name=encode_dns_name(raw.wireguard.server_name),

@@ -30,7 +30,13 @@ dns:
     guest: gan
   local_ttl: 1
   upstream_servers: []
-  records: {}
+  records:
+    local.host:
+      - 127.0.0.1
+      - ::1
+    localho.st:
+      - 127.0.0.1
+      - ::1
 
 wireguard:
   server_name: ""

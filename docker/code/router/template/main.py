@@ -1,4 +1,5 @@
-from ipaddress import ip_address
+from dataclasses import dataclass
+from ipaddress import IPv4Address, ip_address
 from multiprocessing import cpu_count
 from pprint import pformat
 from shutil import copystat, get_terminal_size
@@ -24,6 +25,13 @@ from ..wg import gen_wg, wg_env
 _UNBOUND = DATA / "unbound"
 _PEM = _UNBOUND / "tls.pem"
 _KEY = _UNBOUND / "tls.key"
+
+
+@dataclass(frozen=True)
+class _DNS_Record:
+    ADDR: IPAddress
+    NAME: str
+    TYPE: str
 
 
 def _resolv_addrs() -> Iterator[IPAddress]:
@@ -63,6 +71,17 @@ def _resolv_addrs() -> Iterator[IPAddress]:
             raise RuntimeError(f"NO DNS SERVERS -- {srvs}")
 
 
+def _static_dns_records() -> Iterator[_DNS_Record]:
+    for hostname, addresses in settings().dns.records.items():
+        for address in addresses:
+            record_type = "A" if isinstance(address, IPv4Address) else "AAAA"
+            yield _DNS_Record(
+                ADDR=address,
+                NAME=hostname,
+                TYPE=record_type,
+            )
+
+
 def _env(networks: Networks) -> Mapping[str, Any]:
     fwds, avail = forwarded_ports(networks)
     loop_back = calculate_loopback()
@@ -86,6 +105,7 @@ def _env(networks: Networks) -> Mapping[str, Any]:
         "PRIVATE_ADDRS": PRIVATE_ADDRS,
         "SERVER_NAME": SERVER_NAME,
         "SQUID_PORT": settings().port_bindings.squid,
+        "STATIC_DNS_RECORDS": _static_dns_records(),
         "STATS_PORT": settings().port_bindings.statistics,
         "TOR_NETWORK_V4": networks.tor.v4,
         "TOR_NETWORK_V6": networks.tor.v6,
