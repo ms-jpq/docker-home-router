@@ -2,7 +2,7 @@ from enum import Enum
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler
 from os import sep
-from pathlib import Path, PurePosixPath
+from pathlib import Path, PurePath, PurePosixPath
 from typing import AbstractSet, Any, Callable, Mapping
 from urllib.parse import unquote, urlsplit
 
@@ -133,6 +133,6 @@ def main() -> None:
             except BrokenPipeError:
                 pass
 
-    srv = create_server(("", settings().port_bindings.statistics), Handler)
+    srv = create_server(PurePath(sep) / "tmp" / "stats.sock", Handler)
     with srv:
         srv.serve_forever()
