@@ -6,6 +6,7 @@ ARG S6="https://github.com/just-containers/s6-overlay/releases/download/v2.2.0.3
 
 RUN apt update && \
     DEBIAN_FRONTEND=noninteractive apt install --yes --no-install-recommends -- \
+    software-properties-common \
     procps \
     nftables \
     openssl \
