@@ -31,7 +31,9 @@ RUN apt update && \
 RUN printf '%s' \
     "deb https://pkg.cloudflare.com/ $(cat /etc/lsb-release | grep -e 'DISTRIB_CODENAME' | awk -F '=' '{print $2}') main" | \
     tee /etc/apt/sources.list.d/cloudflare.list && \
-    wget --output-document - -- https://pkg.cloudflare.com/cloudflare-main.gpg | apt-key add -
+    wget --output-document - -- https://pkg.cloudflare.com/cloudflare-main.gpg | apt-key add - && \
+    apt update
+    # TODO -- install cloudflard
 
 
 RUN wget --output-document /tmp/s6 -- "${S6}" && \
