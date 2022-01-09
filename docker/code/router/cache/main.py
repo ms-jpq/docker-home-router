@@ -29,8 +29,11 @@ def _cached() -> Optional[bytes]:
 def main() -> None:
     if cached := _cached():
         run(
-            (UNBOUND_CTL, "load_cache"), input=cached, timeout=SHORT_DURATION
-        ).check_returncode()
+            (UNBOUND_CTL, "load_cache"),
+            check=True,
+            input=cached,
+            timeout=SHORT_DURATION,
+        )
 
     while True:
         raw = check_output((UNBOUND_CTL, "dump_cache"), timeout=SHORT_DURATION)

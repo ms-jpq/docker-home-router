@@ -208,7 +208,7 @@ def gen_wg(networks: Networks) -> None:
         text = j2_render(j2, path=_CLIENT_TPL, env=env)
         conf_path.write_text(text)
 
-        run(("qrencode", "--output", qr_path), input=text.encode()).check_returncode()
+        run(("qrencode", "--output", qr_path), check=True, input=text.encode())
 
 
 def wg_env(networks: Networks) -> Mapping[str, Any]:
