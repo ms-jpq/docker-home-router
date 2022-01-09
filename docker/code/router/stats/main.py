@@ -133,6 +133,5 @@ def main() -> None:
             except BrokenPipeError:
                 pass
 
-    srv = create_server(PurePath(sep) / "tmp" / "stats.sock", Handler)
-    with srv:
+    with create_server(PurePath(sep) / "tmp" / "stats.sock", Handler) as srv:
         srv.serve_forever()
