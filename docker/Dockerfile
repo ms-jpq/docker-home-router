@@ -26,7 +26,13 @@ RUN apt update && \
     rm -rf -- /tmp/*
 
 
-RUN wget "${S6}" --output-document /tmp/s6 && \
+RUN printf '%s' \
+    "deb https://pkg.cloudflare.com/ $(cat /etc/lsb-release | grep -e 'DISTRIB_CODENAME' | awk -F '=' '{print $2}') main" | \
+    tee /etc/apt/sources.list.d/cloudflare.list && \
+    wget --output-document - -- https://pkg.cloudflare.com/cloudflare-main.gpg | apt-key add -
+
+
+RUN wget --output-document /tmp/s6 -- "${S6}" && \
     chmod +x -- /tmp/s6 && \
     /tmp/s6 / && \
     rm -rf -- /etc/s6/services/s6-fdholderd/down /tmp/*
