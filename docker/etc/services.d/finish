@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-
-set -eu
-set -o pipefail
-
-
-SVC="$(basename "$0")"
-printf '%s' "FIN :: $SVC"
-exec s6-svscanctl -t /var/run/s6/services
