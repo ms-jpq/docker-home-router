@@ -28,11 +28,10 @@ RUN apt update && \
     rm -rf -- /tmp/*
 
 
-RUN printf '%s' \
-    "deb https://pkg.cloudflare.com/ $(cat /etc/lsb-release | grep -e 'DISTRIB_CODENAME' | awk -F '=' '{print $2}') main" | \
-    tee /etc/apt/sources.list.d/cloudflare.list && \
-    wget --output-document - -- https://pkg.cloudflare.com/cloudflare-main.gpg | apt-key add - && \
-    apt update
+# RUN printf '%s' \
+#     "deb https://pkg.cloudflare.com/ $(cat /etc/lsb-release | grep -e 'DISTRIB_CODENAME' | awk -F '=' '{print $2}') main" | \
+#     tee /etc/apt/sources.list.d/cloudflare.list && \
+#     wget --output-document - -- https://pkg.cloudflare.com/cloudflare-main.gpg | apt-key add -
     # TODO -- install cloudflard
 
 
