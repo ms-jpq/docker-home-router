@@ -33,6 +33,7 @@ RUN apt update && \
 #     tee /etc/apt/sources.list.d/cloudflare.list && \
 #     wget --output-document - -- https://pkg.cloudflare.com/cloudflare-main.gpg | apt-key add -
     # TODO -- install cloudflard
+    # https://github.com/AdguardTeam/dnsproxy
 
 
 RUN wget --output-document /tmp/s6 -- "${S6}" && \
