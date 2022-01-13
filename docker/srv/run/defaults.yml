@@ -25,9 +25,9 @@ dhcp:
   lease_time: 1
 dns:
   local_domains:
-    trusted: lan
-    wireguard: wg
-    guest: gan
+    trusted: trusted.home.arpa
+    wireguard: wireguard.home.arpa
+    guest: guest.home.arpa
   local_ttl: 1
   upstream_servers: []
   records:
