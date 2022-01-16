@@ -30,7 +30,10 @@ dns:
     guest: guest.home.arpa
   local_ttl: 1
   upstream_servers: []
-  split_horizon: {}
+  split_horizon:
+    trusted: {}
+    wireguard: {}
+    guest: {}
   records:
     local.host:
       - 127.0.0.1
