@@ -41,6 +41,7 @@ dns:
     localho.st:
       - 127.0.0.1
       - ::1
+  private_domains: []
 
 wireguard:
   server_name: ""

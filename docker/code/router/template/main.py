@@ -118,6 +118,7 @@ def _env(networks: Networks) -> Mapping[str, Any]:
         "LOCAL_TTL": settings().dns.local_ttl,
         "LOOPBACK_LOCAL": loop_back,
         "PRIVATE_ADDRS": PRIVATE_ADDRS,
+        "PRIVATE_DOMAINS": settings().dns.private_domains,
         "SERVER_NAME": SERVER_NAME,
         "SQUID_PORT": settings().port_bindings.squid,
         "STATIC_DNS_RECORDS": _static_dns_records(splits),

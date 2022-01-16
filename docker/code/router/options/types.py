@@ -61,6 +61,7 @@ class DNS:
     upstream_servers: AbstractSet[str]
     split_horizon: Splithorizon
     records: Mapping[str, AbstractSet[IPAddress]]
+    private_domains: AbstractSet[str]
 
 
 @dataclass(frozen=True)

@@ -17,6 +17,7 @@ from .types import (
     IPv6,
     PortBindings,
     Settings,
+    Splithorizon,
     WireGuard,
     _IPAddresses,
 )
@@ -90,8 +91,22 @@ def settings() -> Settings:
             ),
             local_ttl=raw.dns.local_ttl,
             upstream_servers={*map(encode_dns_name, raw.dns.upstream_servers)},
-            records=raw.dns.records,
-            split_horizon=raw.dns.split_horizon,
+            records={encode_dns_name(key): val for key, val in raw.dns.records.items()},
+            split_horizon=Splithorizon(
+                trusted={
+                    encode_dns_name(key): {*map(encode_dns_name, val)}
+                    for key, val in raw.dns.split_horizon.trusted.items()
+                },
+                wireguard={
+                    encode_dns_name(key): {*map(encode_dns_name, val)}
+                    for key, val in raw.dns.split_horizon.wireguard.items()
+                },
+                guest={
+                    encode_dns_name(key): {*map(encode_dns_name, val)}
+                    for key, val in raw.dns.split_horizon.guest.items()
+                },
+            ),
+            private_domains={*map(encode_dns_name, raw.dns.private_domains)},
         ),
         wireguard=WireGuard(
             server_name=encode_dns_name(raw.wireguard.server_name),
