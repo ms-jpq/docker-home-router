@@ -8,7 +8,16 @@ from socket import getaddrinfo
 from subprocess import check_call
 from sys import stderr
 from textwrap import dedent
-from typing import AbstractSet, Any, Iterator, Mapping, MutableSet, cast
+from typing import (
+    AbstractSet,
+    Any,
+    Iterable,
+    Iterator,
+    Mapping,
+    MutableSet,
+    Tuple,
+    cast,
+)
 
 from std2.ipaddress import LINK_LOCAL_V6, PRIVATE_V6, IPAddress, IPNetwork
 from std2.pathlib import walk
@@ -73,7 +82,7 @@ def _resolv_addrs() -> Iterator[IPAddress]:
 
 
 def _static_dns_records(splits: AbstractSet[Split]) -> Iterator[_DNS_Record]:
-    it = chain(
+    it: Iterable[Tuple[str, AbstractSet[IPAddress]]] = chain(
         ((split.DOMAIN, {split.ADDR.V4, split.ADDR.V6}) for split in splits),
         settings().dns.records.items(),
     )

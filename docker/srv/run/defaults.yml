@@ -30,7 +30,7 @@ dns:
     guest: guest.home.arpa
   local_ttl: 1
   upstream_servers: []
-  split_horizion: {}
+  split_horizon: {}
   records:
     local.host:
       - 127.0.0.1

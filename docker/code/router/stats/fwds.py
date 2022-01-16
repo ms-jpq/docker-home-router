@@ -10,8 +10,10 @@ from .subnets import load_networks
 
 def feed() -> str:
     networks = load_networks()
-    raw = forwarded_ports(networks)
-    data = tuple({k: str(v) for k, v in asdict(dc)} for dc in chain.from_iterable(raw))
+    specs = forwarded_ports(networks)
+    data = tuple(
+        {k: str(v) for k, v in asdict(dc).items()} for dc in chain.from_iterable(specs)
+    )
     json = dumps(data, check_circular=False, ensure_ascii=False, allow_nan=False)
     raw = check_output(("sortd", "yaml"), text=True, input=json, timeout=SHORT_DURATION)
     return raw.strip()

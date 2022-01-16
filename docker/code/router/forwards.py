@@ -156,9 +156,9 @@ def forwarded_ports(
         *c2(networks.trusted, available=settings().guest_accessible.trusted),
     }
     split = {
-        *c3(networks.wireguard, split=settings().dns.split_horizion.wireguard),
-        *c3(networks.trusted, split=settings().dns.split_horizion.trusted),
-        *c3(networks.guest, split=settings().dns.split_horizion.guest),
+        *c3(networks.wireguard, split=settings().dns.split_horizon.wireguard),
+        *c3(networks.trusted, split=settings().dns.split_horizon.trusted),
+        *c3(networks.guest, split=settings().dns.split_horizon.guest),
     }
     return fwd, available, split
 
