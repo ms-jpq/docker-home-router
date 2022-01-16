@@ -48,10 +48,18 @@ class Domains:
 
 
 @dataclass(frozen=True)
+class SplitHorizion:
+    trusted: Mapping[str, AbstractSet[str]]
+    wireguard: Mapping[str, AbstractSet[str]]
+    guest: Mapping[str, AbstractSet[str]]
+
+
+@dataclass(frozen=True)
 class DNS:
     local_domains: Domains
     local_ttl: int
     upstream_servers: AbstractSet[str]
+    split_horizion: SplitHorizion
     records: Mapping[str, AbstractSet[IPAddress]]
 
 

@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from ipaddress import IPv4Address, ip_address
+from itertools import chain
 from multiprocessing import cpu_count
 from pprint import pformat
 from shutil import copystat, get_terminal_size
@@ -7,13 +8,13 @@ from socket import getaddrinfo
 from subprocess import check_call
 from sys import stderr
 from textwrap import dedent
-from typing import Any, Iterator, Mapping, MutableSet, cast
+from typing import AbstractSet, Any, Iterator, Mapping, MutableSet, cast
 
 from std2.ipaddress import LINK_LOCAL_V6, PRIVATE_V6, IPAddress, IPNetwork
 from std2.pathlib import walk
 
 from ..consts import DATA, PRIVATE_ADDRS, RUN, SERVER_NAME, TEMPLATES, USER
-from ..forwards import dhcp_fixed, forwarded_ports
+from ..forwards import Split, dhcp_fixed, forwarded_ports
 from ..ip import ipv6_enabled
 from ..options.parser import settings
 from ..records import wg_records
@@ -71,8 +72,13 @@ def _resolv_addrs() -> Iterator[IPAddress]:
             raise RuntimeError(f"NO DNS SERVERS -- {srvs}")
 
 
-def _static_dns_records() -> Iterator[_DNS_Record]:
-    for hostname, addresses in settings().dns.records.items():
+def _static_dns_records(splits: AbstractSet[Split]) -> Iterator[_DNS_Record]:
+    it = chain(
+        ((split.DOMAIN, {split.ADDR.V4, split.ADDR.V6}) for split in splits),
+        settings().dns.records.items(),
+    )
+
+    for hostname, addresses in it:
         for address in addresses:
             record_type = "A" if isinstance(address, IPv4Address) else "AAAA"
             yield _DNS_Record(
@@ -83,11 +89,11 @@ def _static_dns_records() -> Iterator[_DNS_Record]:
 
 
 def _env(networks: Networks) -> Mapping[str, Any]:
-    fwds, avail = forwarded_ports(networks)
+    fwds, avail, splits = forwarded_ports(networks)
     loop_back = calculate_loopback()
     env = {
         "CPU_COUNT": cpu_count(),
-        "DHCP_FIXED": dhcp_fixed(fwds),
+        "DHCP_FIXED": dhcp_fixed(chain(fwds, avail, splits)),
         "DHCP_LEASE_TIME": settings().dhcp.lease_time,
         "DNS_ADDRS": _resolv_addrs(),
         "FORWARDED_PORTS": fwds,
@@ -105,7 +111,7 @@ def _env(networks: Networks) -> Mapping[str, Any]:
         "PRIVATE_ADDRS": PRIVATE_ADDRS,
         "SERVER_NAME": SERVER_NAME,
         "SQUID_PORT": settings().port_bindings.squid,
-        "STATIC_DNS_RECORDS": _static_dns_records(),
+        "STATIC_DNS_RECORDS": _static_dns_records(splits),
         "STATS_PORT": settings().port_bindings.statistics,
         "TOR_NETWORK_V4": networks.tor.v4,
         "TOR_NETWORK_V6": networks.tor.v6,

@@ -31,19 +31,28 @@ class _Addrs:
 @dataclass(frozen=True)
 class _Dest:
     NAME: str
-    PROTO: Protocol
-    PORT: int
     ADDR: _Addrs
 
 
 @dataclass(frozen=True)
-class Forwarded(_Dest):
+class _Ported(_Dest):
+    PROTO: Protocol
+    PORT: int
+
+
+@dataclass(frozen=True)
+class _Forwarded(_Ported):
     FROM_PORT: int
 
 
 @dataclass(frozen=True)
-class Available(_Dest):
+class _Available(_Ported):
     ...
+
+
+@dataclass(frozen=True)
+class Split(_Dest):
+    DOMAIN: str
 
 
 def _leased(networks: Networks) -> MutableMapping[str, MutableSet[IPAddress]]:
@@ -92,17 +101,17 @@ def _pick(
 
 def forwarded_ports(
     networks: Networks,
-) -> Tuple[AbstractSet[Forwarded], AbstractSet[Available]]:
+) -> Tuple[AbstractSet[_Forwarded], AbstractSet[_Available], AbstractSet[Split]]:
     leased = _leased(networks)
 
     def c1(
         stack: DualStack, forwards: Mapping[str, Sequence[PortForward]]
-    ) -> Iterator[Forwarded]:
+    ) -> Iterator[_Forwarded]:
         for hostname, fws in forwards.items():
             for fwd in fws:
                 for proto in fwd.protocols:
                     v4, v6 = _pick(leased, stack=stack, hostname=hostname)
-                    spec = Forwarded(
+                    spec = _Forwarded(
                         NAME=hostname,
                         PROTO=proto,
                         FROM_PORT=fwd.from_port or fwd.port,
@@ -113,18 +122,29 @@ def forwarded_ports(
 
     def c2(
         stack: DualStack, available: Mapping[str, Sequence[Accessible]]
-    ) -> Iterator[Available]:
+    ) -> Iterator[_Available]:
         for hostname, accessible in available.items():
             for acc in accessible:
                 for proto in acc.protocols:
                     v4, v6 = _pick(leased, stack=stack, hostname=hostname)
-                    spec = Available(
+                    spec = _Available(
                         NAME=hostname,
                         PROTO=proto,
                         PORT=acc.port,
                         ADDR=_Addrs(V4=v4, V6=v6),
                     )
                     yield spec
+
+    def c3(stack: DualStack, split: Mapping[str, AbstractSet[str]]) -> Iterator[Split]:
+        for hostname, domains in split.items():
+            for domain in domains:
+                v4, v6 = _pick(leased, stack=stack, hostname=hostname)
+                spec = Split(
+                    NAME=hostname,
+                    DOMAIN=domain,
+                    ADDR=_Addrs(V4=v4, V6=v6),
+                )
+                yield spec
 
     fwd = {
         *c1(networks.wireguard, forwards=settings().port_forwards.wireguard),
@@ -135,10 +155,15 @@ def forwarded_ports(
         *c2(networks.wireguard, available=settings().guest_accessible.wireguard),
         *c2(networks.trusted, available=settings().guest_accessible.trusted),
     }
-    return fwd, available
+    split = {
+        *c3(networks.wireguard, split=settings().dns.split_horizion.wireguard),
+        *c3(networks.trusted, split=settings().dns.split_horizion.trusted),
+        *c3(networks.guest, split=settings().dns.split_horizion.guest),
+    }
+    return fwd, available, split
 
 
-def dhcp_fixed(fwds: Iterable[Forwarded]) -> Iterator[Forwarded]:
+def dhcp_fixed(fwds: Iterable[_Dest]) -> Iterator[_Dest]:
     seen: MutableSet[str] = set()
     for fwd in fwds:
         name = fwd.NAME
