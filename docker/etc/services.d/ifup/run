@@ -4,4 +4,8 @@ set -eu
 set -o pipefail
 
 
-exec python3 -m router ifup
+while true
+do
+  python3 -m router ifup
+  sleep 1
+done
