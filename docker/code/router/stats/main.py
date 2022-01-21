@@ -29,18 +29,20 @@ Feed = Callable[[], str]
 _INDEX_TPL = Path("show", "index.html")
 _SHOW_TPL = Path("show", "stats.html")
 
+_INDEX = PurePosixPath(sep)
+
 
 class _Path(Enum):
-    index = PurePosixPath(sep)
-    dhcp = PurePosixPath(sep, "dhcp")
-    dns = PurePosixPath(sep, "dns")
-    fwd = PurePosixPath(sep, "fwd")
-    nets = PurePosixPath(sep, "nets")
-    nft = PurePosixPath(sep, "nft")
-    squid = PurePosixPath(sep, "squid")
-    tc = PurePosixPath(sep, "tc")
-    wg = PurePosixPath(sep, "wg")
-    wgc = PurePosixPath(sep, "wgc")
+    index = _INDEX
+    dhcp = _INDEX / "dhcp"
+    dns = _INDEX / "dns"
+    fwd = _INDEX / "fwd"
+    nets = _INDEX / "nets"
+    nft = _INDEX / "nft"
+    squid = _INDEX / "squid"
+    tc = _INDEX / "tc"
+    wg = _INDEX / "wg"
+    wgc = _INDEX / "wgc"
 
 
 def _route(handler: BaseHTTPRequestHandler) -> _Path:
@@ -75,7 +77,9 @@ def main() -> None:
         path = _route(handler)
         if path is _Path.index:
             env: Mapping[str, Any] = {
-                "SERVICES": ((path.name, path.value) for path in _Path)
+                "SERVICES": (
+                    (path.name, path.value) for path in _Path if path != _Path.index
+                )
             }
             page = j2_render(j2, path=_INDEX_TPL, env=env).encode()
             _get(handler, page=page)
