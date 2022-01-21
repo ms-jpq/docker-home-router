@@ -15,6 +15,7 @@ RUN apt update && \
     wget \
     iproute2 \
     python3-venv \
+    wide-dhcpv6-client \
     dnsmasq \
     unbound \
     avahi-daemon \
