@@ -11,7 +11,7 @@ SCRIPT="$(
 cat << EOF
 flush ruleset
 
-include "./docker/*.conf";
+include "./sys/*.conf";
 include "./user/*.conf";
 EOF
 )"
