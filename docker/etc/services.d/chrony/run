@@ -7,7 +7,7 @@ set -o pipefail
 ARGS=(
   -d
   -x
-  -f /srv/run/chrony/0-main.conf
+  -f /srv/run/chrony/0-include.conf
   -L 0
   )
 
