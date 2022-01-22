@@ -8,8 +8,9 @@ ARGS=(
   -d
   -x
   -f /srv/run/chrony/0-main.conf
+  -L 0
   )
 
 
-rm -rf -- /var/run/chrony
+rm -rf -- /tmp/chronyd.pid
 exec chronyd "${ARGS[@]}"
