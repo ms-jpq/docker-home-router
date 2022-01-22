@@ -9,6 +9,7 @@ RUN apt update && \
     sudo \
     software-properties-common \
     gpg-agent \
+    neovim \
     procps \
     nftables \
     openssl \
