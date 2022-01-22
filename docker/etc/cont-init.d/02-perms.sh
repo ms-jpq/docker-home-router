@@ -7,7 +7,6 @@ shopt -s globstar nullglob
 
 ARGS=(
   /srv
-  /var/run/chrony
   /data
   )
 
