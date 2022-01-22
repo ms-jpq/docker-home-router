@@ -19,7 +19,7 @@ from typing import (
     cast,
 )
 
-from std2.ipaddress import LINK_LOCAL_V6, PRIVATE_V6, IPAddress, IPNetwork
+from std2.ipaddress import LINK_LOCAL_V6, PRIVATE_V6, IPAddress, IPNetwork, LOOPBACK_V4, LOOPBACK_V6
 from std2.pathlib import walk
 
 from ..consts import DATA, PRIVATE_ADDRS, RUN, SERVER_NAME, TEMPLATES, USER
@@ -117,6 +117,8 @@ def _env(networks: Networks) -> Mapping[str, Any]:
         "LINK_LOCAL_V6": LINK_LOCAL_V6,
         "LOCAL_TTL": settings().dns.local_ttl,
         "LOOPBACK_LOCAL": loop_back,
+        "LOOPBACK_V4": LOOPBACK_V4,
+        "LOOPBACK_V6": LOOPBACK_V6,
         "PRIVATE_ADDRS": PRIVATE_ADDRS,
         "PRIVATE_DOMAINS": settings().dns.private_domains,
         "SERVER_NAME": SERVER_NAME,
