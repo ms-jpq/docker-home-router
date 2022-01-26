@@ -53,7 +53,6 @@ traffic_control:
     - wash
     - rtt
     - 50ms
-    - autorate-ingress
   receive:
     - besteffort
     - wash
