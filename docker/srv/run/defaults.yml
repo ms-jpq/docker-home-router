@@ -49,7 +49,7 @@ wireguard:
 
 traffic_control:
   transmit:
-    - diffserv3
+    - diffserv4
     - wash
     - rtt
     - 50ms
