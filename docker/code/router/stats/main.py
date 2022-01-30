@@ -2,17 +2,16 @@ from enum import Enum
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler
 from os import sep
-from pathlib import Path, PurePath, PurePosixPath
+from pathlib import Path, PurePath
 from typing import AbstractSet, Any, Callable, Mapping
 from urllib.parse import unquote, urlsplit
 
 from py_dev.srv.static import build_j2, get
 from std2.http.server import create_server
-from std2.pathlib import is_relative_to
+from std2.pathlib import POSIX_ROOT, is_relative_to
 from std2.types import never
 
 from ..consts import J2, QR_DIR
-from ..options.parser import settings
 from ..render import j2_build, j2_render
 from .dhcp import feed as dhcp_feed
 from .dns import feed as dns_feed
@@ -29,20 +28,18 @@ Feed = Callable[[], str]
 _INDEX_TPL = Path("show", "index.html")
 _SHOW_TPL = Path("show", "stats.html")
 
-_INDEX = PurePosixPath(sep)
-
 
 class _Path(Enum):
-    index = _INDEX
-    dhcp = _INDEX / "dhcp"
-    dns = _INDEX / "dns"
-    fwd = _INDEX / "fwd"
-    nets = _INDEX / "nets"
-    nft = _INDEX / "nft"
-    squid = _INDEX / "squid"
-    tc = _INDEX / "tc"
-    wg = _INDEX / "wg"
-    wgc = _INDEX / "wgc"
+    index = POSIX_ROOT
+    dhcp = POSIX_ROOT / "dhcp"
+    dns = POSIX_ROOT / "dns"
+    fwd = POSIX_ROOT / "fwd"
+    nets = POSIX_ROOT / "nets"
+    nft = POSIX_ROOT / "nft"
+    squid = POSIX_ROOT / "squid"
+    tc = POSIX_ROOT / "tc"
+    wg = POSIX_ROOT / "wg"
+    wgc = POSIX_ROOT / "wgc"
 
 
 def _route(handler: BaseHTTPRequestHandler) -> _Path:
