@@ -26,7 +26,6 @@ def _parse(lease: str) -> Optional[IPNetwork]:
 
 def main() -> None:
     if settings().interfaces.wan_pd_only and ipv6_enabled():
-        DHCP_CLIENT_LEASES.parent.mkdir(parents=True, exist_ok=True)
         try:
             lease = DHCP_CLIENT_LEASES.read_text()
         except FileNotFoundError:

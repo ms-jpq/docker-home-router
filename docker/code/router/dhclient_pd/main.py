@@ -7,6 +7,7 @@ from ..options.parser import settings
 
 
 def main() -> None:
+    DHCP_CLIENT_LEASES.parent.mkdir(parents=True, exist_ok=True)
     if settings().interfaces.wan_pd_only and ipv6_enabled():
         check_call(
             (
