@@ -9,6 +9,7 @@ RUN apt update && \
     sudo \
     software-properties-common \
     gpg-agent \
+    isc-dhcp-client \
     neovim \
     procps \
     nftables \
