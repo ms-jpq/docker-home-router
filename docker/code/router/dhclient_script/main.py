@@ -16,7 +16,7 @@ def _parse(lease: str) -> Optional[IPNetwork]:
     if match := re.search(lease):
         net = match.group("network")
         try:
-            network = ip_network(net)
+            network: IPNetwork = ip_network(net)
         except ValueError:
             return None
         else:
