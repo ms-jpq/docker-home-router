@@ -7,5 +7,5 @@ set -o pipefail
 while true
 do
   python3 -m router ifup
-  sleep 1
+  sleep 2
 done
