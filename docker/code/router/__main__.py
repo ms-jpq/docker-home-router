@@ -3,8 +3,7 @@ from typing import Sequence, Tuple
 
 from .cache.main import main as cache_main
 from .cake.main import main as cake_main
-from .dhclient_pd.main import main as dhclient_pd_main
-from .dhclient_script.main import main as dhclient_script
+from .dhclient.main import main as dhclient_main
 from .domains.main import main as domains_main
 from .ifup.main import main as ifup_main
 from .stats.main import main as stats_main
@@ -19,8 +18,7 @@ def _parse_args() -> Tuple[Namespace, Sequence[str]]:
         choices=(
             "cache",
             "cake",
-            "dh_client",
-            "dh_script",
+            "dhclient",
             "domains",
             "ifup",
             "stats",
@@ -40,10 +38,8 @@ def main() -> None:
         cache_main()
     elif args.op == "cake":
         cake_main()
-    elif args.op == "dh_client":
-        dhclient_pd_main()
-    elif args.op == "dh_script":
-        dhclient_script()
+    elif args.op == "dhclient":
+        dhclient_main()
     elif args.op == "domains":
         domains_main(argv)
     elif args.op == "stats":
