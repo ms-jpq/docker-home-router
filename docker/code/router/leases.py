@@ -4,13 +4,13 @@ from typing import Iterator, Tuple
 
 from std2.ipaddress import IPAddress
 
-from .consts import LEASES
+from .consts import DHCP_SERVER_LEASES
 
 
 def leases() -> Iterator[Tuple[str, IPAddress]]:
-    LEASES.parent.mkdir(parents=True, exist_ok=True)
-    LEASES.touch()
-    lines = LEASES.read_text().rstrip().split(linesep)
+    DHCP_SERVER_LEASES.parent.mkdir(parents=True, exist_ok=True)
+    DHCP_SERVER_LEASES.touch()
+    lines = DHCP_SERVER_LEASES.read_text().rstrip().split(linesep)
 
     for line in reversed(lines):
         if line:

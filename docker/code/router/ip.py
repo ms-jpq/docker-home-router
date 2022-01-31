@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from functools import lru_cache
 from ipaddress import IPv6Address
 from json import dumps, loads
 from subprocess import check_output
@@ -50,6 +51,7 @@ def link_show() -> Links:
     return links
 
 
+@lru_cache
 def ipv6_enabled() -> bool:
     def cont() -> bool:
         for addr in addr_show():

@@ -44,4 +44,6 @@ IPV6_JSON = _TMP / "ipv6.json"
 
 UNBOUND_CTL = RUN / "unbound" / "ctl.sh"
 QR_DIR = RUN / "qr"
-LEASES = DATA / "dnsmasq" / "leases"
+DHCP_SERVER_LEASES = DATA / "dnsmasq" / "leases"
+
+DHCP_CLIENT_LEASES = DATA / "dhclient" / "v6_leases"

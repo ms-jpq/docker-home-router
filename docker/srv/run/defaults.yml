@@ -6,6 +6,7 @@ interfaces:
   guest: null
   unmanaged:
     - "docker*"
+  wan_pd_only: False
 
 ip_addresses:
   ipv4:
@@ -19,7 +20,7 @@ ip_addresses:
     tor_prefix_len: 16
   ipv6:
     ula_global_prefix: null
-    prefix_delegation: false
+    prefix_delegation: False
 
 dhcp:
   lease_time: 1

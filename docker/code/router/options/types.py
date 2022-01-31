@@ -14,6 +14,8 @@ class Interfaces:
     guest: Optional[str]
     unmanaged: AbstractSet[str]
 
+    wan_pd_only: bool
+
 
 @dataclass(frozen=True)
 class IPv4:

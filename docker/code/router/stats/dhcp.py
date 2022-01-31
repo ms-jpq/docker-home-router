@@ -1,8 +1,8 @@
-from ..consts import LEASES
+from ..consts import DHCP_SERVER_LEASES
 
 
 def feed() -> str:
-    LEASES.parent.mkdir(parents=True, exist_ok=True)
-    LEASES.touch()
-    leases = LEASES.read_text()
+    DHCP_SERVER_LEASES.parent.mkdir(parents=True, exist_ok=True)
+    DHCP_SERVER_LEASES.touch()
+    leases = DHCP_SERVER_LEASES.read_text()
     return leases.strip()
