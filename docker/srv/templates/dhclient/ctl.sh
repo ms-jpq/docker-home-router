@@ -4,4 +4,4 @@ set -eu
 set -o pipefail
 
 
-exec exec python3 -m router ifup "$@"
+exec python3 -m router ifup "$@"
