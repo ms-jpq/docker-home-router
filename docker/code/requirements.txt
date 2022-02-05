@@ -1,3 +1,3 @@
 py-dev@https://github.com/ms-jpq/py-dev/archive/eea2435a9a0a4d422e228d7578e6b051713fcd38.tar.gz
 sortd
-Jinja2==3.0.2
+Jinja2==3.*
