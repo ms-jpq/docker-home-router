@@ -25,8 +25,8 @@ from .wg import feed as wg_feed
 Feed = Callable[[], str]
 
 
-_INDEX_TPL = Path("show", "index.html")
-_SHOW_TPL = Path("show", "stats.html")
+_INDEX_TPL = Path("show") / "index.html"
+_SHOW_TPL = Path("show") / "stats.html"
 
 
 class _Path(Enum):
