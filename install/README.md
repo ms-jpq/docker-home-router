@@ -4,7 +4,7 @@
 
 If you are not happy and want to cleanly uninstall everything.
 
-```sh
+```bash
 rm /etc/sysctl.d/50-ip-fwd.conf  # disable ip6 forwarding
 apt purge nftables               # remove firewall
 docker rm -f <name of container> # remove docker container
@@ -12,7 +12,7 @@ docker rm -f <name of container> # remove docker container
 
 ## Step 1. Stuff you can't do with Docker alone
 
-```sh
+```bash
 # This enable ip6 forwarding
 # Docker already enabled ip4 forwarding, so you dont need to do it again
 echo 'net.ipv6.conf.all.forwarding=1' > /etc/sysctl.d/50-ip-fwd.conf
@@ -41,6 +41,6 @@ You see most configs are in `docker-compose.yml` example.
 
 Test everything works after rebooting, you are gucci.
 
-```sh
+```bash
 reboot
 ```
