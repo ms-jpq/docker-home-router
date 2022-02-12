@@ -13,5 +13,6 @@ ARGS=(
 
 rm -rf -- /tmp/squid.pid /tmp/squid
 s6-setuidgid "$USER" squid "${ARGS[@]}" -z
-exec squid "${ARGS[@]}"
+s6-setuidgid "$USER" /usr/lib/squid/security_file_certgen -c -s /tmp/squid_ssl_db -M 4MB
+exec s6-setuidgid "$USER" squid "${ARGS[@]}"
 
