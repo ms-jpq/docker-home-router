@@ -17,4 +17,5 @@ EOF
 )"
 
 
-exec nft --file - <<< "$SCRIPT"
+nft --file - <<< "$SCRIPT"
+printf '%s\n' 'NFT SUCC'
