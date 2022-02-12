@@ -22,7 +22,7 @@ RUN apt update && \
     avahi-daemon \
     chrony \
     tor \
-    squid \
+    squid-openssl \
     squidclient \
     wireguard \
     qrencode \
