@@ -2,6 +2,7 @@
 
 set -eu
 set -o pipefail
+export PATH="/usr/sbin:$PATH"
 
 
 s6-svwait -U /run/s6/legacy-services/unbound

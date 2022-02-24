@@ -2,6 +2,7 @@
 
 set -eu
 set -o pipefail
+export PATH="/usr/sbin:$PATH"
 
 
 cd "$(dirname "$0")" || exit 1

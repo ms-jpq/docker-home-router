@@ -3,6 +3,7 @@
 set -eu
 set -o pipefail
 shopt -s globstar nullglob
+export PATH="/usr/sbin:$PATH"
 
 
 ARGS=(

@@ -2,6 +2,7 @@
 
 set -eu
 set -o pipefail
+export PATH="/usr/sbin:$PATH"
 
 
 exec s6-setuidgid "$USER" /srv/run/unbound/ctl.sh status

@@ -2,6 +2,7 @@
 
 set -eu
 set -o pipefail
+export PATH="/usr/sbin:$PATH"
 
 
 CONF='/srv/run/unbound/0-include.conf'
