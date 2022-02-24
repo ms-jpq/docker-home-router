@@ -4,7 +4,7 @@ set -eu
 set -o pipefail
 
 
-s6-svwait -U /var/run/s6/services/unbound
+s6-svwait -U /run/s6/legacy-services/unbound
 
 while true
 do
