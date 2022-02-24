@@ -37,6 +37,7 @@ RUN tar -C / -Jxpf /tmp/s6-overlay-noarch-"$S6_OVERLAY_VERSION".tar.xz && \
     rm -rf -- /tmp/**
 ENV S6_KEEP_ENV=1 \
     S6_BEHAVIOUR_IF_STAGE2_FAILS=2 \
+    S6_CMD_WAIT_FOR_SERVICES_MAXTIME=0 \
     S6_SERVICES_GRACETIME=0 \
     S6_KILL_GRACETIME=0
 ENTRYPOINT [ "/init" ]
