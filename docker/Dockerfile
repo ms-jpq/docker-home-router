@@ -43,7 +43,8 @@ ENTRYPOINT [ "/init" ]
 
 
 RUN python3 -m venv -- /venv
-ENV PATH="/venv/bin:$PATH"
+ENV PATH="/venv/bin:$PATH" \
+    S6_GLOBAL_PATH="$PATH"
 
 
 WORKDIR /srv/run
