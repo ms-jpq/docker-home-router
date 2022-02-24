@@ -9,4 +9,4 @@ ARGS=(
   )
 
 
-exec dnsmasq "${ARGS[@]}"
+exec s6-envuidgid "$USER" dnsmasq "${ARGS[@]}"

@@ -6,6 +6,6 @@ set -o pipefail
 
 while true
 do
-  python3 -m router ifup
-  sleep 2
+  s6-envuidgid "$USER" /venv/bin/python3 -m router ifup
+  sleep 5
 done

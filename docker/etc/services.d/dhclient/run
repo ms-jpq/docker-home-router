@@ -4,4 +4,4 @@ set -eu
 set -o pipefail
 
 
-exec python3 -m router dhclient
+exec s6-envuidgid "$USER" /venv/bin/python3 -m router dhclient

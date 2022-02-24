@@ -42,16 +42,14 @@ ENV S6_KEEP_ENV=1 \
 ENTRYPOINT [ "/init" ]
 
 
-RUN python3 -m venv -- /venv
-ENV PATH="/venv/bin:$PATH" \
-    S6_GLOBAL_PATH="$PATH"
 
 
 WORKDIR /srv/run
 COPY . /
 ENV USER=router
 RUN useradd --user-group --shell=/usr/sbin/nologin -- "$USER" && \
-    pip3 install --upgrade --no-cache-dir -- /code && \
+    python3 -m venv -- /venv && \
+    /venv/bin/pip3 install --upgrade --no-cache-dir -- /code && \
     rm -rf -- /etc/dnsmasq* /code
 
 ### Well known

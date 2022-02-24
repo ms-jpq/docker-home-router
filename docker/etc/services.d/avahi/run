@@ -11,4 +11,4 @@ ARGS=(
 
 
 rm -rf -- /var/run/avahi-daemon
-exec avahi-daemon "${ARGS[@]}"
+exec s6-envuidgid "$USER" avahi-daemon "${ARGS[@]}"

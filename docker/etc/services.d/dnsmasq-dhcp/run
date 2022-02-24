@@ -10,4 +10,4 @@ ARGS=(
 
 
 s6-svwait -U /run/s6/legacy-services/unbound
-exec dnsmasq "${ARGS[@]}"
+exec s6-envuidgid "$USER" dnsmasq "${ARGS[@]}"

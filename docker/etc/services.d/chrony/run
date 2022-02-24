@@ -13,4 +13,4 @@ ARGS=(
 
 
 rm -rf -- /tmp/chronyd.pid
-exec chronyd "${ARGS[@]}"
+exec s6-envuidgid "$USER" chronyd "${ARGS[@]}"

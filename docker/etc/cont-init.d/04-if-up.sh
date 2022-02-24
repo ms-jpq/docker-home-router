@@ -4,4 +4,4 @@ set -eu
 set -o pipefail
 
 
-exec python3 -m router ifup
+exec /venv/bin/python3 -m router ifup
