@@ -2,6 +2,7 @@
 
 set -eu
 set -o pipefail
+export PATH="/usr/sbin:$PATH"
 
 
-exec python3 -m router domains "$@"
+exec /venv/bin/python3 -m router domains "$@"
