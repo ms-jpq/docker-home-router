@@ -14,7 +14,6 @@ RUN apt update && \
     procps \
     nftables \
     openssl \
-    wget \
     iproute2 \
     python3-venv \
     dnsmasq \
