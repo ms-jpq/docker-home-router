@@ -4,6 +4,5 @@ set -eu
 set -o pipefail
 
 
-SVC="$(basename "$0")"
-printf '%s\n' "FIN :: $SVC"
-exec s6-svscanctl -t /var/run/s6/services
+printf '%s\n' "FIN :: $PWD"
+exec /run/s6/basedir/bin/halt
