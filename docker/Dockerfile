@@ -1,7 +1,7 @@
 FROM ubuntu:jammy
 
 
-ARG S6="https://github.com/just-containers/s6-overlay/releases/download/v2.2.0.3/s6-overlay-amd64-installer"
+ARG S6_OVERLAY_VERSION=3.0.0.2-2
 
 
 RUN apt update && \
@@ -31,21 +31,16 @@ RUN apt update && \
     rm -rf -- /tmp/*
 
 
-# RUN printf '%s' \
-#     "deb https://pkg.cloudflare.com/ $(cat /etc/lsb-release | grep -e 'DISTRIB_CODENAME' | awk -F '=' '{print $2}') main" | \
-#     tee /etc/apt/sources.list.d/cloudflare.list && \
-#     wget --output-document - -- https://pkg.cloudflare.com/cloudflare-main.gpg | apt-key add -
-    # TODO -- install cloudflard
-    # https://github.com/AdguardTeam/dnsproxy
-
-
-RUN wget --output-document /tmp/s6 -- "${S6}" && \
-    chmod +x -- /tmp/s6 && \
-    /tmp/s6 / && \
-    rm -rf -- /etc/s6/services/s6-fdholderd/down /tmp/*
+ADD https://github.com/just-containers/s6-overlay/releases/download/v"$S6_OVERLAY_VERSION"/s6-overlay-noarch-"$S6_OVERLAY_VERSION".tar.xz /tmp
+ADD https://github.com/just-containers/s6-overlay/releases/download/v"$S6_OVERLAY_VERSION"/s6-overlay-x86_64-"$S6_OVERLAY_VERSION".tar.xz /tmp
+RUN tar -C / -Jxpf /tmp/s6-overlay-noarch-"$S6_OVERLAY_VERSION".tar.xz && \
+    tar -C / -Jxpf /tmp/s6-overlay-x86_64-"$S6_OVERLAY_VERSION".tar.xz && \
+    rm -rf -- /tmp/**
 ENV S6_KEEP_ENV=1 \
-    S6_BEHAVIOUR_IF_STAGE2_FAILS=2
-ENTRYPOINT ["/init"]
+    S6_BEHAVIOUR_IF_STAGE2_FAILS=2 \
+    S6_SERVICES_GRACETIME=0 \
+    S6_KILL_GRACETIME=0
+ENTRYPOINT [ "/init" ]
 
 
 RUN python3 -m venv -- /venv
