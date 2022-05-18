@@ -2,11 +2,13 @@ FROM ubuntu:jammy
 
 
 ARG S6_OVERLAY_VERSION=3.0.0.2-2
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 
-RUN apt update && \
-    DEBIAN_FRONTEND=noninteractive apt install --yes --no-install-recommends -- \
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install --yes --no-install-recommends -- \
     sudo \
+    curl \
     software-properties-common \
     gpg-agent \
     isc-dhcp-client \
@@ -30,10 +32,12 @@ RUN apt update && \
     rm -rf -- /tmp/*
 
 
-ADD https://github.com/just-containers/s6-overlay/releases/download/v"$S6_OVERLAY_VERSION"/s6-overlay-noarch-"$S6_OVERLAY_VERSION".tar.xz /tmp
-ADD https://github.com/just-containers/s6-overlay/releases/download/v"$S6_OVERLAY_VERSION"/s6-overlay-x86_64-"$S6_OVERLAY_VERSION".tar.xz /tmp
-RUN tar -C / -Jxpf /tmp/s6-overlay-noarch-"$S6_OVERLAY_VERSION".tar.xz && \
-    tar -C / -Jxpf /tmp/s6-overlay-x86_64-"$S6_OVERLAY_VERSION".tar.xz && \
+RUN curl --location --output /tmp/s6-overlay-noarch.tar.xz -- \
+         https://github.com/just-containers/s6-overlay/releases/download/v"$S6_OVERLAY_VERSION"/s6-overlay-noarch-"$S6_OVERLAY_VERSION".tar.xz && \
+    curl --location --output /tmp/s6-overlay-some-arch.tar.xz -- \
+         https://github.com/just-containers/s6-overlay/releases/download/v"$S6_OVERLAY_VERSION"/s6-overlay-"$(arch)"-"$S6_OVERLAY_VERSION".tar.xz && \
+    tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz && \
+    tar -C / -Jxpf /tmp/s6-overlay-some-arch.tar.xz && \
     rm -rf -- /tmp/**
 ENV S6_KEEP_ENV=1 \
     S6_BEHAVIOUR_IF_STAGE2_FAILS=2 \

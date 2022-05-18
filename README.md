@@ -189,17 +189,6 @@ You can also get a VLAN capable switch, but those are slightly more $$$.
 
 </details>
 
-<details>
-  <summary>Are ARM computers ok? Like Raspberry Pi?</summary>
-
-Non-RPi ARM computers often have horrible software compatibility, but alot of them are better bang for the buck, YMMV.
-
-At the current price point (in Canada), RaspberryPis are just not competitive servers.
-
-I'd just get a random smol form x86 PC from Aliexpress / Amazon, they are a tad more expensive, but alot more powerful.
-
-</details>
-
 ---
 
 ## WTF, Why???
@@ -219,4 +208,3 @@ Same reason as NAT44, because you only need 1 <code>::/128</code> address.
 Even tho in theory we have almost unlimited IP6 addresses, there are many situations, such as shared living arrangements, bad ISPs, normie landlords, etc, where you do not get a nice stable block of prefixes.
 
 Kinda sucks, but it be like that sometimes.
-
