@@ -41,6 +41,6 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/windows-in-docker:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/router:latest
           context: ./docker
           platforms: linux/amd64,linux/arm64
