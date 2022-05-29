@@ -1,7 +1,6 @@
 from argparse import ArgumentParser, Namespace
 from typing import Sequence, Tuple
 
-from .cache.main import main as cache_main
 from .cake.main import main as cake_main
 from .dhclient.main import main as dhclient_main
 from .domains.main import main as domains_main
@@ -16,7 +15,6 @@ def _parse_args() -> Tuple[Namespace, Sequence[str]]:
     parser.add_argument(
         "op",
         choices=(
-            "cache",
             "cake",
             "dhclient",
             "domains",
@@ -34,8 +32,6 @@ def main() -> None:
 
     if args.op == "ifup":
         ifup_main()
-    elif args.op == "cache":
-        cache_main()
     elif args.op == "cake":
         cake_main()
     elif args.op == "dhclient":
