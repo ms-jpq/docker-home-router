@@ -19,7 +19,14 @@ from typing import (
     cast,
 )
 
-from std2.ipaddress import LINK_LOCAL_V6, PRIVATE_V6, IPAddress, IPNetwork, LOOPBACK_V4, LOOPBACK_V6
+from std2.ipaddress import (
+    LINK_LOCAL_V6,
+    LOOPBACK_V4,
+    LOOPBACK_V6,
+    PRIVATE_V6,
+    IPAddress,
+    IPNetwork,
+)
 from std2.pathlib import walk
 
 from ..consts import DATA, PRIVATE_ADDRS, RUN, SERVER_NAME, TEMPLATES, USER
@@ -44,10 +51,16 @@ class _DNS_Record:
     TYPE: str
 
 
-def _resolv_addrs() -> Iterator[IPAddress]:
+def _resolv_addrs() -> Iterator[Tuple[IPAddress, int]]:
     srvs = settings().dns.upstream_servers
-    seen: MutableSet[IPAddress] = set()
-    for srv in srvs:
+    seen: MutableSet[Tuple[IPAddress, int]] = set()
+    for server in srvs:
+        lhs, sep, rhs = server.rpartition("#")
+        if sep:
+            srv, port = lhs, int(rhs)
+        else:
+            srv, port = rhs, 53
+
         try:
             ip = ip_address(srv)
         except ValueError:
@@ -70,12 +83,14 @@ def _resolv_addrs() -> Iterator[IPAddress]:
                         addr, *_ = info
                         ip = ip_address(addr)
                         if ip not in seen:
-                            seen.add(ip)
-                            yield ip
+                            pair = ip, port
+                            seen.add(pair)
+                            yield pair
         else:
             if ip not in seen:
-                seen.add(ip)
-                yield ip
+                pair = ip, port
+                seen.add(pair)
+                yield pair
     else:
         if not seen:
             raise RuntimeError(f"NO DNS SERVERS -- {srvs}")
