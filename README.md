@@ -191,6 +191,23 @@ You can also get a VLAN capable switch, but those are slightly more $$$.
 
 ---
 
+## Netplan
+
+
+```yaml
+---
+version: 2
+network:
+  ethernets:
+    "<wan if>":
+      dhcp4: True
+      dhcp6: True
+    # LAN ifs should be commented out
+```
+
+
+---
+
 ## WTF, Why???
 
 ### Docker
