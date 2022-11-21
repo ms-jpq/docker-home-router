@@ -30,7 +30,7 @@ def _domain(addr: IPAddress) -> str:
     elif addr in networks.guest.v4 or addr in networks.guest.v6:
         return settings().dns.local_domains.guest
     else:
-        assert False
+        assert False, addr
 
 
 def _parse(hostname: str, addr: IPAddress) -> Tuple[str, str, str]:
@@ -88,4 +88,4 @@ def main(argv: Sequence[str]) -> None:
         elif args.op in {"del"}:
             _rm(hostname, addr=addr)
         else:
-            assert False
+            assert False, argv

@@ -2,7 +2,7 @@ FROM ubuntu:jammy
 
 
 ARG S6_OVERLAY_VERSION=3.0.0.2-2
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+SHELL ["/bin/bash", "-Eeu", "-o", "pipefail", "-c"]
 
 
 RUN apt-get update && \
@@ -33,9 +33,9 @@ RUN apt-get update && \
 
 
 RUN curl --location --output /tmp/s6-overlay-noarch.tar.xz -- \
-         https://github.com/just-containers/s6-overlay/releases/download/v"$S6_OVERLAY_VERSION"/s6-overlay-noarch-"$S6_OVERLAY_VERSION".tar.xz && \
+    https://github.com/just-containers/s6-overlay/releases/download/v"$S6_OVERLAY_VERSION"/s6-overlay-noarch-"$S6_OVERLAY_VERSION".tar.xz && \
     curl --location --output /tmp/s6-overlay-some-arch.tar.xz -- \
-         https://github.com/just-containers/s6-overlay/releases/download/v"$S6_OVERLAY_VERSION"/s6-overlay-"$(arch)"-"$S6_OVERLAY_VERSION".tar.xz && \
+    https://github.com/just-containers/s6-overlay/releases/download/v"$S6_OVERLAY_VERSION"/s6-overlay-"$(arch)"-"$S6_OVERLAY_VERSION".tar.xz && \
     tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz && \
     tar -C / -Jxpf /tmp/s6-overlay-some-arch.tar.xz && \
     rm -rf -- /tmp/**
@@ -70,16 +70,16 @@ RUN useradd --user-group --shell=/usr/sbin/nologin -- "$USER" && \
 # 3128  TCP     -> Squid
 # 1080  TCP     -> Tor
 EXPOSE 53/tcp 53/udp \
-       67/udp \
-       123/udp \
-       547/udp \
-       853/tcp \
-       5353/udp \
-       51820/udp \
-       8080/tcp \
-       3128/tcp \
-       1080/tcp
+    67/udp \
+    123/udp \
+    547/udp \
+    853/tcp \
+    5353/udp \
+    51820/udp \
+    8080/tcp \
+    3128/tcp \
+    1080/tcp
 
 
 VOLUME /config \
-       /data
+    /data

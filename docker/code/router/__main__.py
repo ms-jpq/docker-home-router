@@ -45,7 +45,7 @@ def main() -> None:
     elif args.op == "wg":
         wg_main()
     else:
-        assert False
+        assert False, (args, argv)
 
 
 main()
