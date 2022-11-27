@@ -26,9 +26,9 @@ dhcp:
   lease_time: 1
 dns:
   local_domains:
-    trusted: trusted.home.arpa
-    wireguard: wireguard.home.arpa
-    guest: guest.home.arpa
+    trusted: t.home.arpa
+    wireguard: w.home.arpa
+    guest: g.home.arpa
   local_ttl: 1
   upstream_servers: []
   split_horizon:
