@@ -39,7 +39,8 @@ RUN curl --location --output /tmp/s6-overlay-noarch.tar.xz -- \
     tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz && \
     tar -C / -Jxpf /tmp/s6-overlay-some-arch.tar.xz && \
     rm -rf -- /tmp/**
-ENV S6_KEEP_ENV=1 \
+ENV \
+    S6_KEEP_ENV=1 \
     S6_BEHAVIOUR_IF_STAGE2_FAILS=2 \
     S6_CMD_WAIT_FOR_SERVICES_MAXTIME=0 \
     S6_SERVICES_GRACETIME=0 \
@@ -69,7 +70,8 @@ RUN useradd --user-group --shell=/usr/sbin/nologin -- "$USER" && \
 # 8080  TCP     -> HTTP alt
 # 3128  TCP     -> Squid
 # 1080  TCP     -> Tor
-EXPOSE 53/tcp 53/udp \
+EXPOSE \
+    53/tcp 53/udp \
     67/udp \
     123/udp \
     547/udp \
@@ -80,6 +82,8 @@ EXPOSE 53/tcp 53/udp \
     3128/tcp \
     1080/tcp
 
-
-VOLUME /config \
-    /data
+# mount hardware clock @ /dev/ptp0 if using ntp server
+VOLUME \
+    /config \
+    /data \
+    /dev/ptp0
