@@ -13,6 +13,7 @@ from std2.types import never
 
 from ..consts import J2, QR_DIR
 from ..render import j2_build, j2_render
+from .chrony import feed as ch_feed
 from .dhcp import feed as dhcp_feed
 from .dns import feed as dns_feed
 from .fwds import feed as fwd_feed
@@ -31,6 +32,7 @@ _SHOW_TPL = Path("show") / "stats.html"
 
 class _Path(Enum):
     index = POSIX_ROOT
+    chrony = POSIX_ROOT / "chrony"
     dhcp = POSIX_ROOT / "dhcp"
     dns = POSIX_ROOT / "dns"
     fwd = POSIX_ROOT / "fwd"
@@ -79,6 +81,11 @@ def main() -> None:
                 )
             }
             page = j2_render(j2, path=_INDEX_TPL, env=env).encode()
+            _get(handler, page=page)
+
+        elif path is _Path.chrony:
+            env = {"TITLE": path.name, "BODY": ch_feed()}
+            page = j2_render(j2, path=_SHOW_TPL, env=env).encode()
             _get(handler, page=page)
 
         elif path is _Path.dhcp:
