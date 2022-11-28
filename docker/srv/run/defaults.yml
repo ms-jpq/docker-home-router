@@ -76,4 +76,11 @@ guest_accessible:
   trusted: {}
   wireguard: {}
 
-ntp: True
+ntp:
+  enabled: True
+
+  local_options: >-
+    stratum 3
+
+  refclock_options: >-
+    stratum 3

@@ -116,6 +116,13 @@ class GuestAccessible:
 
 
 @dataclass(frozen=True)
+class Ntp:
+    enabled: bool
+    local_options: str
+    refclock_options: str
+
+
+@dataclass(frozen=True)
 class Settings:
     interfaces: Interfaces
     ip_addresses: _IPAddresses
@@ -131,4 +138,4 @@ class Settings:
     port_forwards: PortForwards
     guest_accessible: GuestAccessible
 
-    ntp: bool
+    ntp: Ntp

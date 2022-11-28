@@ -15,6 +15,7 @@ from .types import (
     GuestAccessible,
     IPv4,
     IPv6,
+    Ntp,
     PortBindings,
     Settings,
     Splithorizon,
@@ -119,6 +120,10 @@ def settings() -> Settings:
             trusted=raw.guest_accessible.trusted,
             wireguard=raw.guest_accessible.wireguard,
         ),
-        ntp=raw.ntp and PTP.is_char_device(),
+        ntp=Ntp(
+            enabled=raw.ntp.enabled and PTP.is_char_device(),
+            local_options=raw.ntp.local_options,
+            refclock_options=raw.ntp.refclock_options,
+        ),
     )
     return settings
