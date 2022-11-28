@@ -24,6 +24,7 @@ ip_addresses:
 
 dhcp:
   lease_time: 1
+
 dns:
   local_domains:
     trusted: t.home.arpa
@@ -74,3 +75,5 @@ port_forwards:
 guest_accessible:
   trusted: {}
   wireguard: {}
+
+ntp: True

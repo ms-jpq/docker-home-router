@@ -134,6 +134,7 @@ def _env(networks: Networks) -> Mapping[str, Any]:
         "LOOPBACK_LOCAL": loop_back,
         "LOOPBACK_V4": LOOPBACK_V4,
         "LOOPBACK_V6": LOOPBACK_V6,
+        "NTP": settings().ntp,
         "PRIVATE_ADDRS": PRIVATE_ADDRS,
         "PRIVATE_DOMAINS": settings().dns.private_domains,
         "SERVER_NAME": SERVER_NAME,

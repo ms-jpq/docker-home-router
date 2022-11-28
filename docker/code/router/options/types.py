@@ -130,3 +130,5 @@ class Settings:
 
     port_forwards: PortForwards
     guest_accessible: GuestAccessible
+
+    ntp: bool

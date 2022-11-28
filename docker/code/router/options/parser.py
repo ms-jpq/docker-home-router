@@ -119,5 +119,6 @@ def settings() -> Settings:
             trusted=raw.guest_accessible.trusted,
             wireguard=raw.guest_accessible.wireguard,
         ),
+        ntp=raw.ntp
     )
     return settings

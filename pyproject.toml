@@ -1,0 +1,6 @@
+[project]
+name    = "router"
+version = "0"
+
+[project.optional-dependencies]
+dev = ["mypy", "types-PyYAML"]
