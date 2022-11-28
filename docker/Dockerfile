@@ -85,5 +85,4 @@ EXPOSE \
 # mount hardware clock @ /dev/ptp0 if using ntp server
 VOLUME \
     /config \
-    /data \
-    /dev/ptp0
+    /data
