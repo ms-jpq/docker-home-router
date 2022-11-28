@@ -32,7 +32,7 @@ _SRV = Path(sep, "srv")
 TEMPLATES = _SRV / "templates"
 RUN = _SRV / "run"
 
-CONFIG = Path(sep, "config")
+CONFIG = Path(sep) / "config"
 DEFAULT_CONFIG = RUN / "defaults.yml"
 DATA = Path(sep, "data")
 
@@ -47,3 +47,5 @@ QR_DIR = RUN / "qr"
 DHCP_SERVER_LEASES = DATA / "dnsmasq" / "leases"
 
 DHCP_CLIENT_LEASES = DATA / "dhclient" / "v6_leases"
+
+PTP = Path(sep) / "dev" / "ptp0"

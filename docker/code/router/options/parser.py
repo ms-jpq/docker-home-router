@@ -7,7 +7,7 @@ from std2.locale import pathsort_key
 from std2.pickle.decoder import new_decoder
 from yaml import safe_load
 
-from ..consts import CONFIG, DEFAULT_CONFIG
+from ..consts import CONFIG, DEFAULT_CONFIG, PTP
 from .types import (
     DHCP,
     DNS,
@@ -49,7 +49,7 @@ def encode_dns_name(raw: str) -> str:
 
 def _validate_bindings(bindings: PortBindings) -> None:
     ports = asdict(bindings).values()
-    min_p, max_p = 1025, 2 ** 16 - 1
+    min_p, max_p = 1025, 2**16 - 1
 
     for port in ports:
         assert port >= min_p and port <= max_p
@@ -119,6 +119,6 @@ def settings() -> Settings:
             trusted=raw.guest_accessible.trusted,
             wireguard=raw.guest_accessible.wireguard,
         ),
-        ntp=raw.ntp
+        ntp=raw.ntp and PTP.is_char_device(),
     )
     return settings
