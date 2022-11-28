@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -eu
+set -Eeu
 set -o pipefail
 export PATH="/usr/local/bin:$PATH"
 

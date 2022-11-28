@@ -1,17 +1,14 @@
 #!/usr/bin/env bash
 
-set -eu
+set -Eeu
 set -o pipefail
 export PATH="/usr/sbin:$PATH"
 
-
-ARGS=(
-  -d
-  -x
+CONF=(
   -f /srv/run/chrony/0-include.conf
-  -L 0
   )
 
 
-rm -rf -- /tmp/chronyd.pid
-exec s6-envuidgid "$USER" chronyd "${ARGS[@]}"
+rm -fr -- /tmp/chronyd.pid
+s6-envuidgid "$USER" chronyd -p "${CONF[@]}"
+exec s6-envuidgid "$USER" chronyd "${CONF[@]}" -d -x -L 0
