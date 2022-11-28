@@ -8,6 +8,8 @@ services:
       - NET_ADMIN
     environment:
       - TZ
+    devices:
+      - /dev/ptp0
     network_mode: host
     volumes:
       - /data
