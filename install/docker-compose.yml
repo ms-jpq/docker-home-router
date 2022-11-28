@@ -10,6 +10,8 @@ services:
     environment:
       - TZ
     network_mode: host
+    devices:
+      - /dev/ptp0
     volumes:
       - /data
       - ./config:/config:ro
