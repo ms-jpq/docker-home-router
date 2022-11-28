@@ -29,7 +29,7 @@ from std2.ipaddress import (
 )
 from std2.pathlib import walk
 
-from ..consts import DATA, PRIVATE_ADDRS, RUN, SERVER_NAME, TEMPLATES, USER
+from ..consts import DATA, PRIVATE_ADDRS, PTP_DEVICE, RUN, SERVER_NAME, TEMPLATES, USER
 from ..forwards import Split, dhcp_fixed, forwarded_ports
 from ..ip import ipv6_enabled
 from ..options.parser import settings
@@ -136,6 +136,7 @@ def _env(networks: Networks) -> Mapping[str, Any]:
         "LOOPBACK_V6": LOOPBACK_V6,
         "NTP_ENABLED": settings().ntp.enabled,
         "NTP_LOCAL_OPTIONS": settings().ntp.local_options,
+        "NTP_PTP0": PTP_DEVICE.is_char_device(),
         "NTP_REFCLOCK_OPTIONS": settings().ntp.refclock_options,
         "PRIVATE_ADDRS": PRIVATE_ADDRS,
         "PRIVATE_DOMAINS": settings().dns.private_domains,

@@ -32,4 +32,4 @@ then
   cp -r -- "${NTPS[@]}" "$NTP_DEST"
 fi
 
-exec chown -R "$USER:$USER" -- "${ARGS[@]}"
+exec chown -R -- "$USER:$USER" "${ARGS[@]}"

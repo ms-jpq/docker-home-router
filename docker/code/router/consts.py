@@ -27,16 +27,16 @@ PRIVATE_ADDRS = (
 _TOP_LV = Path(__file__).resolve().parent
 J2 = _TOP_LV / "j2"
 
-_SRV = Path(sep, "srv")
+_SRV = Path(sep) / "srv"
 
 TEMPLATES = _SRV / "templates"
 RUN = _SRV / "run"
 
 CONFIG = Path(sep) / "config"
 DEFAULT_CONFIG = RUN / "defaults.yml"
-DATA = Path(sep, "data")
+DATA = Path(sep) / "data"
 
-_TMP = Path(sep, "tmp")
+_TMP = Path(sep) / "tmp"
 
 
 NETWORKS_JSON = _SRV / "run" / "networks" / "networks.json"
@@ -48,4 +48,5 @@ DHCP_SERVER_LEASES = DATA / "dnsmasq" / "leases"
 
 DHCP_CLIENT_LEASES = DATA / "dhclient" / "v6_leases"
 
-PTP = Path(sep) / "dev" / "ptp0"
+NTP_SOURCES = CONFIG / "ntpsources"
+PTP_DEVICE = Path(sep) / "dev" / "ptp0"
