@@ -2,8 +2,9 @@
 interfaces:
   wan: null
   trusted: []
-  wireguard: wg0
   guest: []
+  wireguard: wg0
+  nat64_if: nat64
   unmanaged:
     - "docker*"
   wan_pd_only: False
@@ -18,6 +19,7 @@ ip_addresses:
       - 172.16.0.0/12
     managed_prefix_len: 24
     tor_prefix_len: 16
+    nat64_prefix_len: 31
   ipv6:
     ula_global_prefix: null
     prefix_delegation: False

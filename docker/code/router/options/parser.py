@@ -75,6 +75,7 @@ def settings() -> Settings:
                 managed_network_exclusions=raw.ip_addresses.ipv4.managed_network_exclusions,
                 managed_prefix_len=raw.ip_addresses.ipv4.managed_prefix_len,
                 tor_prefix_len=raw.ip_addresses.ipv4.tor_prefix_len,
+                nat64_prefix_len=raw.ip_addresses.ipv4.nat64_prefix_len,
             ),
             ipv6=IPv6(
                 ula_global_prefix=raw.ip_addresses.ipv6.ula_global_prefix,

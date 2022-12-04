@@ -13,6 +13,7 @@ class Interfaces:
     trusted: AbstractSet[str]
     guest: AbstractSet[str]
     unmanaged: AbstractSet[str]
+    nat64_if: str
 
     wan_pd_only: bool
 
@@ -23,6 +24,7 @@ class IPv4:
     managed_network_exclusions: AbstractSet[IPv4Network]
     managed_prefix_len: int
     tor_prefix_len: int
+    nat64_prefix_len: int
 
 
 @dataclass(frozen=True)

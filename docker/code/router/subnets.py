@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from fnmatch import fnmatch
+from functools import reduce
 from hashlib import sha256
 from ipaddress import IPv4Address, IPv4Network, IPv6Network, ip_interface
 from itertools import chain, islice
@@ -21,6 +22,7 @@ class _V4Stack:
     wg: IPv4Network
     tor: IPv4Network
     guest: IPv4Network
+    nat64: IPv4Network
 
 
 @dataclass(frozen=True)
@@ -29,6 +31,7 @@ class _V6Stack:
     wg: IPv6Network
     tor: IPv6Network
     guest: IPv6Network
+    nat64: IPv6Network
 
 
 def load_networks() -> Networks:
@@ -74,16 +77,17 @@ def _v4(
     if_exclusions: AbstractSet[str], exclusions: AbstractSet[IPv4Network]
 ) -> _V4Stack:
     nono = chain(exclusions, _existing(if_exclusions))
-    trusted, wg, tor, guest = _pick_private(
+    trusted, wg, tor, guest, nat64 = _pick_private(
         nono,
         prefixes=(
             settings().ip_addresses.ipv4.managed_prefix_len,
             settings().ip_addresses.ipv4.managed_prefix_len,
             settings().ip_addresses.ipv4.tor_prefix_len,
             settings().ip_addresses.ipv4.managed_prefix_len,
+            settings().ip_addresses.ipv4.nat64_prefix_len,
         ),
     )
-    stack = _V4Stack(trusted=trusted, wg=wg, tor=tor, guest=guest)
+    stack = _V4Stack(trusted=trusted, wg=wg, tor=tor, guest=guest, nat64=nat64)
     return stack
 
 
@@ -92,7 +96,7 @@ def _gen_prefix() -> str:
         if addr.ifname == settings().interfaces.wan:
             if addr.address:
                 hashed = int(sha256(addr.address.encode()).hexdigest(), 16)
-                integer = hashed % (2 ** 40 - 1)
+                integer = hashed % (2**40 - 1)
                 bits = format(integer, "08x")
                 prefix = f"fd{bits[:2]}:{bits[2:6]}:{bits[6:]}"
                 return prefix
@@ -103,9 +107,10 @@ def _gen_prefix() -> str:
 def _v6(prefix: Optional[str]) -> _V6Stack:
     org_prefix = prefix or _gen_prefix()
     org = IPv6Network(f"{org_prefix}::/48")
-    trusted, wg, tor, guest = islice(org.subnets(new_prefix=64), 4)
+    trusted, wg, tor, guest, net69 = islice(org.subnets(new_prefix=64), 5)
+    nat64 = next(net69.subnets(new_prefix=96))
 
-    stack = _V6Stack(trusted=trusted, wg=wg, tor=tor, guest=guest)
+    stack = _V6Stack(trusted=trusted, wg=wg, tor=tor, guest=guest, nat64=nat64)
     return stack
 
 
@@ -122,6 +127,7 @@ def calculate_networks() -> Networks:
         wireguard=DualStack(v4=v4.wg, v6=v6.wg),
         tor=DualStack(v4=v4.tor, v6=v6.tor),
         guest=DualStack(v4=v4.guest, v6=v6.guest),
+        nat64=DualStack(v4=v4.nat64, v6=v6.nat64),
     )
     return networks
 

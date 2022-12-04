@@ -14,3 +14,4 @@ class Networks:
     trusted: DualStack
     tor: DualStack
     wireguard: DualStack
+    nat64: DualStack

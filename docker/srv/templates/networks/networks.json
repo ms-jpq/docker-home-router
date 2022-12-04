@@ -3,13 +3,17 @@
     "v4": "{{ GUEST_NETWORK_V4 }}",
     "v6": "{{ GUEST_NETWORK_V6 }}"
   },
-  "trusted": {
-    "v4": "{{ TRUSTED_NETWORK_V4 }}",
-    "v6": "{{ TRUSTED_NETWORK_V6 }}"
+  "nat64": {
+    "v4": "{{ NAT64_NETWORK_V4 }}",
+    "v6": "{{ NAT64_NETWORK_V6 }}"
   },
   "tor": {
     "v4": "{{ TOR_NETWORK_V4 }}",
     "v6": "{{ TOR_NETWORK_V6 }}"
+  },
+  "trusted": {
+    "v4": "{{ TRUSTED_NETWORK_V4 }}",
+    "v6": "{{ TRUSTED_NETWORK_V6 }}"
   },
   "wireguard": {
     "v4": "{{ WG_NETWORK_V4 }}",
