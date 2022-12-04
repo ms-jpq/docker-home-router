@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from ipaddress import IPv4Address, ip_address
 from itertools import chain
+from locale import strxfrm
 from multiprocessing import cpu_count
 from pprint import pformat
 from shutil import copystat, get_terminal_size
@@ -123,7 +124,7 @@ def _env(networks: Networks) -> Mapping[str, Any]:
         "FORWARDED_PORTS": fwds,
         "GUEST_ACCESSIBLE": avail,
         "GUEST_DOMAIN": settings().dns.local_domains.guest,
-        "GUEST_IFS": settings().interfaces.guest,
+        "GUEST_IFS": sorted(settings().interfaces.guest, key=strxfrm),
         "GUEST_NETWORK_V4": networks.guest.v4,
         "GUEST_NETWORK_V6": networks.guest.v6,
         "IPV6_ENABLED": ipv6_enabled(),
@@ -147,8 +148,8 @@ def _env(networks: Networks) -> Mapping[str, Any]:
         "TOR_NETWORK_V4": networks.tor.v4,
         "TOR_NETWORK_V6": networks.tor.v6,
         "TOR_PORT": settings().port_bindings.tor,
-        "TRUSTED_DOMAIN": settings().dns.local_domains.trusted,
-        "TRUSTED_IFS": settings().interfaces.trusted,
+        "TRUSTED_DOMAIN": settings().dns.local_domains.trusted ,
+        "TRUSTED_IFS": sorted(settings().interfaces.trusted, key=strxfrm),
         "TRUSTED_NETWORK_V4": networks.trusted.v4,
         "TRUSTED_NETWORK_V6": networks.trusted.v6,
         "USER": USER,
