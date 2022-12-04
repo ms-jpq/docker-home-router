@@ -13,4 +13,10 @@ ARGS=(
 
 
 rm -fr -- "$PID_FILE"
-exec tayga "${ARGS[@]}"
+
+if [[ -c /dev/net/tun ]]
+then
+  exec tayga "${ARGS[@]}"
+else
+  sleep infinity
+fi

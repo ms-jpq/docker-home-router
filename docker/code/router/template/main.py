@@ -30,7 +30,16 @@ from std2.ipaddress import (
 )
 from std2.pathlib import walk
 
-from ..consts import DATA, PRIVATE_ADDRS, PTP_DEVICES, RUN, SERVER_NAME, TEMPLATES, USER
+from ..consts import (
+    DATA,
+    PRIVATE_ADDRS,
+    PTP_DEVICES,
+    RUN,
+    SERVER_NAME,
+    TEMPLATES,
+    TUNNABLE,
+    USER,
+)
 from ..forwards import Split, dhcp_fixed, forwarded_ports
 from ..ip import ipv6_enabled
 from ..options.parser import settings
@@ -135,7 +144,7 @@ def _env(networks: Networks) -> Mapping[str, Any]:
         "LOOPBACK_LOCAL": loop_back,
         "LOOPBACK_V4": LOOPBACK_V4,
         "LOOPBACK_V6": LOOPBACK_V6,
-        "NAT64_IF": settings().interfaces.nat64_if,
+        "NAT64_IF": settings().interfaces.nat64_if if TUNNABLE else None,
         "NAT64_NETWORK_V4": networks.nat64.v4,
         "NAT64_NETWORK_V6": networks.nat64.v6,
         "NTP_ENABLED": settings().ntp.enabled,
