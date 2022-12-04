@@ -9,15 +9,12 @@ def main() -> None:
     if_name = settings().interfaces.nat64_if
     networks = load_networks()
     main_if = networks.nat64 if settings().interfaces.guest else networks.trusted
-    try:
-        run(("ip", "link", "del", "dev", if_name))
-        check_call(("tayga", "--config", RUN / "tayga" / "0-main.conf", "--mktun"))
 
-        check_call(("ip", "addr", "add", str(next(main_if.v6.hosts())), "dev", if_name))
-        check_call(("ip", "addr", "add", str(next(main_if.v4.hosts())), "dev", if_name))
-        check_call(("ip", "route", "add", str(networks.nat64.v4), "dev", if_name))
-        check_call(("ip", "route", "add", str(networks.nat64.v6), "dev", if_name))
+    run(("ip", "link", "del", "dev", if_name))
+    check_call(("tayga", "--config", RUN / "tayga" / "0-main.conf", "--mktun"))
 
-    except Exception as e:
-        print(e, flush=True)
-        pass
+    check_call(("ip", "link", "set", "dev", if_name, "up"))
+    check_call(("ip", "addr", "add", str(next(main_if.v6.hosts())), "dev", if_name))
+    check_call(("ip", "addr", "add", str(next(main_if.v4.hosts())), "dev", if_name))
+    check_call(("ip", "route", "add", str(networks.nat64.v4), "dev", if_name))
+    check_call(("ip", "route", "add", str(networks.nat64.v6), "dev", if_name))

@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+set -Eeu
+set -o pipefail
+export PATH="/usr/sbin:$PATH"
+
+PID_FILE=/tmp/tayga.pid
+ARGS=(
+  -d
+  --pidfile "$PID_FILE"
+  --config /srv/run/tayga/0-main.conf
+  )
+
+
+rm -fr -- "$PID_FILE"
+exec tayga "${ARGS[@]}"
