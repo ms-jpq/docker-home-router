@@ -9,9 +9,9 @@ from std2.ipaddress import IPAddress
 @dataclass(frozen=True)
 class Interfaces:
     wan: str
-    trusted: str
     wireguard: str
-    guest: Optional[str]
+    trusted: AbstractSet[str]
+    guest: AbstractSet[str]
     unmanaged: AbstractSet[str]
 
     wan_pd_only: bool

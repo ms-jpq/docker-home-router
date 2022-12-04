@@ -1,7 +1,8 @@
 from ipaddress import IPv4Address, ip_interface, ip_network
+from locale import strxfrm
 from re import RegexFlag, compile
 from subprocess import check_call
-from typing import AbstractSet, MutableSet, Optional
+from typing import AbstractSet, Iterable, MutableSet, Optional
 
 from std2.ipaddress import LINK_LOCAL_V6, IPInterface, IPNetwork
 
@@ -34,33 +35,38 @@ def _wan_pd() -> Optional[IPNetwork]:
 
 
 def if_up(
-    addrs: Addrs, delete: bool, interface: str, networks: AbstractSet[IPNetwork]
+    addrs: Addrs,
+    delete: bool,
+    interfaces: Iterable[str],
+    networks: AbstractSet[IPNetwork],
 ) -> None:
-    acc: MutableSet[IPInterface] = {
-        ip_interface(f"{next(network.hosts())}/{network.prefixlen}")
-        for network in networks
-    }
 
-    check_call(("ip", "link", "set", "up", "dev", interface))
+    for idx, interface in enumerate(sorted(interfaces, key=strxfrm), start=1):
+        acc: MutableSet[IPInterface] = {
+            ip_interface(f"{network[idx]}/{network.prefixlen}") for network in networks
+        }
+        check_call(("ip", "link", "set", "up", "dev", interface))
 
-    for addr in addrs:
-        if addr.ifname == interface:
-            for info in addr.addr_info:
-                local = ip_interface(f"{info.local}/{info.prefixlen}")
-                if delete and info.tentative:
-                    check_call(("ip", "addr", "del", str(local), "dev", interface))
-                elif local in acc:
-                    acc.discard(local)
-                else:
-                    if delete and local.ip not in LINK_LOCAL_V6:
+        for addr in addrs:
+            if addr.ifname == interface:
+                for info in addr.addr_info:
+                    local = ip_interface(f"{info.local}/{info.prefixlen}")
+                    if delete and info.tentative:
                         check_call(("ip", "addr", "del", str(local), "dev", interface))
-            break
-    else:
-        raise ValueError(f"IF NOT FOUND - {interface}")
+                    elif local in acc:
+                        acc.discard(local)
+                    else:
+                        if delete and local.ip not in LINK_LOCAL_V6:
+                            check_call(
+                                ("ip", "addr", "del", str(local), "dev", interface)
+                            )
+                break
+        else:
+            raise ValueError(f"IF NOT FOUND - {interface}")
 
-    for ip in acc:
-        if isinstance(ip, IPv4Address) or ipv6_enabled():
-            check_call(("ip", "addr", "add", str(ip), "dev", interface))
+        for ip in acc:
+            if isinstance(ip, IPv4Address) or ipv6_enabled():
+                check_call(("ip", "addr", "add", str(ip), "dev", interface))
 
 
 def main() -> None:
@@ -70,14 +76,14 @@ def main() -> None:
         if_up(
             addrs,
             delete=False,
-            interface=settings().interfaces.wan,
+            interfaces=(settings().interfaces.wan,),
             networks={network},
         )
 
     if_up(
         addrs,
         delete=True,
-        interface=settings().interfaces.trusted,
+        interfaces=settings().interfaces.trusted,
         networks={networks.trusted.v4, networks.trusted.v6},
     )
 
@@ -85,6 +91,6 @@ def main() -> None:
         if_up(
             addrs,
             delete=True,
-            interface=guest_if,
+            interfaces=guest_if,
             networks={networks.guest.v4, networks.guest.v6},
         )
