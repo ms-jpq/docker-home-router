@@ -6,13 +6,7 @@ shopt -s globstar nullglob
 export PATH="/usr/sbin:$PATH"
 
 
-ARGS=(
-  /srv
-  /data
-  )
-
-
-
+TFTP_SRC=/config/tftp
 NFT_DEST=/srv/run/nftables/user/
 NTP_DEST=/srv/run/chrony/sources.d/
 
@@ -32,4 +26,10 @@ then
   cp -r -- "${NTPS[@]}" "$NTP_DEST"
 fi
 
-exec chown -R -- "$USER:$USER" "${ARGS[@]}"
+
+if [[ -d "$TFTP_SRC" ]]
+then
+  ln -s -f -- "$TFTP_SRC" /srv/run/tftp
+fi
+
+exec chown -R -- "$USER:$USER" /srv /data

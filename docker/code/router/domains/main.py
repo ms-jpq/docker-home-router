@@ -71,7 +71,7 @@ def _rm(hostname: str, addr: IPAddress) -> None:
 
 def _parse_args(args: Sequence[str]) -> Namespace:
     parser = ArgumentParser()
-    parser.add_argument("op", choices=("old", "add", "del"))
+    parser.add_argument("op", choices=("tftp", "old", "add", "del"))
     parser.add_argument("mac")
     parser.add_argument("ip")
     parser.add_argument("hostname", nargs="?")
@@ -83,7 +83,9 @@ def main(argv: Sequence[str]) -> None:
     addr: IPAddress = ip_address(args.ip)
     hostname = environ.get("DNSMASQ_SUPPLIED_HOSTNAME", args.hostname)
     if hostname:
-        if args.op in {"old", "add"}:
+        if args.op in {"tftp"}:
+            pass
+        elif args.op in {"old", "add"}:
             _add(hostname, addr=addr)
         elif args.op in {"del"}:
             _rm(hostname, addr=addr)
