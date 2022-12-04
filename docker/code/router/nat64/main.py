@@ -10,8 +10,8 @@ from ..subnets import load_networks
 def main() -> None:
     try:
         networks = load_networks()
-        addrs = addr_show()
         check_call(("tayga", "--config", RUN / "tayga" / "0-main.conf", "--mktun"))
+        addrs = addr_show()
         if_up(
             addrs,
             delete=True,

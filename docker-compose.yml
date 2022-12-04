@@ -8,9 +8,10 @@ services:
       - NET_ADMIN
     environment:
       - TZ
-    devices:
-      - /dev/ptp0
     network_mode: host
+    devices:
+      - /dev/net/tun
+      - /dev/ptp0
     volumes:
       - /data
       - ./config:/config:ro

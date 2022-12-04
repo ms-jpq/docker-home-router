@@ -11,6 +11,7 @@ services:
       - TZ
     network_mode: host
     devices:
+      - /dev/net/tun
       - /dev/ptp0
     volumes:
       - /data
