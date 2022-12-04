@@ -7,7 +7,7 @@ from std2.locale import pathsort_key
 from std2.pickle.decoder import new_decoder
 from yaml import safe_load
 
-from ..consts import CONFIG, DEFAULT_CONFIG, NTP_SOURCES, PTP_DEVICE
+from ..consts import CONFIG, DEFAULT_CONFIG, NTP_SOURCES, PTP_DEVICES
 from .types import (
     DHCP,
     DNS,
@@ -122,7 +122,7 @@ def settings() -> Settings:
         ),
         ntp=Ntp(
             enabled=raw.ntp.enabled
-            and (any(NTP_SOURCES.glob("*.sources")) or PTP_DEVICE.is_char_device()),
+            and (any(NTP_SOURCES.glob("*.sources")) or bool(PTP_DEVICES)),
             local_options=raw.ntp.local_options,
             refclock_options=raw.ntp.refclock_options,
         ),

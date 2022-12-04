@@ -49,4 +49,4 @@ DHCP_SERVER_LEASES = DATA / "dnsmasq" / "leases"
 DHCP_CLIENT_LEASES = DATA / "dhclient" / "v6_leases"
 
 NTP_SOURCES = CONFIG / "ntpsources"
-PTP_DEVICE = Path(sep) / "dev" / "ptp0"
+PTP_DEVICES = tuple(dev.is_char_device() for dev in (Path(sep) / "dev").glob("ptp*"))

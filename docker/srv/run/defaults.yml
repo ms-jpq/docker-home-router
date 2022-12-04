@@ -1,9 +1,9 @@
 ---
 interfaces:
-  wan:
-  trusted:
+  wan: null
+  trusted: []
   wireguard: wg0
-  guest: null
+  guest: []
   unmanaged:
     - "docker*"
   wan_pd_only: False

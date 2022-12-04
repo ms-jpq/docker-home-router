@@ -61,7 +61,7 @@ def main() -> None:
     if_up(
         addrs,
         delete=True,
-        interface=settings().interfaces.wireguard,
+        interfaces=(settings().interfaces.wireguard,),
         networks={networks.wireguard.v4, networks.wireguard.v6},
     )
     _wg_up()
