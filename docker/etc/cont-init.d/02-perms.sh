@@ -7,29 +7,38 @@ export PATH="/usr/sbin:$PATH"
 
 
 TFTP_SRC=/config/tftp
-NFT_DEST=/srv/run/nftables/user/
-NTP_DEST=/srv/run/chrony/sources.d/
+TFTP_DST=/tftp
+NFT_DST=/srv/run/nftables/user/
+NTP_DST=/srv/run/chrony/sources.d/
+DHCPD_DST=/srv/run/dnsmasq/dhcp/dhcp-optsdir/
 
-mkdir -p -- "$NFT_DEST" "$NTP_DEST"
+
+mkdir -p -- "$NFT_DST" "$NTP_DST" "$DHCPD_DST"
 
 
 NFTS=(/config/nftables/*)
 NTPS=(/config/ntpsources/*)
+DHCPDS=(/config/dhcpd/*)
 
 if (( ${#NFTS[@]} ))
 then
-  cp -r -- "${NFTS[@]}" "$NFT_DEST"
+  cp -r -- "${NFTS[@]}" "$NFT_DST"
 fi
 
 if (( ${#NTPS[@]} ))
 then
-  cp -r -- "${NTPS[@]}" "$NTP_DEST"
+  cp -r -- "${NTPS[@]}" "$NTP_DST"
 fi
 
+if (( ${#DHCPDS[@]} ))
+then
+  cp -r -- "${DHCPDS[@]}" "$DHCPD_DST"
+fi
 
 if [[ -d "$TFTP_SRC" ]]
 then
-  ln -s -f -- "$TFTP_SRC" /srv/run/tftp
+  rm -fr -- "$TFTP_DST"
+  ln -s -f -- "$TFTP_SRC" "$TFTP_DST"
 fi
 
 exec chown -R -- "$USER:$USER" /srv /data

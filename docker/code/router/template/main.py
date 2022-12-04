@@ -223,13 +223,17 @@ def main() -> None:
 
     env = _env(networks)
     j2 = j2_build(TEMPLATES)
-    for path in walk(TEMPLATES):
+    for path in walk(TEMPLATES, dirs=True):
         tpl = path.relative_to(TEMPLATES)
         dest = (RUN / tpl).resolve()
         dest.parent.mkdir(parents=True, exist_ok=True)
-        if path.is_symlink():
+        if path.name == ".gitignore":
+            pass
+        elif path.is_symlink():
             dest.unlink(missing_ok=True)
             dest.symlink_to(path.resolve())
+        elif path.is_dir():
+            dest.mkdir(exist_ok=True)
         else:
             text = j2_render(j2, path=tpl, env=env)
             dest.write_text(text)
