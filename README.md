@@ -202,6 +202,8 @@ network:
     "<wan if>":
       dhcp4: True
       dhcp6: True
+      accept-ra: True
+      ipv6-privacy: True
     # LAN ifs should be commented out
 ```
 
