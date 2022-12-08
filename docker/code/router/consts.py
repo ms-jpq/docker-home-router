@@ -51,4 +51,4 @@ DHCP_CLIENT_LEASES = DATA / "dhclient" / "v6_leases"
 NTP_SOURCES = CONFIG / "ntpsources"
 PTP_DEVICES = tuple(dev.is_char_device() for dev in (Path(sep) / "dev").glob("ptp*"))
 
-TUNNABLE = (Path(sep) / "dev" / "net" / "tun").is_char_device()
+TUNNABLE = False

@@ -27,7 +27,6 @@ RUN apt-get update && \
     squidclient \
     wireguard \
     qrencode \
-    tayga \
     iftop \
     nginx && \
     rm -rf -- /tmp/*
