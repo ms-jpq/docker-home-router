@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from ipaddress import IPv4Address, IPv6Address
-from itertools import chain
+from itertools import chain, islice
 from typing import (
     AbstractSet,
     Iterable,
@@ -56,6 +56,9 @@ class Split(_Dest):
 
 
 def _leased(networks: Networks) -> MutableMapping[str, MutableSet[IPAddress]]:
+    trusted_ifs = len(settings().interfaces.trusted)
+    guest_ifs = len(settings().interfaces.guest)
+
     leased: MutableMapping[str, MutableSet[IPAddress]] = {}
     for name, addr in leases():
         addrs = leased.setdefault(name, set())
@@ -64,11 +67,11 @@ def _leased(networks: Networks) -> MutableMapping[str, MutableSet[IPAddress]]:
     addrs = leased.setdefault(SERVER_NAME, set())
     for addr in cast(
         Iterator[IPAddress],
-        (
-            next(networks.guest.v4.hosts()),
-            next(networks.guest.v6.hosts()),
-            next(networks.trusted.v4.hosts()),
-            next(networks.trusted.v6.hosts()),
+        chain(
+            islice(networks.guest.v4.hosts(), guest_ifs),
+            islice(networks.guest.v6.hosts(), guest_ifs),
+            islice(networks.trusted.v4.hosts(), trusted_ifs),
+            islice(networks.trusted.v6.hosts(), trusted_ifs),
         ),
     ):
         addrs.add(addr)
