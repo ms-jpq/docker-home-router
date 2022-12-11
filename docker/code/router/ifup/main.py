@@ -1,38 +1,13 @@
-from ipaddress import IPv4Address, ip_interface, ip_network
+from ipaddress import IPv4Address, ip_interface
 from locale import strxfrm
-from re import RegexFlag, compile
 from subprocess import check_call
-from typing import AbstractSet, Iterable, MutableSet, Optional
+from typing import AbstractSet, Iterable, MutableSet
 
 from std2.ipaddress import LINK_LOCAL_V6, IPInterface, IPNetwork
 
-from ..consts import DHCP_CLIENT_LEASES
 from ..ip import Addrs, addr_show, ipv6_enabled
 from ..options.parser import settings
 from ..subnets import load_networks
-
-
-def _wan_pd() -> Optional[IPNetwork]:
-    try:
-        lease = DHCP_CLIENT_LEASES.read_text()
-    except FileNotFoundError:
-        return None
-    else:
-        re = compile(
-            r"^\s*iaprefix\s+(?P<network>[^s]+)\s+\{$", flags=RegexFlag.MULTILINE
-        )
-
-        if matches := tuple(re.finditer(lease)):
-            *_, match = matches
-            net = match.group("network")
-            try:
-                network: IPNetwork = ip_network(net)
-            except ValueError:
-                return None
-            else:
-                return network
-        else:
-            return None
 
 
 def if_up(
@@ -67,19 +42,12 @@ def if_up(
 
         for ip in acc:
             if isinstance(ip, IPv4Address) or ipv6_enabled():
-                check_call(("ip", "addr", "add", str(ip), "dev", interface))
+                check_call(("ip", "addr", "replace", str(ip), "dev", interface))
 
 
 def main() -> None:
     networks = load_networks()
     addrs = addr_show()
-    if network := _wan_pd():
-        if_up(
-            addrs,
-            keep_tentative=True,
-            interfaces=(settings().interfaces.wan,),
-            networks={network},
-        )
 
     if_up(
         addrs,

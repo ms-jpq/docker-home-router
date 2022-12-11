@@ -15,7 +15,14 @@ def _add_link() -> None:
             break
     else:
         check_call(
-            ("ip", "link", "add", settings().interfaces.wireguard, "type", "wireguard")
+            (
+                "ip",
+                "link",
+                "replace",
+                settings().interfaces.wireguard,
+                "type",
+                "wireguard",
+            )
         )
 
 
