@@ -15,8 +15,6 @@ class Interfaces:
     unmanaged: AbstractSet[str]
     nat64_if: str
 
-    wan_pd_only: bool
-
 
 @dataclass(frozen=True)
 class IPv4:

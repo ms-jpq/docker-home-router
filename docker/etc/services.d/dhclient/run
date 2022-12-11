@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-
-set -Eeu
-set -o pipefail
-export PATH="/usr/sbin:$PATH"
-
-
-exec s6-envuidgid "$USER" /venv/bin/python3 -m router dhclient

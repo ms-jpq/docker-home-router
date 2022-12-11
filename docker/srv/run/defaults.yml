@@ -7,7 +7,6 @@ interfaces:
   nat64_if: nat64
   unmanaged:
     - "docker*"
-  wan_pd_only: False
 
 ip_addresses:
   ipv4:
