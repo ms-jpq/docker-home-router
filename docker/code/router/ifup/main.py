@@ -22,7 +22,8 @@ def _wan_pd() -> Optional[IPNetwork]:
             r"^\s*iaprefix\s+(?P<network>[^s]+)\s+\{$", flags=RegexFlag.MULTILINE
         )
 
-        if match := re.search(lease):
+        if matches := tuple(re.finditer(lease)):
+            *_, match = matches
             net = match.group("network")
             try:
                 network: IPNetwork = ip_network(net)
@@ -36,7 +37,7 @@ def _wan_pd() -> Optional[IPNetwork]:
 
 def if_up(
     addrs: Addrs,
-    delete: bool,
+    keep_tentative: bool,
     interfaces: Iterable[str],
     networks: AbstractSet[IPNetwork],
 ) -> None:
@@ -51,12 +52,12 @@ def if_up(
             if addr.ifname == interface:
                 for info in addr.addr_info:
                     local = ip_interface(f"{info.local}/{info.prefixlen}")
-                    if delete and info.tentative:
+                    if not keep_tentative and info.tentative:
                         check_call(("ip", "addr", "del", str(local), "dev", interface))
                     elif local in acc:
                         acc.discard(local)
                     else:
-                        if delete and local.ip not in LINK_LOCAL_V6:
+                        if local.ip not in LINK_LOCAL_V6:
                             check_call(
                                 ("ip", "addr", "del", str(local), "dev", interface)
                             )
@@ -75,14 +76,14 @@ def main() -> None:
     if network := _wan_pd():
         if_up(
             addrs,
-            delete=False,
+            keep_tentative=True,
             interfaces=(settings().interfaces.wan,),
             networks={network},
         )
 
     if_up(
         addrs,
-        delete=True,
+        keep_tentative=False,
         interfaces=settings().interfaces.trusted,
         networks={networks.trusted.v4, networks.trusted.v6},
     )
@@ -90,7 +91,7 @@ def main() -> None:
     if guest_if := settings().interfaces.guest:
         if_up(
             addrs,
-            delete=True,
+            keep_tentative=False,
             interfaces=guest_if,
             networks={networks.guest.v4, networks.guest.v6},
         )
