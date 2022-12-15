@@ -19,7 +19,7 @@ def _parse(raw: str) -> Iterator[str]:
             yield m.group("header")
             for col in _RE_COLS.finditer(m.group("cols")):
                 quantity = int(col.group("quantity"))
-                parsed = si_prefixed(quantity)
+                parsed = si_prefixed(quantity, precision=2)
                 yield parsed.rjust(len(col.group()))
         else:
             yield line
