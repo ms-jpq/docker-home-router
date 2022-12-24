@@ -10,6 +10,8 @@ from std2.ipaddress import IPAddress
 class Interfaces:
     wan: str
     wireguard: str
+    trusted_bridge: str
+    guest_bridge: str
     trusted: AbstractSet[str]
     guest: AbstractSet[str]
     unmanaged: AbstractSet[str]

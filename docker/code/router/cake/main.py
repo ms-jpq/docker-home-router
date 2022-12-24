@@ -39,7 +39,7 @@ def _tx(wan_if: str) -> None:
 
 
 def _rx(wan_if: str) -> None:
-    raw_links = check_output(("ip", "--json", "link", "show"), text=True)
+    raw_links = check_output(("ip", "--json", "link", "show", "type", "ifb"), text=True)
     links = loads(raw_links)
     for link in links:
         if link["ifname"] == TC_IFB:

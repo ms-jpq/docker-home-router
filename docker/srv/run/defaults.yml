@@ -4,6 +4,8 @@ interfaces:
   trusted: []
   guest: []
   wireguard: wg0
+  trusted_bridge: trustedbr
+  guest_bridge: guestbr
   nat64_if: nat64
   unmanaged:
     - "docker*"
