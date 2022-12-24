@@ -5,4 +5,4 @@ set -o pipefail
 export PATH="/usr/sbin:$PATH"
 
 
-exec /venv/bin/python3 -m router nat64
+exec -- /venv/bin/python3 -m router nat64

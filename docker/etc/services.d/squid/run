@@ -14,5 +14,5 @@ ARGS=(
 
 rm -rf -- /tmp/squid.pid /tmp/squid
 s6-setuidgid "$USER" squid "${ARGS[@]}" -z
-exec s6-setuidgid "$USER" squid "${ARGS[@]}"
+exec -- s6-setuidgid "$USER" squid "${ARGS[@]}"
 

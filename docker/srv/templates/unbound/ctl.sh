@@ -4,7 +4,7 @@ set -Eeu
 set -o pipefail
 
 
-cd "$(dirname "$0")" || exit 1
+cd -- "$(dirname "$0")" || exit 1
 
 
-exec unbound-control -c "$PWD/0-include.conf" "$@"
+exec -- unbound-control -c "$PWD/0-include.conf" "$@"

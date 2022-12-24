@@ -5,4 +5,4 @@ set -o pipefail
 export PATH="/usr/sbin:$PATH"
 
 
-exec /venv/bin/python3 -m router ifup
+exec -- /venv/bin/python3 -m router ifup

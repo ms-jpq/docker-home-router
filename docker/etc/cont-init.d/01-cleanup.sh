@@ -12,4 +12,4 @@ ARGS=(
   )
 
 
-exec rm -rf -- "${ARGS[@]}"
+exec -- rm -rf -- "${ARGS[@]}"

@@ -41,4 +41,4 @@ then
   ln -s -f -- "$TFTP_SRC" "$TFTP_DST"
 fi
 
-exec chown -R -- "$USER:$USER" /srv /data
+exec -- chown -R -- "$USER:$USER" /srv /data

@@ -12,5 +12,5 @@ ARGS=(
 
 
 rm -rf -- /tmp/tor
-exec s6-setuidgid "$USER" tor "${ARGS[@]}"
+exec -- s6-setuidgid "$USER" tor "${ARGS[@]}"
 

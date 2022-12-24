@@ -5,4 +5,4 @@ set -o pipefail
 export PATH="/usr/sbin:$PATH"
 
 
-exec /srv/run/nftables/nft.sh
+exec -- /srv/run/nftables/nft.sh

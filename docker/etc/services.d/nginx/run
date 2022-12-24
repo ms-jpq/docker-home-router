@@ -10,4 +10,4 @@ ARGS=(
   )
 
 
-exec s6-envuidgid "$USER" nginx "${ARGS[@]}"
+exec -- s6-envuidgid "$USER" nginx "${ARGS[@]}"
