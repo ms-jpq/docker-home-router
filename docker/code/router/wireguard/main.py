@@ -10,10 +10,7 @@ _SRV_CONF = RUN / "wireguard" / "server.conf"
 
 
 def _add_link() -> None:
-    for link in link_show():
-        if link.ifname == settings().interfaces.wireguard:
-            break
-    else:
+    if settings().interfaces.wireguard not in link_show("wireguard"):
         check_call(
             (
                 "ip",

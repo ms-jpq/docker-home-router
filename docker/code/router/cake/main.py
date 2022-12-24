@@ -1,6 +1,6 @@
-from json import loads
-from subprocess import check_call, check_output
+from subprocess import check_call
 
+from ..ip import link_show
 from ..options.parser import settings
 
 TC_IFB = f"ifb4{settings().interfaces.wan}"
@@ -39,12 +39,7 @@ def _tx(wan_if: str) -> None:
 
 
 def _rx(wan_if: str) -> None:
-    raw_links = check_output(("ip", "--json", "link", "show", "type", "ifb"), text=True)
-    links = loads(raw_links)
-    for link in links:
-        if link["ifname"] == TC_IFB:
-            break
-    else:
+    if TC_IFB not in link_show("ifb"):
         check_call(("ip", "link", "add", TC_IFB, "type", "ifb"))
 
     check_call(

@@ -3,7 +3,7 @@ from functools import lru_cache
 from ipaddress import IPv6Address
 from json import dumps, loads
 from subprocess import check_output
-from typing import Optional, Sequence
+from typing import AbstractSet, Optional, Sequence
 
 from std2.ipaddress import IPAddress
 from std2.pickle.decoder import new_decoder
@@ -36,19 +36,16 @@ def addr_show() -> Addrs:
     return addrs
 
 
+def link_show(type: str) -> AbstractSet[str]:
+    raw = check_output(("ip", "--json", "link", "show", "type", type))
+    json = loads(raw)
+    ifaces: AbstractSet[str] = {iface for link in json if (iface := link.get("ifname"))}
+    return ifaces
+
+
 @dataclass(frozen=True)
 class Link:
     ifname: str
-
-
-Links = Sequence[Link]
-
-
-def link_show() -> Links:
-    raw = check_output(("ip", "--json", "link", "show"), text=True)
-    json = loads(raw)
-    links = new_decoder[Links](Links, strict=False)(json)
-    return links
 
 
 @lru_cache

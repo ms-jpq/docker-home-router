@@ -1,12 +1,11 @@
 from ipaddress import IPv4Address, ip_interface
-from json import loads
 from locale import strxfrm
-from subprocess import check_call, check_output
+from subprocess import check_call
 from typing import AbstractSet, Iterable, MutableSet
 
 from std2.ipaddress import LINK_LOCAL_V6, IPInterface, IPNetwork
 
-from ..ip import Addrs, addr_show, ipv6_enabled
+from ..ip import Addrs, addr_show, ipv6_enabled, link_show
 from ..options.parser import settings
 from ..subnets import load_networks
 
@@ -51,9 +50,7 @@ def main() -> None:
     networks = load_networks()
     addrs = addr_show()
 
-    raw = check_output(("ip", "--json", "link", "show", "type", "bridge"))
-    br_names = {bridge["ifname"] for bridge in loads(raw)}
-
+    br_names = link_show("bridge")
     for bridge in (interfaces.trusted_bridge, interfaces.guest_bridge):
         if bridge not in br_names:
             check_call(("ip", "link", "add", "name", bridge, "type", "bridge"))
