@@ -27,12 +27,13 @@ def if_up(
             if addr.ifname == interface:
                 for info in addr.addr_info:
                     local = ip_interface(f"{info.local}/{info.prefixlen}")
-                    if not keep_tentative and info.tentative:
+                    link_local = local.ip in LINK_LOCAL_V6
+                    if not link_local and info.tentative and not keep_tentative:
                         check_call(("ip", "addr", "del", str(local), "dev", interface))
                     elif local in acc:
                         acc.discard(local)
                     else:
-                        if local.ip not in LINK_LOCAL_V6:
+                        if not link_local:
                             check_call(
                                 ("ip", "addr", "del", str(local), "dev", interface)
                             )
