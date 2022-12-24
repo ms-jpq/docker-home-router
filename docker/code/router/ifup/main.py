@@ -1,4 +1,5 @@
 from ipaddress import IPv4Address, ip_interface
+from itertools import chain, repeat
 from locale import strxfrm
 from subprocess import check_call
 from typing import AbstractSet, Iterable, MutableSet
@@ -55,6 +56,13 @@ def main() -> None:
         if bridge not in br_names:
             check_call(("ip", "link", "add", "name", bridge, "type", "bridge"))
             check_call(("ip", "link", "set", "up", "dev", bridge))
+
+    for iface, bridge in chain(
+        zip(interfaces.trusted, repeat(interfaces.trusted_bridge)),
+        zip(interfaces.guest, repeat(interfaces.guest_bridge)),
+    ):
+        check_call(("ip", "link", "set", "dev", iface, "master", bridge))
+        check_call(("ip", "link", "set", "dev", iface, "up"))
 
     if_up(
         addrs,
