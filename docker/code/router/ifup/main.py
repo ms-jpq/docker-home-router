@@ -67,5 +67,5 @@ def main() -> None:
         addrs,
         keep_tentative=False,
         interfaces={interfaces.guest_bridge},
-        networks={networks.trusted.v4, networks.trusted.v6},
+        networks={networks.guest.v4, networks.guest.v6},
     )
