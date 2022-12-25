@@ -13,7 +13,6 @@ from ..subnets import load_networks
 
 def if_up(
     addrs: Addrs,
-    keep_tentative: bool,
     interfaces: Iterable[str],
     networks: AbstractSet[IPNetwork],
 ) -> None:
@@ -27,16 +26,12 @@ def if_up(
             if addr.ifname == interface:
                 for info in addr.addr_info:
                     local = ip_interface(f"{info.local}/{info.prefixlen}")
-                    link_local = local.ip in LINK_LOCAL_V6
-                    if not link_local and info.tentative and not keep_tentative:
-                        check_call(("ip", "addr", "del", str(local), "dev", interface))
+                    if local.ip in LINK_LOCAL_V6:
+                        continue
                     elif local in acc:
                         acc.discard(local)
                     else:
-                        if not link_local:
-                            check_call(
-                                ("ip", "addr", "del", str(local), "dev", interface)
-                            )
+                        check_call(("ip", "addr", "del", str(local), "dev", interface))
                 break
         else:
             raise ValueError(f"IF NOT FOUND - {interface}")
@@ -66,14 +61,12 @@ def main() -> None:
 
     if_up(
         addrs,
-        keep_tentative=False,
         interfaces={interfaces.trusted_bridge},
         networks={networks.trusted.v4, networks.trusted.v6},
     )
 
     if_up(
         addrs,
-        keep_tentative=False,
         interfaces={interfaces.guest_bridge},
         networks={networks.guest.v4, networks.guest.v6},
     )

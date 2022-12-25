@@ -64,7 +64,6 @@ def main() -> None:
     _add_link()
     if_up(
         addrs,
-        keep_tentative=False,
         interfaces=(settings().interfaces.wireguard,),
         networks={networks.wireguard.v4, networks.wireguard.v6},
     )
