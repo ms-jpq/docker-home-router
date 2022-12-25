@@ -48,7 +48,7 @@ class Link:
     ifname: str
 
 
-@lru_cache
+@lru_cache(maxsize=None)
 def ipv6_enabled() -> bool:
     def cont() -> bool:
         for addr in addr_show():
