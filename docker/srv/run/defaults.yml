@@ -26,7 +26,7 @@ ip_addresses:
     prefix_delegation: False
 
 dhcp:
-  lease_time: 1
+  lease_time: 60m
 
 dns:
   local_domains:

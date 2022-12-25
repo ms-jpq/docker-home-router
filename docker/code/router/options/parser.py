@@ -65,7 +65,6 @@ def settings() -> Settings:
 
     assert 16 <= raw.ip_addresses.ipv4.managed_prefix_len <= 24
     assert 16 <= raw.ip_addresses.ipv4.tor_prefix_len <= 24
-    assert 1 <= raw.dhcp.lease_time <= raw.dhcp.lease_time
 
     settings = Settings(
         interfaces=raw.interfaces,
