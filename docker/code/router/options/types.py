@@ -41,7 +41,7 @@ class _IPAddresses:
 
 @dataclass(frozen=True)
 class DHCP:
-    lease_time: str
+    lease_time: int
 
 
 @dataclass(frozen=True)
