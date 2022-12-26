@@ -17,6 +17,7 @@ from .chrony import feed as ch_feed
 from .dhcp import feed as dhcp_feed
 from .dns import feed as dns_feed
 from .fwds import feed as fwd_feed
+from .ip import feed as ip_feed
 from .nft import feed as nft_feed
 from .squid import feed as squid_feed
 from .subnets import feed as subnets_feed
@@ -36,6 +37,7 @@ class _Path(Enum):
     dhcp = POSIX_ROOT / "dhcp"
     dns = POSIX_ROOT / "dns"
     fwd = POSIX_ROOT / "fwd"
+    ip = POSIX_ROOT / "ip"
     nets = POSIX_ROOT / "nets"
     nft = POSIX_ROOT / "nft"
     squid = POSIX_ROOT / "squid"
@@ -100,6 +102,11 @@ def main() -> None:
 
         elif path is _Path.fwd:
             env = {"TITLE": path.name, "BODY": fwd_feed()}
+            page = j2_render(j2, path=_SHOW_TPL, env=env).encode()
+            _get(handler, page=page)
+
+        elif path is _Path.ip:
+            env = {"TITLE": path.name, "BODY": ip_feed()}
             page = j2_render(j2, path=_SHOW_TPL, env=env).encode()
             _get(handler, page=page)
 
