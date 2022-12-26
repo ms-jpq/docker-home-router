@@ -7,8 +7,9 @@ export PATH="/usr/sbin:$PATH"
 
 s6-svwait -U /run/s6/legacy-services/unbound
 
-while true
+until ! /etc/services.d/unbound/data/check &>>/dev/null
 do
-  /etc/services.d/unbound/data/check &>>/dev/null
   sleep 1
 done
+
+exec -- /run/s6/basedir/bin/halt

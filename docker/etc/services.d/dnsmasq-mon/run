@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+set -Eeu
+set -o pipefail
+export PATH="/usr/sbin:$PATH"
+
+
+while true
+do
+  sleep 60
+  s6-svc -t /run/s6/legacy-services/dnsmasq-dhcp
+done
