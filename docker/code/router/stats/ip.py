@@ -15,5 +15,6 @@ def feed() -> str:
         (interfaces.wireguard, interfaces.trusted_bridge, interfaces.guest_bridge),
         interfaces.trusted,
         interfaces.guest,
+        (interfaces.wan,),
     )
     return linesep.join(map(_show, ifs))
