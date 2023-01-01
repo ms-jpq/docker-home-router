@@ -1,0 +1,12 @@
+[Unit]
+Description=Tor
+After=template.service
+Requires=template.service
+
+[Service]
+Restart=on-failure
+ExecStartPre=/usr/bin/rm --force --recursive -- /tmp/tor
+ExecStart=/usr/sbin/tor --hush -f /srv/run/tor/0-main.conf
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,11 @@
+[Unit]
+Description=Cake SQM
+
+[Service]
+Type=oneshot
+Restart=on-failure
+RemainAfterExit=yes
+ExecStart=/venv/bin/python3 -m router cake
+
+[Install]
+WantedBy=default.target

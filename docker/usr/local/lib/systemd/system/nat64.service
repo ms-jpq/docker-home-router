@@ -1,0 +1,13 @@
+[Unit]
+Description=NAT64
+After=template.service
+Requires=template.service
+
+[Service]
+Type=oneshot
+Restart=on-failure
+RemainAfterExit=yes
+ExecStart=/venv/bin/python3 -m router nat64
+
+[Install]
+WantedBy=default.target

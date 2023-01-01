@@ -1,0 +1,12 @@
+[Unit]
+Description=Dnsmasq DHCP Server
+After=template.service
+Requires=template.service
+PartOf=unbound.service
+
+[Service]
+Restart=on-failure
+ExecStart=/usr/sbin/dnsmasq --conf-dir /srv/run/dnsmasq/dhcp/conf.d
+
+[Install]
+WantedBy=default.target

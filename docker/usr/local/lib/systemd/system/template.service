@@ -1,11 +1,12 @@
 [Unit]
-Description=Template
+Description=Configuration Template
 
 [Service]
 Type=oneshot
 Restart=on-failure
 RemainAfterExit=yes
 ExecStart=/venv/bin/python3 -m router template
+ExecStart=/usr/bin/systemctl daemon-reload
 
 [Install]
 WantedBy=default.target

@@ -1,0 +1,11 @@
+[Unit]
+Description=Dnsmasq DNS Server
+After=template.service
+Requires=template.service
+
+[Service]
+Restart=on-failure
+ExecStart=/usr/sbin/dnsmasq --conf-dir /srv/run/dnsmasq/dns/conf.d
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,14 @@
+[Unit]
+Description=Squid HTTP Proxy Server
+After=template.service
+Requires=template.service
+
+[Service]
+Restart=on-failure
+Environment=CONF=/srv/run/squid/0-main.conf
+ExecStartPre=/usr/bin/rm --force --recursive -- /tmp/squid.pid /tmp/squid
+ExecStartPre=/usr/sbin/squid -z -f ${CONF}
+ExecStart=/usr/sbin/squid --foreground -d 1 -f ${CONF}
+
+[Install]
+WantedBy=default.target

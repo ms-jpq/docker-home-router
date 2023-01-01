@@ -1,5 +1,5 @@
 [Unit]
-Description=Avahi
+Description=Avahi MDNS Daemon
 After=template.service
 Requires=template.service
 

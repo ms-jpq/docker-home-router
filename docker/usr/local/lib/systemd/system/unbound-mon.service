@@ -1,0 +1,15 @@
+[Unit]
+Description=Unbound Healthcheck
+CollectMode=inactive-or-failed
+After=unbound.service
+Requires=unbound.service
+
+[Service]
+Type=oneshot
+Restart=on-failure
+TimeoutStartSec=1s
+ExecStart=/usr/sbin/unbound-control -c /srv/run/unbound/0-include.conf status
+ExecStopPost=-/usr/bin/systemctl restart -- unbound.service
+
+[Install]
+WantedBy=default.target

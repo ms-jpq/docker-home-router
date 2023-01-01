@@ -1,0 +1,11 @@
+[Unit]
+Description=Nginx Http Server
+After=template.service
+Requires=template.service
+
+[Service]
+Restart=on-failure
+ExecStart=/usr/sbin/nginx -c /srv/run/nginx/nginx.conf
+
+[Install]
+WantedBy=default.target

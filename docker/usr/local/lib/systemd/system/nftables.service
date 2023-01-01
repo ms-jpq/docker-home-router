@@ -1,0 +1,13 @@
+[Unit]
+Description=NFtables Firewall
+After=template.service
+Requires=template.service
+
+[Service]
+Type=oneshot
+Restart=on-failure
+RemainAfterExit=yes
+ExecStart=/srv/run/nftables/nft.sh
+
+[Install]
+WantedBy=default.target

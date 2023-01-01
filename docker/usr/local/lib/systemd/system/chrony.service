@@ -1,13 +1,14 @@
 [Unit]
-Description=Chronyd
+Description=Chronyd NTP Server
 After=template.service
 Requires=template.service
 
 [Service]
 Restart=on-failure
+Environment=CONFIG=/srv/run/chrony/0-include.conf
 ExecStartPre=/usr/bin/rm --force -- /tmp/chronyd.pid
-ExecStartPre=/usr/sbin/chronyd -p -f /srv/run/chrony/0-include.conf
-ExecStart=/usr/sbin/chronyd -d -x -L 0 -f /srv/run/chrony/0-include.conf
+ExecStartPre=/usr/sbin/chronyd -p -f ${CONF}
+ExecStart=/usr/sbin/chronyd -d -x -L 0 -f ${CONF}
 
 [Install]
 WantedBy=default.target

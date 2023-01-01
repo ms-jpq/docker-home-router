@@ -1,0 +1,10 @@
+[Unit]
+Description=Restart Dnsmasq DHCP
+CollectMode=inactive-or-failed
+After=dnsmasq-dhcp.service
+Requires=dnsmasq-dhcp.service
+
+[Service]
+Type=oneshot
+Restart=on-failure
+ExecStart=/usr/bin/systemctl restart -- dnsmasq-dhcp.service

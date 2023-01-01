@@ -1,0 +1,13 @@
+[Unit]
+Description=Unbound
+After=template.service
+Requires=template.service
+
+[Service]
+Restart=on-failure
+Environment=CONF=/srv/run/unbound/0-include.conf
+ExecStartPre=/usr/bin/unbound-checkconf -- ${CONF}
+ExecStart=/usr/sbin/unbound -c ${CONF}
+
+[Install]
+WantedBy=default.target

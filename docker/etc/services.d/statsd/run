@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-
-set -Eeu
-set -o pipefail
-export PATH="/venv/bin:/usr/sbin:$PATH"
-
-
-exec -- s6-setuidgid "$USER" /venv/bin/python3 -m router stats
