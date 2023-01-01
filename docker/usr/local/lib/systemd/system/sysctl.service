@@ -1,0 +1,15 @@
+[Unit]
+Description=Set sysctl
+
+[Service]
+Type=oneshot
+Restart=on-failure
+RemainAfterExit=yes
+ExecStart=/usr/sbin/sysctl --write -- net.ipv4.ip_forward=1
+ExecStart=/usr/sbin/sysctl --write -- net.ipv6.conf.all.forwarding=1
+ExecStart=/usr/sbin/sysctl --write -- net.ipv4.tcp_congestion_control=bbr
+ExecStart=/usr/sbin/sysctl --write -- net.ipv6.conf.all.accept_dad=0
+# ExecStart=sysctl --write -- net.ipv6.conf.all.optimistic_dad=1
+
+[Install]
+WantedBy=default.target

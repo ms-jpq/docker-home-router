@@ -1,0 +1,13 @@
+[Unit]
+Description=Chronyd
+After=template.service
+Requires=template.service
+
+[Service]
+Restart=on-failure
+ExecStartPre=/usr/bin/rm --force -- /tmp/chronyd.pid
+ExecStartPre=/usr/sbin/chronyd -p -f /srv/run/chrony/0-include.conf
+ExecStart=/usr/sbin/chronyd -d -x -L 0 -f /srv/run/chrony/0-include.conf
+
+[Install]
+WantedBy=default.target

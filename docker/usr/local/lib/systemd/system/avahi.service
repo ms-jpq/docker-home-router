@@ -1,0 +1,11 @@
+[Unit]
+Description=Avahi
+After=template.service
+Requires=template.service
+
+[Service]
+Restart=on-failure
+ExecStart=/usr/sbin/avahi-daemon --no-chroot --file /srv/run/avahi/0-main.conf
+
+[Install]
+WantedBy=default.target

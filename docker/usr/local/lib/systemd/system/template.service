@@ -1,0 +1,11 @@
+[Unit]
+Description=Template
+
+[Service]
+Type=oneshot
+Restart=on-failure
+RemainAfterExit=yes
+ExecStart=/venv/bin/python3 -m router template
+
+[Install]
+WantedBy=default.target
