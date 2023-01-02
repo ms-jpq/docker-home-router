@@ -1,0 +1,14 @@
+[Unit]
+Description=Stats Server
+After=template.service
+Requires=template.service
+
+[Service]
+DynamicUser=yes
+Restart=on-failure
+RemainAfterExit=yes
+ExecStartPre=/usr/sbin/rm --force -- /tmp/stats.sock
+ExecStart=/venv/bin/python3 -m router stats
+
+[Install]
+WantedBy=default.target

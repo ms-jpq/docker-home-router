@@ -1,10 +1,11 @@
 [Unit]
 Description=Dnsmasq DHCP Server
-After=template.service
-Requires=template.service
+After=if-up.service
+Requires=if-up.service
 PartOf=unbound.service
 
 [Service]
+DynamicUser=yes
 Restart=on-failure
 ExecStart=/usr/sbin/dnsmasq --conf-dir /srv/run/dnsmasq/dhcp/conf.d
 

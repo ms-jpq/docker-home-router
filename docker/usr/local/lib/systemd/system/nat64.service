@@ -5,6 +5,7 @@ Requires=template.service
 
 [Service]
 Type=oneshot
+DynamicUser=yes
 Restart=on-failure
 RemainAfterExit=yes
 ExecStart=/venv/bin/python3 -m router nat64

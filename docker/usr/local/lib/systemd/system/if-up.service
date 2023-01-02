@@ -1,14 +1,13 @@
 [Unit]
-Description=Wireguard
+Description=Interfaces Up
 After=template.service
 Requires=template.service
 
 [Service]
 Type=oneshot
-DynamicUser=yes
 Restart=on-failure
 RemainAfterExit=yes
-ExecStart=/venv/bin/python3 -m router wg
+ExecStart=/venv/bin/python3 -m router ifup
 
 [Install]
 WantedBy=default.target

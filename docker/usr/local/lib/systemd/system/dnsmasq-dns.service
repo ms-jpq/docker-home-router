@@ -1,9 +1,10 @@
 [Unit]
 Description=Dnsmasq DNS Server
-After=template.service
-Requires=template.service
+After=if-up.service
+Requires=if-up.service
 
 [Service]
+DynamicUser=yes
 Restart=on-failure
 ExecStart=/usr/sbin/dnsmasq --conf-dir /srv/run/dnsmasq/dns/conf.d
 

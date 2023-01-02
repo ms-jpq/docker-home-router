@@ -1,0 +1,10 @@
+[Unit]
+Description=Journalctl to stdout
+
+[Service]
+DynamicUser=yes
+Restart=on-failure
+ExecStart=/usr/sbin/journalctl --boot --lines all --follow
+
+[Install]
+WantedBy=default.target

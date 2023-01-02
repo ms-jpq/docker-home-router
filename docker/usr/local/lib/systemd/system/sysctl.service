@@ -1,8 +1,11 @@
 [Unit]
 Description=Set sysctl
+After=journalctl.service
+Requires=journalctl.service
 
 [Service]
 Type=oneshot
+DynamicUser=yes
 Restart=on-failure
 RemainAfterExit=yes
 ExecStart=/usr/sbin/sysctl --write -- net.ipv4.ip_forward=1

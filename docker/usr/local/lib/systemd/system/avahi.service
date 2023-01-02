@@ -1,9 +1,10 @@
 [Unit]
 Description=Avahi MDNS Daemon
-After=template.service
-Requires=template.service
+After=if-up.service
+Requires=if-up.service
 
 [Service]
+DynamicUser=yes
 Restart=on-failure
 ExecStart=/usr/sbin/avahi-daemon --no-chroot --file /srv/run/avahi/0-main.conf
 

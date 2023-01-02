@@ -1,9 +1,10 @@
 [Unit]
 Description=Unbound
-After=template.service
-Requires=template.service
+After=if-up.service
+Requires=if-up.service
 
 [Service]
+DynamicUser=yes
 Restart=on-failure
 Environment=CONF=/srv/run/unbound/0-include.conf
 ExecStartPre=/usr/bin/unbound-checkconf -- ${CONF}

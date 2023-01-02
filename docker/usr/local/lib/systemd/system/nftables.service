@@ -1,10 +1,13 @@
 [Unit]
 Description=NFtables Firewall
-After=template.service
-Requires=template.service
+After=if-up.service
+After=wireguard.service
+Requires=if-up.service
+Requires=wireguard.service
 
 [Service]
 Type=oneshot
+DynamicUser=yes
 Restart=on-failure
 RemainAfterExit=yes
 ExecStart=/srv/run/nftables/nft.sh

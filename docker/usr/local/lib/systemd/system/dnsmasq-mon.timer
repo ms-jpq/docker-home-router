@@ -2,7 +2,8 @@
 Description=Restart Dnsmasq DHCP Timer
 
 [Timer]
-OnCalendar=minutely
+OnActiveSec=1m
+OnUnitInactiveSec=1m
 
 [Install]
 WantedBy=timers.target

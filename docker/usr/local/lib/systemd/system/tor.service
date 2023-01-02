@@ -1,9 +1,10 @@
 [Unit]
 Description=Tor
-After=template.service
-Requires=template.service
+After=if-up.service
+Requires=if-up.service
 
 [Service]
+DynamicUser=yes
 Restart=on-failure
 ExecStartPre=/usr/bin/rm --force --recursive -- /tmp/tor
 ExecStart=/usr/sbin/tor --hush -f /srv/run/tor/0-main.conf
