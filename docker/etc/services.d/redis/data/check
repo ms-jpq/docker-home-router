@@ -5,7 +5,7 @@ set -o pipefail
 export PATH="/usr/sbin:$PATH"
 
 
-until redis-cli -s /tmp/redis.sock ping
+until s6-setuidgid "$USER" redis-cli -s /tmp/redis.sock ping
 do
   sleep 1
 done

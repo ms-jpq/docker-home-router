@@ -12,6 +12,6 @@ ARGS=(
 
 mkdir -p -- /tmp/ntop
 s6-svwait -U /run/s6/legacy-services/redis
-redis-cli -s /tmp/redis.sock flushall
+s6-setuidgid "$USER" redis-cli -s /tmp/redis.sock flushall
 exec -- ntopng "${ARGS[@]}"
 
