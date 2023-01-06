@@ -30,6 +30,7 @@ RUN apt-get update && \
     iftop \
     nginx \
     redis \
+    net-tools \
     ntopng && \
     rm -rf -- /tmp/*
 

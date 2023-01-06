@@ -11,5 +11,3 @@ until ! /etc/services.d/unbound/data/check &>>/dev/null
 do
   sleep 1
 done
-
-exec -- /run/s6/basedir/bin/halt

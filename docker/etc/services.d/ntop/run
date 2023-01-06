@@ -6,10 +6,11 @@ export PATH="/usr/sbin:$PATH"
 
 
 ARGS=(
-  -- /srv/run/ntop/0-main.conf
+  /srv/run/ntop/0-main.conf
   )
 
 
 mkdir -p -- /tmp/ntop
+redis-cli -s /tmp/redis.sock flushall
 exec -- ntopng "${ARGS[@]}"
 

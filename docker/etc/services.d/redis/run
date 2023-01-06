@@ -6,7 +6,7 @@ export PATH="/usr/sbin:$PATH"
 
 
 ARGS=(
-  -- /srv/run/redis/0-main.conf
+  /srv/run/redis/0-main.conf
   )
 
 

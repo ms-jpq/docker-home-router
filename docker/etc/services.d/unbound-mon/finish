@@ -1,1 +1,7 @@
-../avahi/finish
+#!/usr/bin/env bash
+
+set -Eeu
+set -o pipefail
+
+
+exec -- s6-svc -t /run/s6/legacy-services/unbound
