@@ -4,5 +4,5 @@ set -Eeu
 set -o pipefail
 
 
-printf '%s\n' "FIN :: $PWD"
+printf -- '%s\n' "FIN :: $PWD"
 # exec -- /run/s6/basedir/bin/halt

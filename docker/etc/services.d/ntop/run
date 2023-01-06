@@ -6,8 +6,10 @@ export PATH="/usr/sbin:$PATH"
 
 
 ARGS=(
-  -c /srv/run/nginx/0-main.conf
+  -- /srv/run/ntop/0-main.conf
   )
 
 
-exec -- s6-envuidgid "$USER" nginx "${ARGS[@]}"
+mkdir -p -- /tmp/ntop
+exec -- ntopng "${ARGS[@]}"
+

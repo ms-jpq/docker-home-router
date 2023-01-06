@@ -6,8 +6,9 @@ export PATH="/usr/sbin:$PATH"
 
 
 ARGS=(
-  -c /srv/run/nginx/0-main.conf
+  -- /srv/run/redis/0-main.conf
   )
 
 
-exec -- s6-envuidgid "$USER" nginx "${ARGS[@]}"
+exec -- redis-server "${ARGS[@]}"
+

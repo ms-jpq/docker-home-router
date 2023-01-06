@@ -28,7 +28,9 @@ RUN apt-get update && \
     wireguard \
     qrencode \
     iftop \
-    nginx && \
+    nginx \
+    redis \
+    ntopng && \
     rm -rf -- /tmp/*
 
 
