@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+set -Eeu
+set -o pipefail
+export PATH="/usr/sbin:$PATH"
+
+
+until redis-cli -s /tmp/redis.sock ping
+do
+  sleep 1
+done
